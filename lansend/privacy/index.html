@@ -3,50 +3,184 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07101f">
   <title>LAN Send Privacy Policy</title>
+
   <style>
-    :root { color-scheme: light dark; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.6; margin: 0; }
-    main { max-width: 820px; margin: 0 auto; padding: 48px 24px 72px; }
-    h1 { margin-bottom: 0.25rem; }
-    .muted { opacity: 0.72; margin-top: 0; }
-    h2 { margin-top: 2rem; }
-    a { word-break: break-word; }
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+      background: #07101f;
+      color: #edf5ff;
+    }
+
+    a {
+      color: #7fb2ff;
+      word-break: break-word;
+    }
+
+    .wrap {
+      width: min(920px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    nav {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #edf5ff;
+      font-weight: 750;
+    }
+
+    .brand img {
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      display: none;
+      place-items: center;
+      background: linear-gradient(145deg, #2f80ff, #6ea8ff);
+      color: white;
+      font-weight: 900;
+    }
+
+    .navlinks {
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+    }
+
+    .navlinks a {
+      color: #aebed3;
+      text-decoration: none;
+    }
+
+    main {
+      padding: 58px 0 72px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(38px, 6vw, 54px);
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+    }
+
+    .muted {
+      color: #73849a;
+      margin-top: 0;
+    }
+
+    h2 {
+      margin-top: 2rem;
+      margin-bottom: 0.7rem;
+      font-size: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      color: #9dafc5;
+    }
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 28px 0 42px;
+      color: #73849a;
+      font-size: 13px;
+    }
+
+    @media (max-width: 680px) {
+      .wrap {
+        width: min(100% - 28px, 920px);
+      }
+
+      nav {
+        height: 64px;
+      }
+
+      main {
+        padding-top: 46px;
+      }
+    }
   </style>
 </head>
+
 <body>
-<main>
-  <h1>LAN Send Privacy Policy</h1>
-  <p class="muted">Last updated: September 11, 2026</p>
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="/lansend/">
+        <img
+          src="/lansend/assets/lansend-app-icon.png"
+          alt="LAN Send"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
+        >
+        <span class="mark">L</span>
+        <span>LAN Send</span>
+      </a>
 
-  <p>LAN Send is a local network file and text transfer app published by RTEK Labs. This Privacy Policy explains how LAN Send handles information when you use the Android app and Windows companion.</p>
+      <div class="navlinks">
+        <a href="/lansend/">Home</a>
+        <a href="/lansend/help/">Help</a>
+      </div>
+    </nav>
 
-  <h2>Information LAN Send can access</h2>
-  <p>LAN Send can access files, text, clipboard content, device pairing information, and local network addresses when these are needed to provide the features you choose to use. For example, if you select a file or clipboard item to send, LAN Send accesses that content so it can transfer it to your paired device.</p>
+    <main>
+      <h1>LAN Send Privacy Policy</h1>
+      <p class="muted">Last updated: September 11, 2026</p>
 
-  <h2>How transfers work</h2>
-  <p>LAN Send is designed to transfer supported content directly between paired devices over your local network. RTEK Labs does not operate a cloud server that receives or stores the files, messages, or clipboard content you transfer through LAN Send.</p>
+      <p>LAN Send is a local network file and text transfer app published by RTEK Labs. This Privacy Policy explains how LAN Send handles information when you use the Android app and Windows companion.</p>
 
-  <h2>Local storage</h2>
-  <p>LAN Send stores configuration and pairing information locally on your devices so that paired devices can reconnect and your preferences can be remembered. Transfer history may also be stored locally on the device where the feature is available.</p>
+      <h2>Information LAN Send can access</h2>
+      <p>LAN Send can access files, text, clipboard content, device pairing information, and local network addresses when these are needed to provide the features you choose to use. For example, if you select a file or clipboard item to send, LAN Send accesses that content so it can transfer it to your paired device.</p>
 
-  <h2>Personal information</h2>
-  <p>LAN Send does not sell personal information. LAN Send does not use precise location to track you or share your physical location with other users.</p>
+      <h2>How transfers work</h2>
+      <p>LAN Send is designed to transfer supported content directly between paired devices over your local network. RTEK Labs does not operate a cloud server that receives or stores the files, messages, or clipboard content you transfer through LAN Send.</p>
 
-  <h2>Third-party platform services</h2>
-  <p>Distribution platforms such as Google Play and Microsoft Store may collect diagnostics, crash reports, purchase information, or other platform-related data under their own privacy policies. RTEK Labs does not control data collected independently by those platform providers.</p>
+      <h2>Local storage</h2>
+      <p>LAN Send stores configuration and pairing information locally on your devices so that paired devices can reconnect and your preferences can be remembered. Transfer history may also be stored locally on the device where the feature is available.</p>
 
-  <h2>Security</h2>
-  <p>LAN Send uses pairing and device authorization mechanisms intended to restrict transfers to devices you have paired. You should only pair with devices you trust and use LAN Send on networks you trust.</p>
+      <h2>Personal information</h2>
+      <p>LAN Send does not sell personal information. LAN Send does not use precise location to track you or share your physical location with other users.</p>
 
-  <h2>Children</h2>
-  <p>LAN Send is not designed to collect personal information from children. The app is a general-purpose utility for transferring content between paired devices.</p>
+      <h2>Third-party platform services</h2>
+      <p>Distribution platforms such as Google Play and Microsoft Store may collect diagnostics, crash reports, purchase information, or other platform-related data under their own privacy policies. RTEK Labs does not control data collected independently by those platform providers.</p>
 
-  <h2>Changes to this policy</h2>
-  <p>This Privacy Policy may be updated when LAN Send features or data-handling practices change. The current version will be published on this page.</p>
+      <h2>Security</h2>
+      <p>LAN Send uses pairing and device authorization mechanisms intended to restrict transfers to devices you have paired. You should only pair with devices you trust and use LAN Send on networks you trust.</p>
 
-  <h2>Contact</h2>
-  <p>For privacy or support questions, contact RTEK Labs at <a href="mailto:rteklabs.support@gmail.com">rteklabs.support@gmail.com</a>.</p>
-</main>
+      <h2>Children</h2>
+      <p>LAN Send is not designed to collect personal information from children. The app is a general-purpose utility for transferring content between paired devices.</p>
+
+      <h2>Changes to this policy</h2>
+      <p>This Privacy Policy may be updated when LAN Send features or data-handling practices change. The current version will be published on this page.</p>
+
+      <h2>Contact</h2>
+      <p>For privacy or support questions, contact RTEK Labs at <a href="mailto:rteklabs.support@gmail.com">rteklabs.support@gmail.com</a>.</p>
+    </main>
+
+    <footer>
+      © 2026 RTEK Labs · <a href="/lansend/">LAN Send</a> · <a href="/lansend/help/">Help</a>
+    </footer>
+  </div>
 </body>
 </html>
