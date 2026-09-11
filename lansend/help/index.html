@@ -14,7 +14,8 @@
     .wrap { width:min(920px,calc(100% - 40px)); margin:0 auto; }
     nav { height:72px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.08); }
     .brand { display:flex; align-items:center; gap:12px; text-decoration:none; color:#edf5ff; font-weight:750; }
-    .mark { width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(145deg,#2f80ff,#6ea8ff);color:white;font-weight:900; }
+    .brand img { width:36px; height:36px; border-radius:11px; object-fit:cover; display:block; }
+    .mark { width:36px;height:36px;border-radius:11px;display:none;place-items:center;background:linear-gradient(145deg,#2f80ff,#6ea8ff);color:white;font-weight:900; }
     .navlinks { display:flex; gap:20px; font-size:14px; }
     .navlinks a { color:#aebed3; text-decoration:none; }
     header.hero { padding:70px 0 42px; }
@@ -34,7 +35,58 @@
     .card { padding:20px; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:rgba(255,255,255,.03); }
     .card h3 { margin-top:0; }
     .card p { margin-bottom:0; font-size:14px; }
-    .download { display:inline-flex; padding:11px 16px; border-radius:11px; background:#2f80ff; color:white; text-decoration:none; font-weight:700; margin-top:8px; }
+
+    .download {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:46px;
+      padding:0 18px;
+      border-radius:11px;
+      border:1px solid #2f80ff;
+      background:#2f80ff;
+      color:white;
+      text-decoration:none;
+      font-weight:700;
+      margin-top:8px;
+      transition:background .18s ease,border-color .18s ease,box-shadow .18s ease;
+    }
+
+    .download:hover,
+    .download:focus-visible {
+      background:#216de0;
+      border-color:#216de0;
+      box-shadow:0 8px 22px rgba(11,77,191,.22);
+    }
+
+    .download:focus-visible {
+      outline:2px solid #a9cbff;
+      outline-offset:3px;
+    }
+
+    .download > img {
+      width:22px;
+      height:22px;
+      object-fit:contain;
+      display:block;
+    }
+
+    .windows-logo-fallback {
+      width:22px;
+      height:22px;
+      display:none;
+      grid-template-columns:repeat(2,1fr);
+      grid-template-rows:repeat(2,1fr);
+      gap:2px;
+      transform:skewY(-4deg);
+    }
+
+    .windows-logo-fallback i {
+      display:block;
+      background:#fff;
+    }
+
     footer { margin-top:34px; border-top:1px solid rgba(255,255,255,.08); padding:28px 0 42px; color:#73849a; font-size:13px; }
     @media(max-width:680px){.wrap{width:min(100% - 28px,920px)}nav{height:64px}.navlinks a:first-child{display:none}.grid{grid-template-columns:1fr}header.hero{padding-top:52px}}
   </style>
@@ -42,7 +94,15 @@
 <body>
   <div class="wrap">
     <nav>
-      <a class="brand" href="/lansend/"><span class="mark">L</span><span>LAN Send</span></a>
+      <a class="brand" href="/lansend/">
+        <img
+          src="/lansend/assets/lansend-app-icon.png"
+          alt="LAN Send"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
+        >
+        <span class="mark">L</span>
+        <span>LAN Send</span>
+      </a>
       <div class="navlinks"><a href="/lansend/">Home</a><a href="/lansend/privacy/">Privacy</a></div>
     </nav>
 
@@ -63,7 +123,16 @@
           <li>On Android, choose <strong>Add PC</strong> and scan the QR code.</li>
           <li>Once the PC shows online, you're ready to send.</li>
         </ol>
-        <a class="download" href="https://github.com/rteklabs/LAN-Send/releases/download/v3.1.0/LAN-Send-Windows-x64-3.1.0.msix">Download LAN Send for Windows</a>
+        <a class="download" href="https://github.com/rteklabs/LAN-Send/releases/download/v3.1.0/LAN-Send-Windows-x64-3.1.0.msix">
+          <img
+            src="/lansend/assets/windows-logo.png"
+            alt=""
+            aria-hidden="true"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
+          >
+          <span class="windows-logo-fallback" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>Free Download</span>
+        </a>
       </section>
 
       <section id="send">
