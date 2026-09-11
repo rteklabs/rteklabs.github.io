@@ -517,8 +517,14 @@
       object-fit: cover;
     }
 
+    .windows-gallery .asset {
+      overflow: hidden;
+      background: #f6f8fc;
+    }
+
     .windows-gallery .asset > img {
       object-fit: contain;
+      object-position: top center;
       background: #f6f8fc;
     }
 
@@ -536,8 +542,18 @@
       aspect-ratio: 16 / 10;
     }
 
+    .windows-main > img {
+      transform: scale(1.10);
+      transform-origin: top center;
+    }
+
     .windows-settings {
       aspect-ratio: 4 / 3;
+    }
+
+    .windows-settings > img {
+      transform: scale(1);
+      transform-origin: top center;
     }
 
     /* =========================
@@ -616,6 +632,10 @@
       .windows-gallery {
         gap: 14px;
         margin-top: 14px;
+      }
+
+      .windows-main > img {
+        transform: scale(1.06);
       }
 
       .heroasset {
