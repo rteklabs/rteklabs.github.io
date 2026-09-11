@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Getting started, pairing and troubleshooting help for LAN Send on Android and Windows.">
+  <meta name="theme-color" content="#0b1220">
+  <title>Getting Started — LAN Send</title>
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font-family: Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#07101f; color:#edf5ff; line-height:1.65; }
+    a { color:#7fb2ff; }
+    .wrap { width:min(920px,calc(100% - 40px)); margin:0 auto; }
+    nav { height:72px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.08); }
+    .brand { display:flex; align-items:center; gap:12px; text-decoration:none; color:#edf5ff; font-weight:750; }
+    .mark { width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(145deg,#2f80ff,#6ea8ff);color:white;font-weight:900; }
+    .navlinks { display:flex; gap:20px; font-size:14px; }
+    .navlinks a { color:#aebed3; text-decoration:none; }
+    header.hero { padding:70px 0 42px; }
+    h1 { margin:0 0 14px; font-size:clamp(38px,6vw,58px); line-height:1.05; letter-spacing:-.045em; }
+    .lead { margin:0; max-width:700px; color:#9dafc5; font-size:18px; }
+    .toc { display:flex; flex-wrap:wrap; gap:9px; margin-top:28px; }
+    .toc a { padding:8px 12px; border:1px solid rgba(255,255,255,.09); border-radius:999px; background:rgba(255,255,255,.035); color:#b8c9de; text-decoration:none; font-size:13px; }
+    section { padding:34px 0; border-top:1px solid rgba(255,255,255,.075); }
+    h2 { margin:0 0 18px; font-size:28px; letter-spacing:-.025em; }
+    h3 { margin:26px 0 8px; font-size:18px; }
+    p { color:#9dafc5; }
+    ol,ul { color:#aebed3; padding-left:24px; }
+    li { margin:9px 0; }
+    strong { color:#edf5ff; }
+    .notice { padding:18px 20px; margin:22px 0; border-radius:14px; border:1px solid rgba(110,168,255,.18); background:rgba(47,128,255,.08); color:#bcd5f8; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .card { padding:20px; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:rgba(255,255,255,.03); }
+    .card h3 { margin-top:0; }
+    .card p { margin-bottom:0; font-size:14px; }
+    .download { display:inline-flex; padding:11px 16px; border-radius:11px; background:#2f80ff; color:white; text-decoration:none; font-weight:700; margin-top:8px; }
+    footer { margin-top:34px; border-top:1px solid rgba(255,255,255,.08); padding:28px 0 42px; color:#73849a; font-size:13px; }
+    @media(max-width:680px){.wrap{width:min(100% - 28px,920px)}nav{height:64px}.navlinks a:first-child{display:none}.grid{grid-template-columns:1fr}header.hero{padding-top:52px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="/lansend/"><span class="mark">L</span><span>LAN Send</span></a>
+      <div class="navlinks"><a href="/lansend/">Home</a><a href="/lansend/privacy/">Privacy</a></div>
+    </nav>
+
+    <header class="hero">
+      <h1>Getting Started</h1>
+      <p class="lead">Install, pair and start moving files between your Android phone and Windows PC. Most setups take only a couple of minutes.</p>
+      <div class="toc"><a href="#setup">Setup</a><a href="#send">Send files</a><a href="#testing">Closed testers</a><a href="#troubleshooting">Troubleshooting</a><a href="#faq">FAQ</a></div>
+    </header>
+
+    <main>
+      <section id="setup">
+        <h2>1. Install and pair</h2>
+        <ol>
+          <li>Install LAN Send on your <strong>Android device</strong> from the Google Play testing link provided to you.</li>
+          <li>Install the <strong>Windows companion</strong> on your PC.</li>
+          <li>Connect the Android device and PC to the <strong>same local Wi‑Fi/network</strong>.</li>
+          <li>Open LAN Send on Windows and display its pairing QR code.</li>
+          <li>On Android, choose <strong>Add PC</strong> and scan the QR code.</li>
+          <li>Once the PC shows online, you're ready to send.</li>
+        </ol>
+        <a class="download" href="https://github.com/rteklabs/LAN-Send/releases/download/v3.1.0/LAN-Send-Windows-x64-3.1.0.msix">Download LAN Send for Windows</a>
+      </section>
+
+      <section id="send">
+        <h2>2. Send something</h2>
+        <div class="grid">
+          <article class="card"><h3>Android → Windows</h3><p>Open LAN Send on Android, select your paired PC, choose the file or content you want to send, then send it. Received files are saved according to your Windows receive settings.</p></article>
+          <article class="card"><h3>Windows → Android</h3><p>Open LAN Send on Windows, choose your paired Android device and send a file or text. You can also use supported Windows sharing options such as Send with LAN Send.</p></article>
+        </div>
+      </section>
+
+      <section id="testing">
+        <h2>Closed-test checklist</h2>
+        <p>If you're helping test LAN Send, thank you. A useful test is short:</p>
+        <ol>
+          <li>Join the closed test using the <strong>Google account that will install the app</strong>.</li>
+          <li>Install LAN Send from Google Play. If you previously installed a development/sideloaded Android build and Play cannot install the test build, uninstall the old LAN Send first.</li>
+          <li>Install the Windows companion and pair by QR code.</li>
+          <li>Send at least one file or text item <strong>Android → Windows</strong>.</li>
+          <li>Send at least one file or text item <strong>Windows → Android</strong>.</li>
+          <li>Close and reopen LAN Send and confirm your paired device reconnects.</li>
+        </ol>
+        <div class="notice">Found a problem? Please include what you were doing, what you expected to happen, what happened instead, and whether the issue was on Android or Windows. Screenshots are helpful when available.</div>
+      </section>
+
+      <section id="troubleshooting">
+        <h2>Troubleshooting</h2>
+        <h3>My PC shows offline</h3>
+        <p>Confirm LAN Send is running on Windows and both devices are on the same local network. Reopen LAN Send on the PC and Android device and allow a moment for reconnection.</p>
+        <h3>The QR code won't pair</h3>
+        <p>Make sure you're scanning the current QR code shown by the Windows companion and that both devices can communicate on the same local network.</p>
+        <h3>Google Play says LAN Send can't be installed</h3>
+        <p>If this device previously had a sideloaded/development copy of LAN Send, uninstall that copy and install the closed-test version again from Google Play. Different signing certificates can prevent one build from replacing another.</p>
+        <h3>Windows blocks or warns about the companion</h3>
+        <p>The current direct Windows download is provided as an MSIX package while the Microsoft Store release is being certified. If installation is blocked, contact RTEK Labs support rather than disabling Windows security protections.</p>
+      </section>
+
+      <section id="faq">
+        <h2>FAQ</h2>
+        <h3>Does RTEK Labs upload or store my transferred files?</h3>
+        <p>No. LAN Send is designed to transfer supported content directly between paired devices over your local network. RTEK Labs does not operate a cloud server that receives or stores those transfers.</p>
+        <h3>Do I need an LAN Send account?</h3>
+        <p>No. Device pairing is used instead of an LAN Send account.</p>
+        <h3>Does LAN Send need the internet?</h3>
+        <p>The transfer itself is designed for your local network. Internet access can still be required for things outside the transfer path, such as downloading or updating the apps through their distribution platforms.</p>
+        <h3>Can Android remember more than one PC?</h3>
+        <p>Yes. LAN Send can remember up to three PCs so you can reconnect without pairing from scratch each time.</p>
+        <h3>Still stuck?</h3>
+        <p>Email <a href="mailto:rteklabs.support@gmail.com">rteklabs.support@gmail.com</a>.</p>
+      </section>
+    </main>
+
+    <footer>© 2026 RTEK Labs · <a href="/lansend/">LAN Send</a> · <a href="/lansend/privacy/">Privacy Policy</a></footer>
+  </div>
+</body>
+</html>
