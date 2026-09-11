@@ -1,17 +1,1033 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="LAN Send transfers files, text, and clipboard content between Android and Windows over your local Wi-Fi network."><meta name="theme-color" content="#07101f"><title>LAN Send — Android ↔ Windows file transfer</title><style>
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#eef5ff;background:#07101f;line-height:1.55}a{color:inherit}.wrap{width:min(1120px,calc(100% - 40px));margin:auto}nav{height:72px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff14}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:750}.brand img{width:38px;height:38px;border-radius:11px;object-fit:cover}.brand-fallback{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(145deg,#2f80ff,#6ea8ff);font-weight:900}.navlinks{display:flex;gap:22px;font-size:14px;color:#b9c8dd}.navlinks a{text-decoration:none}.hero{padding:88px 0 66px;text-align:center}.eyebrow{display:inline-flex;padding:7px 12px;border-radius:999px;border:1px solid #6ea8ff40;background:#2f80ff17;color:#a9cbff;font-size:13px;font-weight:650}h1{max-width:820px;margin:20px auto;font-size:clamp(42px,7vw,72px);line-height:1.02;letter-spacing:-.055em}.hero>p{max-width:700px;margin:auto;color:#aebed3;font-size:clamp(17px,2.2vw,20px)}.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:34px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:12px;text-decoration:none;font-weight:700;font-size:15px;border:1px solid #ffffff1c}.primary{background:#2f80ff;border-color:#2f80ff;transition:background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease}.primary:hover,.primary:focus-visible{background:#216de0;border-color:#216de0;box-shadow:0 8px 22px #0b4dbf38}.primary:focus-visible{outline:2px solid #a9cbff;outline-offset:3px}.download-btn{gap:10px;padding:0 22px}.download-btn>img{width:22px;height:22px;object-fit:contain;display:block}.windows-logo-fallback{width:22px;height:22px;display:none;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:2px;transform:skewY(-4deg)}.windows-logo-fallback i{display:block;background:#fff}.secondary{background:#ffffff0e}.micro{margin-top:14px!important;font-size:12px!important;color:#74859c!important}.asset{position:relative;overflow:hidden;border:1px dashed #6ea8ff66;background:linear-gradient(145deg,#0d1b30,#111f33);border-radius:20px;display:grid;place-items:center;color:#7f94ad}.asset img{width:100%;height:100%;object-fit:cover;display:block}.asset .ph{padding:28px;text-align:center}.asset .ph strong{display:block;color:#bcd5f8;margin-bottom:5px}.asset .ph code{font-size:12px;color:#6ea8ff}.heroasset{margin:38px auto 0;max-width:960px;aspect-ratio:8/5;isolation:isolate;border-radius:24px;overflow:hidden}.heroasset>img{position:absolute;inset:0;z-index:0}.heroasset>.ph{position:relative;z-index:0}.hero-brand-overlay{position:absolute;top:24px;left:50%;transform:translateX(-50%);z-index:2;display:flex;align-items:center;gap:14px;padding:12px 18px;border-radius:18px;background:rgba(7,16,31,.58);border:1px solid rgba(255,255,255,.18);box-shadow:0 16px 40px rgba(0,0,0,.32);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);text-align:left;white-space:nowrap}.hero-brand-overlay>img{position:static;width:48px;height:48px;border-radius:14px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,.22)}.hero-brand-copy strong{display:block;color:#fff;font-size:24px;line-height:1.04;letter-spacing:-.025em;font-weight:820}.hero-brand-copy span{display:block;color:#d3def0;font-size:13px;margin-top:4px;font-weight:560}.hero-chips{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:3;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;width:calc(100% - 38px)}.hero-chip{position:relative;display:inline-flex;align-items:center;gap:9px;min-height:42px;padding:0 16px;border-radius:14px;background:rgba(214,224,239,.58);color:#17345d;border:1px solid rgba(255,255,255,.42);box-shadow:0 10px 28px rgba(5,13,28,.22);backdrop-filter:blur(13px) saturate(115%);-webkit-backdrop-filter:blur(13px) saturate(115%);font-size:13px;font-weight:760;cursor:default;transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}.hero-chip:hover,.hero-chip:focus-visible{transform:translateY(-3px);background:rgba(248,251,255,.9);border-color:rgba(255,255,255,.82);box-shadow:0 14px 34px rgba(5,13,28,.32);outline:none}.hero-chip::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 12px);width:240px;padding:12px 14px;border-radius:12px;background:rgba(7,16,31,.9);border:1px solid rgba(255,255,255,.16);color:#eef5ff;font-size:12px;font-weight:520;line-height:1.45;text-align:left;box-shadow:0 14px 35px rgba(0,0,0,.35);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;visibility:hidden;transform:translateX(-50%) translateY(9px) scale(.97);transition:opacity .18s ease,transform .22s ease,visibility .18s ease;pointer-events:none;z-index:20}.hero-chip:hover::after,.hero-chip:focus-visible::after{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0) scale(1)}.hero-chip img{width:20px;height:20px;object-fit:contain;display:block}.hero-icon-fallback{width:20px;height:20px;border-radius:6px;display:none;place-items:center;background:rgba(47,128,255,.16);border:1px solid rgba(47,128,255,.22);color:#2f80ff;font-size:9px;font-weight:900;line-height:1}.section-title{text-align:center;margin-bottom:36px}.section-title h2{margin:0 0 10px;font-size:clamp(30px,4vw,42px);letter-spacing:-.035em}.section-title p{margin:auto;max-width:650px;color:#8fa0b6}section{padding:70px 0}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{padding:26px;border-radius:18px;border:1px solid #ffffff14;background:#ffffff09}.num{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#2f80ff26;color:#7fb2ff;font-weight:800;margin-bottom:18px}.card h3{margin:0 0 8px}.card p{margin:0;color:#8fa0b6;font-size:14px}.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.gallery .asset>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.gallery .asset>.ph{position:relative;z-index:0}.shot{aspect-ratio:9/16}.windows{aspect-ratio:16/10;grid-column:span 2}.settings-shot{aspect-ratio:4/3}.gallery .asset:nth-child(5){grid-column:span 1}.features{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.cta{text-align:center;padding-bottom:90px}.cta-box{padding:44px 28px;border-radius:24px;background:#2f80ff17;border:1px solid #6ea8ff2e}.cta h2{margin:0 0 10px}.cta p{color:#9eafc4}footer{border-top:1px solid #ffffff14;padding:26px 0 40px;color:#73849a;font-size:13px}.foot{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}.foot a{color:#9fb1c8;text-decoration:none;margin-left:18px}@media(max-width:720px){.wrap{width:min(100% - 28px,1120px)}nav{height:64px}.navlinks a:first-child{display:none}.hero{padding:64px 0 48px}.steps,.features,.gallery{grid-template-columns:1fr}.windows,.gallery .asset:nth-child(5){grid-column:span 1}.heroasset{aspect-ratio:4/3}.hero-brand-overlay{top:12px;padding:8px 11px;gap:9px;border-radius:14px}.hero-brand-overlay>img{width:36px;height:36px;border-radius:10px}.hero-brand-copy strong{font-size:17px}.hero-brand-copy span{font-size:10px}.hero-chips{bottom:11px;gap:6px;width:calc(100% - 18px)}.hero-chip{min-height:32px;padding:0 10px;border-radius:10px;font-size:10px;gap:6px}.hero-chip::after{width:190px;padding:10px 11px;font-size:10px}.hero-chip img,.hero-icon-fallback{width:15px;height:15px}.hero-icon-fallback{font-size:7px;border-radius:4px}section{padding:52px 0}}@media(hover:none){.hero-chip::after{display:none}.hero-chip:active{background:rgba(248,251,255,.9)}}
-</style></head><body>
-<header class="wrap"><nav><a class="brand" href="/lansend/"><img src="/lansend/assets/lansend-app-icon.png" alt="LAN Send" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="brand-fallback" style="display:none">L</span><span>LAN Send</span></a><div class="navlinks"><a href="#screens">Screenshots</a><a href="/lansend/help/">Help</a><a href="/lansend/privacy/">Privacy</a></div></nav></header>
-<main><section class="hero wrap"><span class="eyebrow">Android ↔ Windows</span><h1>Move files without sending them to the cloud.</h1><p>LAN Send transfers files, text and clipboard content directly between your Android phone and Windows PC over your local Wi‑Fi network.</p><div class="actions"><a class="btn primary download-btn" href="https://github.com/rteklabs/LAN-Send/releases/download/v3.1.0/LAN-Send-Windows-x64-3.1.0.msix"><img src="/lansend/assets/windows-logo.png" alt="" aria-hidden="true" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="windows-logo-fallback" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Free Download</span></a><a class="btn secondary" href="/lansend/help/">Getting started →</a></div><p class="micro">Windows x64 · Android closed testing in progress</p><div class="asset heroasset"><img src="/lansend/assets/lansend-website-hero.png" alt="LAN Send transferring files between an Android phone and Windows PC over local Wi-Fi" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><div class="ph"><strong>HERO IMAGE PLACEHOLDER</strong><code>lansend-website-hero.png</code><br>1600 × 1000</div><div class="hero-brand-overlay" aria-label="LAN Send — Private transfers over local Wi-Fi"><img src="/lansend/assets/lansend-app-icon.png" alt="" aria-hidden="true"><div class="hero-brand-copy"><strong>LAN Send</strong><span>Private transfers over local Wi‑Fi</span></div></div><div class="hero-chips" aria-label="LAN Send features"><span class="hero-chip" tabindex="0" data-tip="Files move directly between your paired devices. RTEK Labs does not store your transferred content in the cloud."><img src="/lansend/assets/icon-private.png" alt="" aria-hidden="true" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="hero-icon-fallback" aria-hidden="true">P</span>Private</span><span class="hero-chip" tabindex="0" data-tip="Transfers happen directly over the local Wi-Fi network shared by your Android phone and Windows PC."><img src="/lansend/assets/icon-localwifi.png" alt="" aria-hidden="true" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="hero-icon-fallback" aria-hidden="true">W</span>Local Wi‑Fi</span><span class="hero-chip" tabindex="0" data-tip="Send files, text and clipboard content in either direction between Android and Windows."><img src="/lansend/assets/icon-crossplatform.png" alt="" aria-hidden="true" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="hero-icon-fallback" aria-hidden="true">↔</span>Android ↔ Windows</span><span class="hero-chip" tabindex="0" data-tip="Pair your phone and PC quickly by scanning the QR code shown by LAN Send on Windows."><img src="/lansend/assets/icon-qrpairing.png" alt="" aria-hidden="true" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="hero-icon-fallback" aria-hidden="true">QR</span>QR pairing</span></div></div></section>
-<section class="wrap"><div class="section-title"><h2>Pair once. Send in seconds.</h2><p>No accounts to create. Put both devices on the same local network, scan the QR code and start transferring.</p></div><div class="steps"><article class="card"><div class="num">1</div><h3>Install</h3><p>Install LAN Send on your Windows PC and Android device.</p></article><article class="card"><div class="num">2</div><h3>Pair</h3><p>Open LAN Send on Windows and scan its QR code from Android.</p></article><article class="card"><div class="num">3</div><h3>Send</h3><p>Move files, text and clipboard content in either direction.</p></article></div></section>
-<section id="screens" class="wrap"><div class="section-title"><h2>See LAN Send in action.</h2><p>These slots are wired to the final PNG filenames. As we choose each asset, it can drop straight into place.</p></div><div class="gallery">
-<div class="asset shot"><img src="/lansend/assets/android-home.png" alt="LAN Send Android home" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><div class="ph"><strong>ANDROID HOME</strong><code>android-home.png</code><br>1080 × 2400</div></div>
-<div class="asset shot"><img src="/lansend/assets/android-send.png" alt="Sending from Android" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><div class="ph"><strong>ANDROID SEND</strong><code>android-send.png</code><br>1080 × 2400</div></div>
-<div class="asset shot"><img src="/lansend/assets/android-pairing.png" alt="QR pairing on Android" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><div class="ph"><strong>ANDROID PAIRING</strong><code>android-pairing.png</code><br>1080 × 2400</div></div>
-<div class="asset windows"><img src="/lansend/assets/windows-main.png" alt="LAN Send Windows main screen" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><div class="ph"><strong>WINDOWS MAIN</strong><code>windows-main.png</code><br>1600 × 1000</div></div>
-<div class="asset settings-shot"><img src="/lansend/assets/windows-settings.png" alt="LAN Send Windows settings" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none'"><div class="ph"><strong>WINDOWS SETTINGS</strong><code>windows-settings.png</code><br>1200 × 900</div></div>
-</div></section>
-<section class="wrap"><div class="section-title"><h2>Built for everyday transfers.</h2></div><div class="features"><article class="card"><h3>↔ Two-way transfer</h3><p>Send from Android to Windows or Windows to Android, including multiple and large files.</p></article><article class="card"><h3>⌁ Text & clipboard</h3><p>Move notes, links and clipboard content between paired devices.</p></article><article class="card"><h3>⌂ Local network first</h3><p>RTEK Labs does not operate a cloud server that stores your transferred content.</p></article><article class="card"><h3>✓ Remembers your devices</h3><p>Keep paired PCs available, reconnect after network changes and review recent transfer activity.</p></article></div></section>
-<section class="cta wrap"><div class="cta-box"><h2>Need help pairing?</h2><p>The Getting Started page covers installation, QR pairing, sending in both directions and common fixes.</p><a class="btn secondary" href="/lansend/help/">Open Getting Started</a></div></section></main>
-<footer><div class="wrap foot"><span>© 2026 RTEK Labs · LAN Send</span><span><a href="/lansend/help/">Help</a><a href="/lansend/privacy/">Privacy</a><a href="mailto:rteklabs.support@gmail.com">Support</a></span></div></footer></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta
+    name="description"
+    content="LAN Send transfers files, text, and clipboard content between Android and Windows over your local Wi-Fi network."
+  >
+  <meta name="theme-color" content="#07101f">
+
+  <title>LAN Send — Android ↔ Windows file transfer</title>
+
+  <style>
+    /* =========================
+       Base
+       ========================= */
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #eef5ff;
+      background: #07101f;
+      line-height: 1.55;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 40px));
+      margin: auto;
+    }
+
+    section {
+      padding: 70px 0;
+    }
+
+    /* =========================
+       Navigation
+       ========================= */
+    nav {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ffffff14;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      font-weight: 750;
+    }
+
+    .brand img {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      object-fit: cover;
+    }
+
+    .brand-fallback {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #2f80ff, #6ea8ff);
+      font-weight: 900;
+    }
+
+    .navlinks {
+      display: flex;
+      gap: 22px;
+      font-size: 14px;
+      color: #b9c8dd;
+    }
+
+    .navlinks a {
+      text-decoration: none;
+    }
+
+    /* =========================
+       Hero
+       ========================= */
+    .hero {
+      padding: 88px 0 66px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid #6ea8ff40;
+      background: #2f80ff17;
+      color: #a9cbff;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    h1 {
+      max-width: 820px;
+      margin: 20px auto;
+      font-size: clamp(42px, 7vw, 72px);
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+    }
+
+    .hero > p {
+      max-width: 700px;
+      margin: auto;
+      color: #aebed3;
+      font-size: clamp(17px, 2.2vw, 20px);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 20px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      border: 1px solid #ffffff1c;
+    }
+
+    .primary {
+      background: #2f80ff;
+      border-color: #2f80ff;
+      transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+    }
+
+    .primary:hover,
+    .primary:focus-visible {
+      background: #216de0;
+      border-color: #216de0;
+      box-shadow: 0 8px 22px #0b4dbf38;
+    }
+
+    .primary:focus-visible {
+      outline: 2px solid #a9cbff;
+      outline-offset: 3px;
+    }
+
+    .secondary {
+      background: #ffffff0e;
+    }
+
+    /* Windows download button */
+    .download-btn {
+      gap: 10px;
+      padding: 0 22px;
+    }
+
+    .download-btn > img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .windows-logo-fallback {
+      width: 22px;
+      height: 22px;
+      display: none;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 2px;
+      transform: skewY(-4deg);
+    }
+
+    .windows-logo-fallback i {
+      display: block;
+      background: #fff;
+    }
+
+    .micro {
+      margin-top: 14px !important;
+      font-size: 12px !important;
+      color: #74859c !important;
+    }
+
+    /* =========================
+       Shared image cards
+       ========================= */
+    .asset {
+      position: relative;
+      overflow: hidden;
+      border: 1px dashed #6ea8ff66;
+      background: linear-gradient(145deg, #0d1b30, #111f33);
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      color: #7f94ad;
+    }
+
+    .asset img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .asset .ph {
+      padding: 28px;
+      text-align: center;
+    }
+
+    .asset .ph strong {
+      display: block;
+      color: #bcd5f8;
+      margin-bottom: 5px;
+    }
+
+    .asset .ph code {
+      font-size: 12px;
+      color: #6ea8ff;
+    }
+
+    /* =========================
+       Hero image + overlays
+       ========================= */
+    .heroasset {
+      margin: 38px auto 0;
+      max-width: 960px;
+      aspect-ratio: 8 / 5;
+      isolation: isolate;
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    .heroasset > img {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .heroasset > .ph {
+      position: relative;
+      z-index: 0;
+    }
+
+    .hero-brand-overlay {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 18px;
+      border-radius: 18px;
+      background: rgba(7, 16, 31, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.32);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .hero-brand-overlay > img {
+      position: static;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+    }
+
+    .hero-brand-copy strong {
+      display: block;
+      color: #fff;
+      font-size: 24px;
+      line-height: 1.04;
+      letter-spacing: -0.025em;
+      font-weight: 820;
+    }
+
+    .hero-brand-copy span {
+      display: block;
+      color: #d3def0;
+      font-size: 13px;
+      margin-top: 4px;
+      font-weight: 560;
+    }
+
+    /* Feature buttons on hero image */
+    .hero-chips {
+      position: absolute;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      width: calc(100% - 38px);
+    }
+
+    .hero-chip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 14px;
+      background: rgba(214, 224, 239, 0.58);
+      color: #17345d;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      box-shadow: 0 10px 28px rgba(5, 13, 28, 0.22);
+      backdrop-filter: blur(13px) saturate(115%);
+      -webkit-backdrop-filter: blur(13px) saturate(115%);
+      font-size: 13px;
+      font-weight: 760;
+      cursor: default;
+      transition:
+        transform 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+    }
+
+    .hero-chip:hover,
+    .hero-chip:focus-visible {
+      transform: translateY(-3px);
+      background: rgba(248, 251, 255, 0.9);
+      border-color: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 14px 34px rgba(5, 13, 28, 0.32);
+      outline: none;
+    }
+
+    /* Fly-in explanation */
+    .hero-chip::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 12px);
+      width: 240px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(7, 16, 31, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: #eef5ff;
+      font-size: 12px;
+      font-weight: 520;
+      line-height: 1.45;
+      text-align: left;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-50%) translateY(9px) scale(0.97);
+      transition:
+        opacity 0.18s ease,
+        transform 0.22s ease,
+        visibility 0.18s ease;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .hero-chip:hover::after,
+    .hero-chip:focus-visible::after {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    .hero-chip img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .hero-icon-fallback {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      display: none;
+      place-items: center;
+      background: rgba(47, 128, 255, 0.16);
+      border: 1px solid rgba(47, 128, 255, 0.22);
+      color: #2f80ff;
+      font-size: 9px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    /* =========================
+       Section headings
+       ========================= */
+    .section-title {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .section-title h2 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 4vw, 42px);
+      letter-spacing: -0.035em;
+    }
+
+    .section-title p {
+      margin: auto;
+      max-width: 650px;
+      color: #8fa0b6;
+    }
+
+    /* =========================
+       Steps + feature cards
+       ========================= */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      padding: 26px;
+      border-radius: 18px;
+      border: 1px solid #ffffff14;
+      background: #ffffff09;
+    }
+
+    .num {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: #2f80ff26;
+      color: #7fb2ff;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+    }
+
+    .card p {
+      margin: 0;
+      color: #8fa0b6;
+      font-size: 14px;
+    }
+
+    /* =========================
+       Screenshot gallery
+       ========================= */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .gallery .asset > img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery .asset > .ph {
+      position: relative;
+      z-index: 0;
+    }
+
+    .shot {
+      aspect-ratio: 9 / 16;
+    }
+
+    .windows {
+      aspect-ratio: 16 / 10;
+      grid-column: span 2;
+    }
+
+    .settings-shot {
+      aspect-ratio: 4 / 3;
+    }
+
+    .gallery .asset:nth-child(5) {
+      grid-column: span 1;
+    }
+
+    /* =========================
+       Bottom CTA
+       ========================= */
+    .cta {
+      text-align: center;
+      padding-bottom: 90px;
+    }
+
+    .cta-box {
+      padding: 44px 28px;
+      border-radius: 24px;
+      background: #2f80ff17;
+      border: 1px solid #6ea8ff2e;
+    }
+
+    .cta h2 {
+      margin: 0 0 10px;
+    }
+
+    .cta p {
+      color: #9eafc4;
+    }
+
+    /* =========================
+       Footer
+       ========================= */
+    footer {
+      border-top: 1px solid #ffffff14;
+      padding: 26px 0 40px;
+      color: #73849a;
+      font-size: 13px;
+    }
+
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .foot a {
+      color: #9fb1c8;
+      text-decoration: none;
+      margin-left: 18px;
+    }
+
+    /* =========================
+       Mobile
+       ========================= */
+    @media (max-width: 720px) {
+      .wrap {
+        width: min(100% - 28px, 1120px);
+      }
+
+      nav {
+        height: 64px;
+      }
+
+      .navlinks a:first-child {
+        display: none;
+      }
+
+      .hero {
+        padding: 64px 0 48px;
+      }
+
+      .steps,
+      .features,
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+
+      .windows,
+      .gallery .asset:nth-child(5) {
+        grid-column: span 1;
+      }
+
+      .heroasset {
+        aspect-ratio: 4 / 3;
+      }
+
+      .hero-brand-overlay {
+        top: 12px;
+        padding: 8px 11px;
+        gap: 9px;
+        border-radius: 14px;
+      }
+
+      .hero-brand-overlay > img {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+      }
+
+      .hero-brand-copy strong {
+        font-size: 17px;
+      }
+
+      .hero-brand-copy span {
+        font-size: 10px;
+      }
+
+      .hero-chips {
+        bottom: 11px;
+        gap: 6px;
+        width: calc(100% - 18px);
+      }
+
+      .hero-chip {
+        min-height: 32px;
+        padding: 0 10px;
+        border-radius: 10px;
+        font-size: 10px;
+        gap: 6px;
+      }
+
+      .hero-chip::after {
+        width: 190px;
+        padding: 10px 11px;
+        font-size: 10px;
+      }
+
+      .hero-chip img,
+      .hero-icon-fallback {
+        width: 15px;
+        height: 15px;
+      }
+
+      .hero-icon-fallback {
+        font-size: 7px;
+        border-radius: 4px;
+      }
+
+      section {
+        padding: 52px 0;
+      }
+    }
+
+    @media (hover: none) {
+      .hero-chip::after {
+        display: none;
+      }
+
+      .hero-chip:active {
+        background: rgba(248, 251, 255, 0.9);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- =========================
+       Header
+       ========================= -->
+  <header class="wrap">
+    <nav>
+      <a class="brand" href="/lansend/">
+        <img
+          src="/lansend/assets/lansend-app-icon.png"
+          alt="LAN Send"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
+        >
+        <span class="brand-fallback" style="display: none">L</span>
+        <span>LAN Send</span>
+      </a>
+
+      <div class="navlinks">
+        <a href="#screens">Screenshots</a>
+        <a href="/lansend/help/">Help</a>
+        <a href="/lansend/privacy/">Privacy</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- =========================
+         Hero
+         ========================= -->
+    <section class="hero wrap">
+      <span class="eyebrow">Android ↔ Windows</span>
+
+      <h1>Move files without sending them to the cloud.</h1>
+
+      <p>
+        LAN Send transfers files, text and clipboard content directly between
+        your Android phone and Windows PC over your local Wi-Fi network.
+      </p>
+
+      <div class="actions">
+        <a
+          class="btn primary download-btn"
+          href="https://github.com/rteklabs/LAN-Send/releases/download/v3.1.0/LAN-Send-Windows-x64-3.1.0.msix"
+        >
+          <img
+            src="/lansend/assets/windows-logo.png"
+            alt=""
+            aria-hidden="true"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
+          >
+
+          <span class="windows-logo-fallback" aria-hidden="true">
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+
+          <span>Free Download</span>
+        </a>
+
+        <a class="btn secondary" href="/lansend/help/">
+          Getting started →
+        </a>
+      </div>
+
+      <p class="micro">Windows x64 · Android closed testing in progress</p>
+
+      <!-- Main hero image -->
+      <div class="asset heroasset">
+        <img
+          src="/lansend/assets/lansend-website-hero.png"
+          alt="LAN Send transferring files between an Android phone and Windows PC over local Wi-Fi"
+          onload="this.nextElementSibling.style.display='none'"
+          onerror="this.style.display='none'"
+        >
+
+        <div class="ph">
+          <strong>HERO IMAGE PLACEHOLDER</strong>
+          <code>lansend-website-hero.png</code><br>
+          1600 × 1000
+        </div>
+
+        <!-- Hero title overlay -->
+        <div
+          class="hero-brand-overlay"
+          aria-label="LAN Send — Private transfers over local Wi-Fi"
+        >
+          <img
+            src="/lansend/assets/lansend-app-icon.png"
+            alt=""
+            aria-hidden="true"
+          >
+
+          <div class="hero-brand-copy">
+            <strong>LAN Send</strong>
+            <span>Private transfers over local Wi-Fi</span>
+          </div>
+        </div>
+
+        <!-- Hero feature buttons -->
+        <div class="hero-chips" aria-label="LAN Send features">
+          <span
+            class="hero-chip"
+            tabindex="0"
+            data-tip="Files move directly between your paired devices. RTEK Labs does not store your transferred content in the cloud."
+          >
+            <img
+              src="/lansend/assets/icon-private.png"
+              alt=""
+              aria-hidden="true"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
+            >
+            <span class="hero-icon-fallback" aria-hidden="true">P</span>
+            Private
+          </span>
+
+          <span
+            class="hero-chip"
+            tabindex="0"
+            data-tip="Transfers happen directly over the local Wi-Fi network shared by your Android phone and Windows PC."
+          >
+            <img
+              src="/lansend/assets/icon-localwifi.png"
+              alt=""
+              aria-hidden="true"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
+            >
+            <span class="hero-icon-fallback" aria-hidden="true">W</span>
+            Local Wi-Fi
+          </span>
+
+          <span
+            class="hero-chip"
+            tabindex="0"
+            data-tip="Send files, text and clipboard content in either direction between Android and Windows."
+          >
+            <img
+              src="/lansend/assets/icon-crossplatform.png"
+              alt=""
+              aria-hidden="true"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
+            >
+            <span class="hero-icon-fallback" aria-hidden="true">↔</span>
+            Android ↔ Windows
+          </span>
+
+          <span
+            class="hero-chip"
+            tabindex="0"
+            data-tip="Pair your phone and PC quickly by scanning the QR code shown by LAN Send on Windows."
+          >
+            <img
+              src="/lansend/assets/icon-qrpairing.png"
+              alt=""
+              aria-hidden="true"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
+            >
+            <span class="hero-icon-fallback" aria-hidden="true">QR</span>
+            QR pairing
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         How it works
+         ========================= -->
+    <section class="wrap">
+      <div class="section-title">
+        <h2>Pair once. Send in seconds.</h2>
+        <p>
+          No accounts to create. Put both devices on the same local network,
+          scan the QR code and start transferring.
+        </p>
+      </div>
+
+      <div class="steps">
+        <article class="card">
+          <div class="num">1</div>
+          <h3>Install</h3>
+          <p>Install LAN Send on your Windows PC and Android device.</p>
+        </article>
+
+        <article class="card">
+          <div class="num">2</div>
+          <h3>Pair</h3>
+          <p>Open LAN Send on Windows and scan its QR code from Android.</p>
+        </article>
+
+        <article class="card">
+          <div class="num">3</div>
+          <h3>Send</h3>
+          <p>Move files, text and clipboard content in either direction.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- =========================
+         Screenshot gallery
+         ========================= -->
+    <section id="screens" class="wrap">
+      <div class="section-title">
+        <h2>See LAN Send in action.</h2>
+        <p>
+          These slots are wired to the final PNG filenames. As we choose each
+          asset, it can drop straight into place.
+        </p>
+      </div>
+
+      <div class="gallery">
+        <!-- Android home -->
+        <div class="asset shot">
+          <img
+            src="/lansend/assets/android-home.png"
+            alt="LAN Send Android home"
+            onload="this.nextElementSibling.style.display='none'"
+            onerror="this.style.display='none'"
+          >
+          <div class="ph">
+            <strong>ANDROID HOME</strong>
+            <code>android-home.png</code><br>
+            1080 × 2400
+          </div>
+        </div>
+
+        <!-- Android send -->
+        <div class="asset shot">
+          <img
+            src="/lansend/assets/android-send.png"
+            alt="Sending from Android"
+            onload="this.nextElementSibling.style.display='none'"
+            onerror="this.style.display='none'"
+          >
+          <div class="ph">
+            <strong>ANDROID SEND</strong>
+            <code>android-send.png</code><br>
+            1080 × 2400
+          </div>
+        </div>
+
+        <!-- Android pairing -->
+        <div class="asset shot">
+          <img
+            src="/lansend/assets/android-pairing.png"
+            alt="QR pairing on Android"
+            onload="this.nextElementSibling.style.display='none'"
+            onerror="this.style.display='none'"
+          >
+          <div class="ph">
+            <strong>ANDROID PAIRING</strong>
+            <code>android-pairing.png</code><br>
+            1080 × 2400
+          </div>
+        </div>
+
+        <!-- Windows main -->
+        <div class="asset windows">
+          <img
+            src="/lansend/assets/windows-main.png"
+            alt="LAN Send Windows main screen"
+            onload="this.nextElementSibling.style.display='none'"
+            onerror="this.style.display='none'"
+          >
+          <div class="ph">
+            <strong>WINDOWS MAIN</strong>
+            <code>windows-main.png</code><br>
+            1600 × 1000
+          </div>
+        </div>
+
+        <!-- Windows settings -->
+        <div class="asset settings-shot">
+          <img
+            src="/lansend/assets/windows-settings.png"
+            alt="LAN Send Windows settings"
+            onload="this.nextElementSibling.style.display='none'"
+            onerror="this.style.display='none'"
+          >
+          <div class="ph">
+            <strong>WINDOWS SETTINGS</strong>
+            <code>windows-settings.png</code><br>
+            1200 × 900
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         Features
+         ========================= -->
+    <section class="wrap">
+      <div class="section-title">
+        <h2>Built for everyday transfers.</h2>
+      </div>
+
+      <div class="features">
+        <article class="card">
+          <h3>↔ Two-way transfer</h3>
+          <p>
+            Send from Android to Windows or Windows to Android, including
+            multiple and large files.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>⌁ Text & clipboard</h3>
+          <p>Move notes, links and clipboard content between paired devices.</p>
+        </article>
+
+        <article class="card">
+          <h3>⌂ Local network first</h3>
+          <p>
+            RTEK Labs does not operate a cloud server that stores your
+            transferred content.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>✓ Remembers your devices</h3>
+          <p>
+            Keep paired PCs available, reconnect after network changes and
+            review recent transfer activity.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- =========================
+         Help CTA
+         ========================= -->
+    <section class="cta wrap">
+      <div class="cta-box">
+        <h2>Need help pairing?</h2>
+        <p>
+          The Getting Started page covers installation, QR pairing, sending in
+          both directions and common fixes.
+        </p>
+        <a class="btn secondary" href="/lansend/help/">
+          Open Getting Started
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================
+       Footer
+       ========================= -->
+  <footer>
+    <div class="wrap foot">
+      <span>© 2026 RTEK Labs · LAN Send</span>
+
+      <span>
+        <a href="/lansend/help/">Help</a>
+        <a href="/lansend/privacy/">Privacy</a>
+        <a href="mailto:rteklabs.support@gmail.com">Support</a>
+      </span>
+    </div>
+  </footer>
+</body>
+</html>
