@@ -171,6 +171,24 @@
 
     .secondary {
       background: #ffffff0e;
+      transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        box-shadow 0.18s ease;
+    }
+
+    .secondary:hover,
+    .secondary:focus-visible {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: #07101f;
+      box-shadow: 0 8px 22px rgba(245, 158, 11, 0.28);
+    }
+
+    .secondary:focus-visible {
+      outline: 2px solid #ffd37a;
+      outline-offset: 3px;
     }
 
     /* Windows download button */
