@@ -629,6 +629,18 @@
     /* =========================
        Screenshot gallery
        ========================= */
+    .gallery-label {
+      margin: 0 0 14px;
+      color: #bcd5f8;
+      font-size: 17px;
+      font-weight: 720;
+      letter-spacing: -0.01em;
+    }
+
+    .gallery-label.windows-label {
+      margin-top: 30px;
+    }
+
     .android-gallery {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -640,13 +652,38 @@
       grid-template-columns: 1.1fr 1fr;
       gap: 18px;
       align-items: start;
-      margin-top: 18px;
+      margin-top: 0;
     }
 
     .screenshot-card {
       border: 1px solid rgba(126, 174, 255, 0.24);
       background: #0b1628;
       box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+      cursor: pointer;
+    }
+
+    .screenshot-card::after {
+      content: "Hover to preview";
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(4, 12, 24, 0.64);
+      color: #eef5ff;
+      font-size: 14px;
+      font-weight: 760;
+      letter-spacing: 0.015em;
+      text-align: center;
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      pointer-events: none;
+      transition: opacity 0.24s ease;
+    }
+
+    .screenshot-card:hover::after {
+      opacity: 0;
     }
 
     .android-gallery .asset > img,
@@ -793,7 +830,7 @@
 
       .windows-gallery {
         gap: 14px;
-        margin-top: 14px;
+        margin-top: 0;
       }
 
       .windows-main > img {
@@ -861,13 +898,21 @@
       }
     }
 
-    @media (hover: none) {
+    @media (hover: none), (pointer: coarse) {
       .hero-chip::after {
         display: none;
       }
 
       .hero-chip:active {
         background: rgba(248, 251, 255, 0.9);
+      }
+
+      .screenshot-card {
+        cursor: default;
+      }
+
+      .screenshot-card::after {
+        display: none;
       }
     }
   </style>
@@ -1124,6 +1169,8 @@
         </p>
       </div>
 
+      <h3 class="gallery-label">Android App Screenshots</h3>
+
       <!-- Android screenshots -->
       <div class="android-gallery">
         <div class="asset screenshot-card shot">
@@ -1168,6 +1215,8 @@
           </div>
         </div>
       </div>
+
+      <h3 class="gallery-label windows-label">Windows App Screenshots</h3>
 
       <!-- Windows screenshots -->
       <div class="windows-gallery">
