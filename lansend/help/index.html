@@ -123,6 +123,7 @@
           <li>On Android, choose <strong>Add PC</strong> and scan the QR code.</li>
           <li>Once the PC shows online, you're ready to send.</li>
         </ol>
+        <div class="notice"><strong>Important — Windows network type:</strong> LAN Send is designed for trusted private networks such as your home or office Wi‑Fi. If Windows has classified the current network as <strong>Public</strong>, Windows Firewall may block incoming LAN Send connections to the PC. This can make the PC appear offline or prevent Android → Windows transfers. On a network you trust, set the Windows network profile to <strong>Private</strong>. Do not change an unfamiliar café, hotel, airport or other public Wi‑Fi network to Private just to make LAN Send work.</div>
         <a class="download" href="https://github.com/rteklabs/LAN-Send/releases/download/v3.1.0/LAN-Send-Windows-x64-3.1.0.msix">
           <img
             src="/lansend/assets/windows-logo.png"
@@ -160,7 +161,11 @@
       <section id="troubleshooting">
         <h2>Troubleshooting</h2>
         <h3>My PC shows offline</h3>
-        <p>Confirm LAN Send is running on Windows and both devices are on the same local network. Reopen LAN Send on the PC and Android device and allow a moment for reconnection.</p>
+        <p>Confirm LAN Send is running on Windows and both devices are on the same local network. Reopen LAN Send on the PC and Android device and allow a moment for reconnection. If the PC still shows offline, check that Windows is using the <strong>Private</strong> network profile for this trusted network.</p>
+        <h3>LAN Send works in one direction only</h3>
+        <p>If Windows → Android works but Android → Windows does not, check the Windows network profile. LAN Send's Windows receiver is allowed through Windows Firewall on <strong>Private networks</strong>. If Windows considers the connection Public, incoming transfers to the PC may be blocked.</p>
+        <h3>Both devices are on the same Wi‑Fi, but they still can't connect</h3>
+        <p>Some guest, hotel, café, office and public Wi‑Fi networks use <strong>device isolation</strong> (also called client or AP isolation). This prevents devices on the same Wi‑Fi from communicating directly. LAN Send cannot bypass this network restriction. Try a trusted home/private network or another network that allows local device communication.</p>
         <h3>The QR code won't pair</h3>
         <p>Make sure you're scanning the current QR code shown by the Windows companion and that both devices can communicate on the same local network.</p>
         <h3>Google Play says LAN Send can't be installed</h3>
@@ -177,6 +182,8 @@
         <p>No. Device pairing is used instead of an LAN Send account.</p>
         <h3>Does LAN Send need the internet?</h3>
         <p>The transfer itself is designed for your local network. Internet access can still be required for things outside the transfer path, such as downloading or updating the apps through their distribution platforms.</p>
+        <h3>Can I use LAN Send on public Wi‑Fi?</h3>
+        <p>LAN Send is intended for trusted private networks. Public or guest Wi‑Fi may block direct communication between devices, and Windows may also block incoming LAN Send connections when the network is classified as Public. For reliability and security, use LAN Send on a trusted home or office network.</p>
         <h3>Can Android remember more than one PC?</h3>
         <p>Yes. LAN Send can remember up to three PCs so you can reconnect without pairing from scratch each time.</p>
         <h3>Still stuck?</h3>
