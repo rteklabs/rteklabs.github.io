@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#07101f">
+  <link rel="icon" type="image/png" href="/lansend/assets/lansend-app-icon.png">
+  <link rel="apple-touch-icon" href="/lansend/assets/lansend-app-icon.png">
   <title>LAN Send Privacy Policy</title>
 
   <style>
@@ -28,12 +30,22 @@
       margin: 0 auto;
     }
 
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(7,16,31,.88);
+      border-bottom: 1px solid #ffffff14;
+      box-shadow: 0 8px 28px rgba(0,0,0,.18);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
     nav {
       height: 72px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .brand {
@@ -46,16 +58,16 @@
     }
 
     .brand img {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 11px;
       object-fit: cover;
       display: block;
     }
 
     .mark {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 11px;
       display: none;
       place-items: center;
@@ -68,11 +80,24 @@
       display: flex;
       gap: 20px;
       font-size: 14px;
+      color: #aebed3;
     }
 
     .navlinks a {
       color: #aebed3;
       text-decoration: none;
+      transition: color .18s ease;
+    }
+
+    .navlinks a:hover,
+    .navlinks a:focus-visible {
+      color:#f5b84b;
+    }
+
+    .navlinks a:focus-visible {
+      outline:2px solid #ffd37a;
+      outline-offset:4px;
+      border-radius:4px;
     }
 
     main {
@@ -118,6 +143,21 @@
         height: 64px;
       }
 
+      .navlinks {
+        gap: 12px;
+        font-size: 12px;
+      }
+
+      .navlinks a:first-child {
+        display: none;
+      }
+
+      .brand img,
+      .mark {
+        width:34px;
+        height:34px;
+      }
+
       main {
         padding-top: 46px;
       }
@@ -126,24 +166,30 @@
 </head>
 
 <body>
+  <header class="site-header">
+    <div class="wrap">
+      <nav>
+        <a class="brand" href="/lansend/">
+          <img
+            src="/lansend/assets/lansend-app-icon.png"
+            alt="LAN Send"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
+          >
+          <span class="mark">L</span>
+          <span>LAN Send</span>
+        </a>
+
+        <div class="navlinks">
+          <a href="/">RTEK Labs</a>
+          <a href="/lansend/">LAN Send</a>
+          <a href="/lansend/help/">Help</a>
+          <a href="/lansend/privacy/">Privacy</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
   <div class="wrap">
-    <nav>
-      <a class="brand" href="/lansend/">
-        <img
-          src="/lansend/assets/lansend-app-icon.png"
-          alt="LAN Send"
-          onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
-        >
-        <span class="mark">L</span>
-        <span>LAN Send</span>
-      </a>
-
-      <div class="navlinks">
-        <a href="/lansend/">Home</a>
-        <a href="/lansend/help/">Help</a>
-      </div>
-    </nav>
-
     <main>
       <h1>LAN Send Privacy Policy</h1>
       <p class="muted">Last updated: September 11, 2026</p>
@@ -179,7 +225,7 @@
     </main>
 
     <footer>
-      © 2026 RTEK Labs · <a href="/lansend/">LAN Send</a> · <a href="/lansend/help/">Help</a>
+      © 2026 RTEK Labs · <a href="/lansend/">LAN Send</a> · <a href="/lansend/help/">Help</a> · <a href="/lansend/credits/">Credits</a>
     </footer>
   </div>
 </body>
