@@ -172,6 +172,27 @@
     .section-title { text-align:center;margin-bottom:36px; }
     .section-title h2 { margin:0 0 10px;font-size:clamp(30px,4vw,42px);letter-spacing:-.035em; }
     .section-title p { margin:auto;max-width:650px;color:#8fa0b6; }
+    .video-demo { padding-top:28px; }
+    .video-thumb {
+      position:relative;display:block;overflow:hidden;max-width:960px;margin:0 auto;border-radius:24px;
+      border:1px solid rgba(126,174,255,.24);background:#0b1628;box-shadow:0 22px 54px rgba(0,0,0,.28);text-decoration:none;
+      aspect-ratio:16/9;isolation:isolate;
+    }
+    .video-thumb > img { position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease,filter .35s ease; }
+    .video-thumb::after { content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(4,10,24,.58),rgba(4,10,24,.06) 58%,rgba(4,10,24,.12));transition:background .22s ease; }
+    .video-play-button {
+      position:absolute;left:50%;top:50%;z-index:3;width:92px;height:92px;transform:translate(-50%,-50%);border-radius:50%;
+      display:grid;place-items:center;background:rgba(255,255,255,.94);box-shadow:0 18px 42px rgba(0,0,0,.3);transition:transform .2s ease,background .2s ease,box-shadow .2s ease;
+    }
+    .video-play-button::before { content:"";width:0;height:0;margin-left:7px;border-top:15px solid transparent;border-bottom:15px solid transparent;border-left:25px solid #2f80ff; }
+    .video-caption { position:absolute;left:24px;right:24px;bottom:20px;z-index:3;display:flex;justify-content:space-between;align-items:end;gap:18px; }
+    .video-caption-copy strong { display:block;color:#fff;font-size:20px;letter-spacing:-.02em; }
+    .video-caption-copy span { display:block;margin-top:3px;color:#cedaeb;font-size:13px; }
+    .video-youtube-label { flex:0 0 auto;padding:7px 10px;border-radius:999px;background:rgba(7,16,31,.72);border:1px solid rgba(255,255,255,.18);color:#edf5ff;font-size:11px;font-weight:720;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px); }
+    .video-thumb:hover > img,.video-thumb:focus-visible > img { transform:scale(1.025);filter:brightness(1.06); }
+    .video-thumb:hover .video-play-button,.video-thumb:focus-visible .video-play-button { transform:translate(-50%,-50%) scale(1.07);background:#fff;box-shadow:0 20px 48px rgba(0,0,0,.38); }
+    .video-thumb:hover::after,.video-thumb:focus-visible::after { background:linear-gradient(to top,rgba(4,10,24,.48),rgba(4,10,24,.02) 58%,rgba(4,10,24,.08)); }
+    .video-thumb:focus-visible { outline:2px solid #ffd37a;outline-offset:4px; }
     .steps { display:grid;grid-template-columns:repeat(3,1fr);gap:16px; }
     .features { display:grid;grid-template-columns:repeat(2,1fr);gap:16px; }
     .card { padding:26px;border-radius:18px;border:1px solid #ffffff14;background:#ffffff09; }
@@ -205,7 +226,7 @@
     .credits { width:100%;font-size:11px;color:#5f7086;margin-top:4px; }
     .credits a { margin-left:0; }
     @media(max-width:720px){
-      .wrap{width:min(100% - 28px,1120px)}nav{height:64px}.navlinks a:first-child{display:none}.hero{padding:64px 0 48px}.android-download-card{grid-template-columns:1fr;gap:22px;padding:26px 22px;text-align:center}.android-status,.android-actions{margin-left:auto;margin-right:auto;justify-content:center}.android-qr{width:min(190px,70vw);margin:auto}.steps,.features,.android-gallery,.windows-gallery{grid-template-columns:1fr}.windows-gallery{gap:14px;margin-top:0}.windows-main>img{transform:scale(1.06)}.heroasset{aspect-ratio:4/3}.hero-brand-overlay{top:12px;padding:8px 11px;gap:9px;border-radius:14px}.hero-brand-overlay>img{width:36px;height:36px;border-radius:10px}.hero-brand-copy strong{font-size:17px}.hero-brand-copy span{font-size:10px}.hero-chips{bottom:11px;gap:6px;width:calc(100% - 18px)}.hero-chip{min-height:32px;padding:0 10px;border-radius:10px;font-size:10px;gap:6px}.hero-chip::after{width:190px;padding:10px 11px;font-size:10px}.hero-chip img,.hero-icon-fallback{width:15px;height:15px}.hero-icon-fallback{font-size:7px;border-radius:4px}section{padding:52px 0}}
+      .wrap{width:min(100% - 28px,1120px)}nav{height:64px}.navlinks a:first-child{display:none}.hero{padding:64px 0 48px}.android-download-card{grid-template-columns:1fr;gap:22px;padding:26px 22px;text-align:center}.android-status,.android-actions{margin-left:auto;margin-right:auto;justify-content:center}.android-qr{width:min(190px,70vw);margin:auto}.video-play-button{width:72px;height:72px}.video-play-button::before{border-top-width:12px;border-bottom-width:12px;border-left-width:20px}.video-caption{left:15px;right:15px;bottom:13px}.video-caption-copy strong{font-size:16px}.video-caption-copy span{font-size:11px}.video-youtube-label{display:none}.steps,.features,.android-gallery,.windows-gallery{grid-template-columns:1fr}.windows-gallery{gap:14px;margin-top:0}.windows-main>img{transform:scale(1.06)}.heroasset{aspect-ratio:4/3}.hero-brand-overlay{top:12px;padding:8px 11px;gap:9px;border-radius:14px}.hero-brand-overlay>img{width:36px;height:36px;border-radius:10px}.hero-brand-copy strong{font-size:17px}.hero-brand-copy span{font-size:10px}.hero-chips{bottom:11px;gap:6px;width:calc(100% - 18px)}.hero-chip{min-height:32px;padding:0 10px;border-radius:10px;font-size:10px;gap:6px}.hero-chip::after{width:190px;padding:10px 11px;font-size:10px}.hero-chip img,.hero-icon-fallback{width:15px;height:15px}.hero-icon-fallback{font-size:7px;border-radius:4px}section{padding:52px 0}}
     @media(hover:none),(pointer:coarse){.hero-chip::after{display:none}.hero-chip:active{background:rgba(248,251,255,.9)}.screenshot-card{cursor:default}.screenshot-card::after{display:none}}
   </style>
 </head>
@@ -274,6 +295,18 @@
           <div class="android-qr-placeholder"><strong>QR</strong><span>Google Play closed test</span></div>
         </a>
       </div>
+    </section>
+
+    <section id="demo" class="video-demo wrap">
+      <div class="section-title"><h2>Watch LAN Send in action.</h2><p>A quick walkthrough of pairing, sending files and text, transfer progress and the Android ↔ Windows workflow.</p></div>
+      <a class="video-thumb" href="https://youtu.be/gHCZpyYiosg" target="_blank" rel="noopener noreferrer" aria-label="Watch the LAN Send demo video on YouTube">
+        <img src="/lansend/assets/lansend-website-hero.jpg" alt="LAN Send demo video thumbnail">
+        <span class="video-play-button" aria-hidden="true"></span>
+        <span class="video-caption">
+          <span class="video-caption-copy"><strong>LAN Send demo</strong><span>Click to watch the walkthrough</span></span>
+          <span class="video-youtube-label">Watch on YouTube</span>
+        </span>
+      </a>
     </section>
 
     <section class="wrap">
