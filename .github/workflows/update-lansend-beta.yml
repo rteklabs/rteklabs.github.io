@@ -16,8 +16,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Update LAN Send Windows download actions
-        shell: python
         run: |
+          python - <<'PY'
           from pathlib import Path
 
           path = Path('lansend/index.html')
@@ -53,6 +53,7 @@ jobs:
               raise SystemExit(f'Expected exactly one matching download block, found {text.count(old)}')
 
           path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
 
       - name: Commit website update
         run: |
