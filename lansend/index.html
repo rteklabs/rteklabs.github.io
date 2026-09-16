@@ -13,7 +13,7 @@
 
   <style>
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 88px; }
     body {
       margin: 0;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -24,12 +24,21 @@
     a { color: inherit; }
     .wrap { width: min(1120px, calc(100% - 40px)); margin: auto; }
     section { padding: 70px 0; }
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(7,16,31,.88);
+      border-bottom: 1px solid #ffffff14;
+      box-shadow: 0 8px 28px rgba(0,0,0,.18);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
     nav {
       height: 72px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #ffffff14;
     }
     .brand {
       display: flex;
@@ -54,7 +63,9 @@
       font-weight: 900;
     }
     .navlinks { display: flex; gap: 22px; font-size: 14px; color: #b9c8dd; }
-    .navlinks a { text-decoration: none; }
+    .navlinks a { text-decoration: none; transition: color .18s ease; }
+    .navlinks a:hover,.navlinks a:focus-visible { color:#f5b84b; }
+    .navlinks a:focus-visible { outline:2px solid #ffd37a;outline-offset:4px;border-radius:4px; }
     .hero { padding: 88px 0 66px; text-align: center; }
     .eyebrow {
       display: inline-flex;
@@ -157,12 +168,13 @@
     .android-actions { display:flex;flex-wrap:wrap;gap:10px;margin-top:6px; }
     .android-play {
       display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:11px;border:1px solid #2f80ff;background:#2f80ff;color:#fff;
-      text-decoration:none;font-size:14px;font-weight:700;transition:background .18s ease,border-color .18s ease,box-shadow .18s ease;
+      text-decoration:none;font-size:14px;font-weight:700;transition:background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease;
     }
     .android-play.alt { background:#ffffff0e;border-color:#ffffff26;color:#dce8f7; }
-    .android-play:hover,.android-play:focus-visible { background:#216de0;border-color:#216de0;box-shadow:0 8px 22px rgba(11,77,191,.28); }
-    .android-play.alt:hover,.android-play.alt:focus-visible { background:#ffffff18;border-color:#6ea8ff66; }
-    .android-play:focus-visible { outline:2px solid #a9cbff;outline-offset:3px; }
+    .android-play:hover,.android-play:focus-visible,.android-play.alt:hover,.android-play.alt:focus-visible {
+      background:#f59e0b;border-color:#f59e0b;color:#07101f;box-shadow:0 8px 22px rgba(245,158,11,.28);transform:translateY(-1px);
+    }
+    .android-play:focus-visible { outline:2px solid #ffd37a;outline-offset:3px; }
     .android-note { margin-top:13px!important;font-size:12px;color:#74859c!important; }
     .android-qr { width:190px;aspect-ratio:1;position:relative;display:grid;place-items:center;overflow:hidden;border-radius:18px;background:#fff;border:1px solid rgba(255,255,255,.16);box-shadow:0 12px 30px rgba(0,0,0,.22); }
     .android-qr > img { position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:10px;background:#fff; }
@@ -226,25 +238,28 @@
     .credits { width:100%;font-size:11px;color:#5f7086;margin-top:4px; }
     .credits a { margin-left:0; }
     @media(max-width:720px){
-      .wrap{width:min(100% - 28px,1120px)}nav{height:64px}.navlinks a:first-child{display:none}.hero{padding:64px 0 48px}.android-download-card{grid-template-columns:1fr;gap:22px;padding:26px 22px;text-align:center}.android-status,.android-actions{margin-left:auto;margin-right:auto;justify-content:center}.android-qr{width:min(190px,70vw);margin:auto}.video-play-button{width:72px;height:72px}.video-play-button::before{border-top-width:12px;border-bottom-width:12px;border-left-width:20px}.video-caption{left:15px;right:15px;bottom:13px}.video-caption-copy strong{font-size:16px}.video-caption-copy span{font-size:11px}.video-youtube-label{display:none}.steps,.features,.android-gallery,.windows-gallery{grid-template-columns:1fr}.windows-gallery{gap:14px;margin-top:0}.windows-main>img{transform:scale(1.06)}.heroasset{aspect-ratio:4/3}.hero-brand-overlay{top:12px;padding:8px 11px;gap:9px;border-radius:14px}.hero-brand-overlay>img{width:36px;height:36px;border-radius:10px}.hero-brand-copy strong{font-size:17px}.hero-brand-copy span{font-size:10px}.hero-chips{bottom:11px;gap:6px;width:calc(100% - 18px)}.hero-chip{min-height:32px;padding:0 10px;border-radius:10px;font-size:10px;gap:6px}.hero-chip::after{width:190px;padding:10px 11px;font-size:10px}.hero-chip img,.hero-icon-fallback{width:15px;height:15px}.hero-icon-fallback{font-size:7px;border-radius:4px}section{padding:52px 0}}
+      .wrap{width:min(100% - 28px,1120px)}nav{height:64px}.navlinks{gap:12px;font-size:12px}.navlinks a:first-child{display:none}.hero{padding:64px 0 48px}.android-download-card{grid-template-columns:1fr;gap:22px;padding:26px 22px;text-align:center}.android-status,.android-actions{margin-left:auto;margin-right:auto;justify-content:center}.android-qr{width:min(190px,70vw);margin:auto}.video-play-button{width:72px;height:72px}.video-play-button::before{border-top-width:12px;border-bottom-width:12px;border-left-width:20px}.video-caption{left:15px;right:15px;bottom:13px}.video-caption-copy strong{font-size:16px}.video-caption-copy span{font-size:11px}.video-youtube-label{display:none}.steps,.features,.android-gallery,.windows-gallery{grid-template-columns:1fr}.windows-gallery{gap:14px;margin-top:0}.windows-main>img{transform:scale(1.06)}.heroasset{aspect-ratio:4/3}.hero-brand-overlay{top:12px;padding:8px 11px;gap:9px;border-radius:14px}.hero-brand-overlay>img{width:36px;height:36px;border-radius:10px}.hero-brand-copy strong{font-size:17px}.hero-brand-copy span{font-size:10px}.hero-chips{bottom:11px;gap:6px;width:calc(100% - 18px)}.hero-chip{min-height:32px;padding:0 10px;border-radius:10px;font-size:10px;gap:6px}.hero-chip::after{width:190px;padding:10px 11px;font-size:10px}.hero-chip img,.hero-icon-fallback{width:15px;height:15px}.hero-icon-fallback{font-size:7px;border-radius:4px}section{padding:52px 0}}
     @media(hover:none),(pointer:coarse){.hero-chip::after{display:none}.hero-chip:active{background:rgba(248,251,255,.9)}.screenshot-card{cursor:default}.screenshot-card::after{display:none}}
   </style>
 </head>
 <body>
-  <header class="wrap">
-    <nav>
-      <a class="brand" href="/lansend/">
-        <img src="/lansend/assets/lansend-app-icon.png" alt="LAN Send" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
-        <span class="brand-fallback" style="display:none">L</span>
-        <span>LAN Send</span>
-      </a>
-      <div class="navlinks">
-        <a href="/">RTEK Labs</a>
-        <a href="#screens">Screenshots</a>
-        <a href="/lansend/help/">Help</a>
-        <a href="/about/">About</a>
-      </div>
-    </nav>
+  <header class="site-header">
+    <div class="wrap">
+      <nav>
+        <a class="brand" href="/lansend/">
+          <img src="/lansend/assets/lansend-app-icon.png" alt="LAN Send" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+          <span class="brand-fallback" style="display:none">L</span>
+          <span>LAN Send</span>
+        </a>
+        <div class="navlinks">
+          <a href="/">RTEK Labs</a>
+          <a href="#demo">Demo</a>
+          <a href="#screens">Screenshots</a>
+          <a href="#android-download">Android</a>
+          <a href="/lansend/help/">Help</a>
+        </div>
+      </nav>
+    </div>
   </header>
 
   <main>
@@ -351,7 +366,7 @@
   <footer>
     <div class="wrap foot">
       <span>© 2026 RTEK Labs · LAN Send</span>
-      <span><a href="/">RTEK Labs</a><a href="/about/">About</a><a href="/lansend/help/">Help</a><a href="/lansend/privacy/">Privacy</a><a href="mailto:rteklabs.support@gmail.com">Support</a></span>
+      <span><a href="/">RTEK Labs</a><a href="/lansend/help/">Help</a><a href="/lansend/privacy/">Privacy</a><a href="mailto:rteklabs.support@gmail.com">Support</a></span>
       <div class="credits">Notification sound: “bubble1” by <a href="https://pixabay.com/users/dragon-studio-38165424/" target="_blank" rel="noopener">DRAGON-STUDIO</a>, via Pixabay.</div>
     </div>
   </footer>
