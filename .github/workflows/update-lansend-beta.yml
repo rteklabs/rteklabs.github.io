@@ -1,0 +1,64 @@
+name: Update LAN Send beta download
+
+on:
+  push:
+    paths:
+      - '.github/workflows/update-lansend-beta.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update-page:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Update LAN Send Windows download actions
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('lansend/index.html')
+          text = path.read_text(encoding='utf-8')
+
+          old = '''      <div class="actions">
+        <a class="btn primary download-btn" href="https://github.com/rteklabs/rteklabs.github.io/releases/download/v3.1.0/LAN-Send-Windows-x64-3.1.0.msix">
+          <img src="/lansend/assets/windows-logo.png" alt="" aria-hidden="true" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+          <span class="windows-logo-fallback" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>Free Download</span>
+        </a>
+        <a class="btn secondary" href="/lansend/help/">Getting started →</a>
+      </div>
+      <p class="micro">Windows x64 · Android closed testing now live</p>'''
+
+          new = '''      <div class="actions">
+        <span class="btn primary download-btn" aria-disabled="true" style="opacity:.62;pointer-events:none;">
+          <img src="/lansend/assets/windows-logo.png" alt="" aria-hidden="true" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+          <span class="windows-logo-fallback" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>Microsoft Store — Coming Soon</span>
+        </span>
+        <a class="btn secondary download-btn" href="https://github.com/rteklabs/LAN-Send-Releases/releases/download/windows-beta-v3.1.0/LAN-Send-Windows-Beta-3.1.0.exe">
+          <img src="/lansend/assets/windows-logo.png" alt="" aria-hidden="true" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+          <span class="windows-logo-fallback" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>Download Windows Beta</span>
+        </a>
+        <a class="btn secondary" href="/lansend/help/">Getting started →</a>
+      </div>
+      <p class="micro">Windows x64 beta · Microsoft Store release in certification · Android closed testing live</p>
+      <p class="micro" style="margin-top:6px!important;">Beta installer is unsigned and may show a Microsoft Defender SmartScreen warning.</p>'''
+
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected exactly one matching download block, found {text.count(old)}')
+
+          path.write_text(text.replace(old, new), encoding='utf-8')
+
+      - name: Commit website update
+        run: |
+          git config user.name "RTEK Labs Website Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add lansend/index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Point LAN Send website to Windows beta release"
+          git push
