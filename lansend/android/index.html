@@ -40,12 +40,14 @@
     .steps li { position:relative; margin:16px 0; padding-left:42px; color:#aebed3; }
     .steps li::before { counter-increment:step; content:counter(step); position:absolute; left:0; top:0; width:28px; height:28px; display:grid; place-items:center; border-radius:9px; background:#2f80ff22; border:1px solid #6ea8ff38; color:#91bbff; font-weight:800; }
     .actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:16px; }
-    .btn { display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:0 16px; border-radius:10px; text-decoration:none; font-weight:750; font-size:14px; transition:background .18s ease,border-color .18s ease; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:0 16px; border-radius:10px; text-decoration:none; font-weight:750; font-size:14px; transition:background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease; }
     .btn.primary { background:#2f80ff; border:1px solid #2f80ff; color:white; }
-    .btn.primary:hover,.btn.primary:focus-visible { background:#216de0; border-color:#216de0; }
+    .btn.primary:hover,.btn.primary:focus-visible { background:#216de0; border-color:#216de0; box-shadow:0 8px 22px #0b4dbf38; transform:translateY(-1px); }
     .btn.secondary { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.12); color:#dce9fb; }
-    .btn.secondary:hover,.btn.secondary:focus-visible { border-color:#f5b84b88; color:#f5c66e; }
-    .btn:focus-visible { outline:2px solid #a9cbff; outline-offset:3px; }
+    .btn.secondary:hover,.btn.secondary:focus-visible { background:#f59e0b; border-color:#f59e0b; color:#07101f; box-shadow:0 8px 22px rgba(245,158,11,.28); transform:translateY(-1px); }
+    .btn.primary:focus-visible { outline:2px solid #a9cbff; outline-offset:3px; }
+    .btn.secondary:focus-visible { outline:2px solid #ffd37a; outline-offset:3px; }
+    .btn:active { transform:translateY(0); box-shadow:none; }
     .note { margin-top:18px; padding:16px 18px; border-radius:14px; border:1px solid rgba(110,168,255,.18); background:rgba(47,128,255,.08); color:#bcd5f8; }
     .quiet { color:#7f91a8; font-size:13px; }
     .pairing { margin:18px 0 0; padding-left:24px; color:#aebed3; }
@@ -69,7 +71,7 @@
         <div class="navlinks">
           <a href="/">RTEK Labs</a>
           <a href="/lansend/">LAN Send</a>
-          <a href="/lansend/android/">Android</a>
+          <a href="/lansend/android/">Android App</a>
           <a href="/lansend/help/">Help</a>
           <a href="/lansend/privacy/">Privacy</a>
         </div>
