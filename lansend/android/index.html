@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Install LAN Send for Android and pair it with the LAN Send Windows companion.">
+  <meta name="theme-color" content="#0b1220">
+  <link rel="icon" type="image/png" href="/lansend/assets/lansend-app-icon.png?v=2">
+  <link rel="shortcut icon" href="/lansend/assets/lansend-app-icon.png?v=2">
+  <link rel="apple-touch-icon" href="/lansend/assets/lansend-app-icon.png?v=2">
+  <title>Get LAN Send for Android</title>
+  <style>
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:88px; }
+    body { margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#07101f; color:#edf5ff; line-height:1.65; }
+    a { color:#7fb2ff; }
+    .wrap { width:min(920px,calc(100% - 40px)); margin:0 auto; }
+    .site-header { position:sticky; top:0; z-index:1000; background:rgba(7,16,31,.88); border-bottom:1px solid #ffffff14; box-shadow:0 8px 28px rgba(0,0,0,.18); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+    nav { height:72px; display:flex; align-items:center; justify-content:space-between; }
+    .brand { display:flex; align-items:center; gap:12px; text-decoration:none; color:#edf5ff; font-weight:750; }
+    .brand img { width:38px; height:38px; border-radius:11px; object-fit:cover; display:block; }
+    .mark { width:38px; height:38px; border-radius:11px; display:none; place-items:center; background:linear-gradient(145deg,#2f80ff,#6ea8ff); color:white; font-weight:900; }
+    .navlinks { display:flex; gap:20px; font-size:14px; color:#aebed3; }
+    .navlinks a { color:#aebed3; text-decoration:none; transition:color .18s ease; }
+    .navlinks a:hover,.navlinks a:focus-visible { color:#f5b84b; }
+    .navlinks a:focus-visible { outline:2px solid #ffd37a; outline-offset:4px; border-radius:4px; }
+    .hero { padding:70px 0 42px; }
+    .eyebrow { color:#78aaff; font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+    h1 { margin:10px 0 14px; font-size:clamp(38px,6vw,58px); line-height:1.05; letter-spacing:-.045em; }
+    .lead { margin:0; max-width:760px; color:#9dafc5; font-size:18px; }
+    section { padding:34px 0; border-top:1px solid rgba(255,255,255,.075); }
+    h2 { margin:0 0 10px; font-size:28px; letter-spacing:-.025em; }
+    h3 { margin:0 0 6px; font-size:18px; }
+    p { color:#9dafc5; }
+    strong { color:#edf5ff; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .card { padding:22px; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:rgba(255,255,255,.03); }
+    .card > p:first-of-type { margin-top:4px; }
+    .steps { margin:18px 0 0; padding:0; list-style:none; counter-reset:step; }
+    .steps li { position:relative; margin:16px 0; padding-left:42px; color:#aebed3; }
+    .steps li::before { counter-increment:step; content:counter(step); position:absolute; left:0; top:0; width:28px; height:28px; display:grid; place-items:center; border-radius:9px; background:#2f80ff22; border:1px solid #6ea8ff38; color:#91bbff; font-weight:800; }
+    .actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:16px; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:0 16px; border-radius:10px; text-decoration:none; font-weight:750; font-size:14px; transition:background .18s ease,border-color .18s ease; }
+    .btn.primary { background:#2f80ff; border:1px solid #2f80ff; color:white; }
+    .btn.primary:hover,.btn.primary:focus-visible { background:#216de0; border-color:#216de0; }
+    .btn.secondary { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.12); color:#dce9fb; }
+    .btn.secondary:hover,.btn.secondary:focus-visible { border-color:#f5b84b88; color:#f5c66e; }
+    .btn:focus-visible { outline:2px solid #a9cbff; outline-offset:3px; }
+    .note { margin-top:18px; padding:16px 18px; border-radius:14px; border:1px solid rgba(110,168,255,.18); background:rgba(47,128,255,.08); color:#bcd5f8; }
+    .quiet { color:#7f91a8; font-size:13px; }
+    .pairing { margin:18px 0 0; padding-left:24px; color:#aebed3; }
+    .pairing li { margin:9px 0; }
+    .cert { padding:22px; border-radius:16px; border:1px solid rgba(245,184,75,.22); background:rgba(245,184,75,.055); }
+    .cert h2 { font-size:23px; }
+    footer { margin-top:34px; border-top:1px solid rgba(255,255,255,.08); padding:28px 0 42px; color:#73849a; font-size:13px; }
+    footer a { margin-right:16px; }
+    @media(max-width:680px) { .wrap{width:min(100% - 28px,920px)} nav{height:64px} .navlinks{gap:12px;font-size:12px} .navlinks a:first-child{display:none} .brand img,.mark{width:34px;height:34px} .hero{padding-top:52px} .grid{grid-template-columns:1fr} .card{padding:19px} .actions{align-items:stretch;flex-direction:column} .btn{width:100%} }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <nav>
+        <a class="brand" href="/lansend/">
+          <img src="/lansend/assets/lansend-app-icon.png" alt="LAN Send" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+          <span class="mark">L</span>
+          <span>LAN Send</span>
+        </a>
+        <div class="navlinks">
+          <a href="/">RTEK Labs</a>
+          <a href="/lansend/">LAN Send</a>
+          <a href="/lansend/help/">Help</a>
+          <a href="/lansend/privacy/">Privacy</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <header class="hero">
+      <span class="eyebrow">Android companion</span>
+      <h1>Get LAN Send for Android</h1>
+      <p class="lead">LAN Send transfers files, messages and clipboard content directly between Android and Windows over your local Wi-Fi network.</p>
+    </header>
+
+    <main>
+      <section id="install">
+        <h2>Install the Android app</h2>
+        <p>Choose either Google Play closed testing or the direct signed APK.</p>
+        <div class="grid">
+          <article class="card">
+            <h3>Option 1 — Google Play closed testing</h3>
+            <ol class="steps">
+              <li><strong>Join the tester group.</strong><br>Join using the Google account you use on your Android phone.</li>
+              <li><strong>Become a tester.</strong><br>After joining the group, open the Google Play testing page and select <em>Become a tester</em>.</li>
+              <li><strong>Install LAN Send.</strong><br>Google Play will then provide access to the app. Access may occasionally take a short time to propagate.</li>
+            </ol>
+            <div class="actions">
+              <a class="btn primary" href="https://groups.google.com/g/lan-send-closed-testers" target="_blank" rel="noopener">1. Join tester group</a>
+              <a class="btn secondary" href="https://play.google.com/apps/testing/com.raytek.lansend" target="_blank" rel="noopener">2. Become a tester</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3>Option 2 — Direct APK</h3>
+            <p>If you cannot use the Google Play testing programme, you can install the signed LAN Send Android APK directly.</p>
+            <p class="quiet">Your phone may ask you to allow installation from your browser or file manager. Only enable this for the installation source you trust.</p>
+            <div class="actions">
+              <a class="btn primary" href="/lansend/downloads/LAN-Send-Android-3.0.8.apk" download>Download Android APK</a>
+            </div>
+            <p class="quiet">Current direct build: LAN Send 3.0.8</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="pairing">
+        <h2>Pair Android with Windows</h2>
+        <ol class="pairing">
+          <li>Connect the Windows PC and Android phone to the same Wi-Fi network.</li>
+          <li>Open LAN Send on Windows.</li>
+          <li>Open LAN Send on Android.</li>
+          <li>Choose <strong>Add PC</strong> and scan the QR code shown by Windows.</li>
+          <li>Wait for both applications to show the device as online.</li>
+          <li>Send a small test file.</li>
+        </ol>
+        <div class="note"><strong>Connection note:</strong> Guest Wi-Fi, corporate Wi-Fi or networks with client/AP isolation may prevent devices on the same Wi-Fi from communicating with each other.</div>
+      </section>
+
+      <section>
+        <div class="cert">
+          <h2>For Microsoft Store certification testers</h2>
+          <p>The LAN Send Windows application is a companion application for LAN Send on Android. Testing its primary file-transfer functionality requires an Android device and Windows PC connected to the same local network.</p>
+          <p>No LAN Send account or login credentials are required.</p>
+          <p>Microsoft certification staff may install the Android companion using either the Google Play closed-testing instructions above or the direct signed APK.</p>
+          <div class="actions">
+            <a class="btn secondary" href="https://groups.google.com/g/lan-send-closed-testers" target="_blank" rel="noopener">Join closed testers</a>
+            <a class="btn secondary" href="https://play.google.com/apps/testing/com.raytek.lansend" target="_blank" rel="noopener">Become a Google Play tester</a>
+            <a class="btn secondary" href="/lansend/downloads/LAN-Send-Android-3.0.8.apk" download>Download signed APK</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <a href="/lansend/">LAN Send</a>
+      <a href="/lansend/help/">Help</a>
+      <a href="/lansend/privacy/">Privacy Policy</a>
+      <a href="mailto:rteklabs.support@gmail.com">Support</a>
+      <span>© 2026 RTEK Labs</span>
+    </footer>
+  </div>
+</body>
+</html>
