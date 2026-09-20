@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Transfer files from Android to Windows over local Wi-Fi without sending them through a chat app or cloud drive. LAN Send supports files, text, links and clipboard content.">
+  <meta name="theme-color" content="#07101f">
+  <link rel="canonical" href="https://rteklabs.github.io/lansend/android-to-windows-file-transfer/">
+  <link rel="icon" type="image/png" href="/lansend/assets/lansend-app-icon.png?v=2">
+  <title>Android to Windows File Transfer Over Wi-Fi | LAN Send</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#07101f;color:#eef5ff;line-height:1.65}
+    a{color:inherit}.wrap{width:min(980px,calc(100% - 40px));margin:auto}
+    .site-header{position:sticky;top:0;z-index:100;background:rgba(7,16,31,.9);border-bottom:1px solid #ffffff14;backdrop-filter:blur(14px)}
+    nav{height:72px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:750}.brand img{width:38px;height:38px;border-radius:11px}
+    .navlinks{display:flex;gap:18px;font-size:14px;color:#aebed3}.navlinks a{text-decoration:none}.navlinks a:hover{color:#f5b84b}
+    .hero{padding:86px 0 54px;text-align:center}.eyebrow{display:inline-flex;padding:7px 12px;border-radius:999px;border:1px solid #6ea8ff40;background:#2f80ff17;color:#a9cbff;font-size:13px;font-weight:700}
+    h1{max-width:850px;margin:20px auto 16px;font-size:clamp(40px,7vw,68px);line-height:1.04;letter-spacing:-.05em}.lead{max-width:760px;margin:auto;color:#aebed3;font-size:19px}
+    section{padding:52px 0;border-top:1px solid #ffffff12}h2{margin:0 0 12px;font-size:clamp(28px,4vw,40px);letter-spacing:-.03em}p{color:#98a9bf}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.card{padding:24px;border-radius:18px;border:1px solid #ffffff14;background:#ffffff09}.card h3{margin:0 0 8px}.card p{margin:0;font-size:14px}
+    .steps{counter-reset:step;list-style:none;padding:0;margin:24px 0 0}.steps li{position:relative;margin:18px 0;padding:18px 18px 18px 58px;border:1px solid #ffffff12;border-radius:14px;background:#0b1627;color:#aebed3}
+    .steps li::before{counter-increment:step;content:counter(step);position:absolute;left:18px;top:17px;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:#2f80ff26;color:#8db9ff;font-weight:800}
+    .compare{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:720px;background:#0b1627;border:1px solid #ffffff12}th,td{padding:14px 16px;border-bottom:1px solid #ffffff10;text-align:left;font-size:14px}th{background:#101d31}td{color:#9dafc5}.yes{color:#a9cbff;font-weight:700}
+    .cta{text-align:center;padding-bottom:84px}.cta-box{padding:40px 26px;border:1px solid #6ea8ff2e;border-radius:22px;background:#2f80ff17}.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 18px;border-radius:11px;text-decoration:none;font-weight:750}.primary{background:#2f80ff}.secondary{background:#ffffff0e;border:1px solid #ffffff1c}
+    footer{border-top:1px solid #ffffff14;padding:28px 0 40px;color:#73849a;font-size:13px}
+    @media(max-width:720px){.wrap{width:min(100% - 28px,980px)}nav{height:64px}.navlinks{gap:10px;font-size:12px}.navlinks a:first-child{display:none}.grid{grid-template-columns:1fr}.hero{padding:62px 0 44px}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap"><nav>
+      <a class="brand" href="/lansend/"><img src="/lansend/assets/lansend-app-icon.png" alt="LAN Send"><span>LAN Send</span></a>
+      <div class="navlinks"><a href="/">RTEK Labs</a><a href="/lansend/">LAN Send</a><a href="/lansend/android/">Android App</a><a href="/lansend/why/">Why LAN Send?</a><a href="/lansend/help/">Help</a></div>
+    </nav></div>
+  </header>
+
+  <main>
+    <header class="hero wrap">
+      <span class="eyebrow">Android → Windows over local Wi-Fi</span>
+      <h1>Transfer files from Android to Windows without a cloud detour.</h1>
+      <p class="lead">LAN Send moves files, text, links and clipboard content directly between your Android phone and Windows PC over the same trusted local network.</p>
+    </header>
+
+    <section><div class="wrap">
+      <h2>A simpler phone-to-PC handoff.</h2>
+      <p>Messaging apps and cloud drives can move files, but they usually add an upload, account or sync step. LAN Send is designed for the common case where your phone and PC are already nearby and connected to the same network.</p>
+      <div class="grid">
+        <article class="card"><h3>Direct local transfer</h3><p>Send supported content between paired devices over your local network instead of routing the transfer through RTEK Labs cloud infrastructure.</p></article>
+        <article class="card"><h3>Two-way</h3><p>Send Android → Windows or Windows → Android from the same paired setup.</p></article>
+        <article class="card"><h3>Files, text and links</h3><p>Move screenshots, documents, URLs, notes and clipboard text without creating a message to yourself.</p></article>
+        <article class="card"><h3>No LAN Send account</h3><p>Pair your devices by QR code. LAN Send does not require a separate LAN Send account to transfer.</p></article>
+      </div>
+    </div></section>
+
+    <section><div class="wrap">
+      <h2>How to transfer files from Android to Windows.</h2>
+      <ol class="steps">
+        <li>Install LAN Send on the Windows PC and Android phone.</li>
+        <li>Connect both devices to the same trusted local Wi-Fi/network.</li>
+        <li>Open LAN Send on Windows and scan its QR code from the Android app.</li>
+        <li>Select a file on Android and send it to the paired PC.</li>
+        <li>The Windows app receives the file into its configured inbox.</li>
+      </ol>
+    </div></section>
+
+    <section><div class="wrap">
+      <h2>LAN Send vs common alternatives.</h2>
+      <div class="compare"><table>
+        <thead><tr><th>Method</th><th>Local/direct</th><th>Account needed</th><th>Text/link handoff</th><th>Works remotely</th></tr></thead>
+        <tbody>
+          <tr><td>LAN Send</td><td class="yes">Yes, on local network</td><td class="yes">No LAN Send account</td><td class="yes">Yes</td><td>No</td></tr>
+          <tr><td>Messaging app</td><td>Usually cloud-mediated</td><td>Usually</td><td>Yes</td><td class="yes">Yes</td></tr>
+          <tr><td>Cloud drive</td><td>No</td><td>Usually</td><td>Not its main job</td><td class="yes">Yes</td></tr>
+          <tr><td>USB cable</td><td class="yes">Yes</td><td class="yes">No</td><td>Awkward</td><td>No</td></tr>
+        </tbody>
+      </table></div>
+    </div></section>
+
+    <section class="cta"><div class="wrap"><div class="cta-box">
+      <h2>Try LAN Send.</h2>
+      <p>If your main goal is quick Android ↔ Windows handoff on the same network, LAN Send is built specifically for that workflow.</p>
+      <div class="actions">
+        <a class="btn primary" href="/lansend/win311/">Download Windows Beta</a>
+        <a class="btn secondary" href="/lansend/android/">Get Android app</a>
+        <a class="btn secondary" href="/lansend/why/">Why LAN Send?</a>
+      </div>
+    </div></div></section>
+  </main>
+
+  <footer><div class="wrap">© 2026 RTEK Labs · <a href="/lansend/">LAN Send</a> · <a href="/lansend/privacy/">Privacy</a></div></footer>
+</body>
+</html>
