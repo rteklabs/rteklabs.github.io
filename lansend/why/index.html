@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Why use LAN Send? Direct Android ↔ Windows transfer over your local network, without routing everyday files through chat apps or cloud storage.">
+  <meta name="theme-color" content="#07101f">
+  <link rel="icon" type="image/png" href="/lansend/assets/lansend-app-icon.png?v=2">
+  <link rel="shortcut icon" href="/lansend/assets/lansend-app-icon.png?v=2">
+  <link rel="apple-touch-icon" href="/lansend/assets/lansend-app-icon.png?v=2">
+  <title>Why LAN Send? — LAN Send</title>
+  <style>
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:88px}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#07101f;color:#edf5ff;line-height:1.62}
+    a{color:inherit}
+    .wrap{width:min(1080px,calc(100% - 40px));margin:auto}
+    .site-header{position:sticky;top:0;z-index:1000;background:rgba(7,16,31,.88);border-bottom:1px solid #ffffff14;box-shadow:0 8px 28px rgba(0,0,0,.18);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+    nav{height:72px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:750}
+    .brand img{width:38px;height:38px;border-radius:11px;object-fit:cover}
+    .mark{width:38px;height:38px;border-radius:11px;display:none;place-items:center;background:linear-gradient(145deg,#2f80ff,#6ea8ff);font-weight:900}
+    .navlinks{display:flex;gap:20px;font-size:14px;color:#aebed3}
+    .navlinks a{text-decoration:none;transition:color .18s ease}
+    .navlinks a:hover,.navlinks a:focus-visible{color:#f5b84b}
+    .navlinks a:focus-visible{outline:2px solid #ffd37a;outline-offset:4px;border-radius:4px}
+    .hero{padding:88px 0 60px;text-align:center}
+    .eyebrow{display:inline-flex;padding:7px 12px;border-radius:999px;border:1px solid #6ea8ff40;background:#2f80ff17;color:#a9cbff;font-size:13px;font-weight:700}
+    h1{max-width:860px;margin:20px auto 16px;font-size:clamp(42px,7vw,70px);line-height:1.03;letter-spacing:-.055em}
+    .lead{max-width:760px;margin:auto;color:#aebed3;font-size:clamp(17px,2.2vw,20px)}
+    section{padding:56px 0;border-top:1px solid #ffffff12}
+    h2{margin:0 0 12px;font-size:clamp(30px,4vw,42px);letter-spacing:-.035em}
+    .section-lead{max-width:760px;margin:0 0 28px;color:#91a3ba}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .card{padding:26px;border-radius:18px;border:1px solid #ffffff14;background:#ffffff09}
+    .card .icon{width:38px;height:38px;display:grid;place-items:center;margin-bottom:16px;border-radius:11px;background:#2f80ff20;border:1px solid #6ea8ff32;color:#91bbff;font-weight:900}
+    .card h3{margin:0 0 8px;font-size:19px}
+    .card p{margin:0;color:#91a3ba;font-size:14px}
+    .highlight{padding:30px;border-radius:22px;border:1px solid #6ea8ff2f;background:linear-gradient(145deg,#2f80ff16,#ffffff08)}
+    .highlight strong{color:#fff}
+    .usecases{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .usecase{padding:22px;border-radius:16px;background:#0c1728;border:1px solid #ffffff12}
+    .usecase h3{margin:0 0 7px;font-size:17px}
+    .usecase p{margin:0;color:#8fa0b6;font-size:14px}
+    .compare{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;min-width:760px;border:1px solid #ffffff12;border-radius:16px;overflow:hidden;background:#0b1627}
+    th,td{padding:14px 16px;border-bottom:1px solid #ffffff10;text-align:left;font-size:14px}
+    th{background:#101d31;color:#dce8f7}
+    td{color:#9dafc5}
+    tr:last-child td{border-bottom:0}
+    .good{color:#a9cbff;font-weight:700}
+    .note{margin-top:20px;padding:18px 20px;border-radius:14px;border:1px solid rgba(245,184,75,.20);background:rgba(245,184,75,.055);color:#c5b889}
+    .cta{text-align:center;padding-bottom:88px}
+    .cta-box{padding:42px 28px;border-radius:24px;background:#2f80ff17;border:1px solid #6ea8ff2e}
+    .cta-box p{max-width:650px;margin:8px auto 24px;color:#9eafc4}
+    .actions{display:flex;justify-content:center;flex-wrap:wrap;gap:10px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 18px;border-radius:11px;text-decoration:none;font-weight:750;font-size:14px}
+    .primary{background:#2f80ff;border:1px solid #2f80ff;color:#fff}
+    .secondary{background:#ffffff0e;border:1px solid #ffffff1c;color:#e7f0fb}
+    .primary:hover,.primary:focus-visible{background:#216de0}
+    .secondary:hover,.secondary:focus-visible{background:#f59e0b;border-color:#f59e0b;color:#07101f}
+    footer{border-top:1px solid #ffffff14;padding:26px 0 40px;color:#73849a;font-size:13px}
+    .foot{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+    .foot a{color:#9fb1c8;text-decoration:none;margin-left:16px}
+    @media(max-width:760px){
+      .wrap{width:min(100% - 28px,1080px)}
+      nav{height:64px}.navlinks{gap:11px;font-size:12px}.navlinks a:first-child{display:none}
+      .hero{padding:64px 0 46px}.grid,.usecases{grid-template-columns:1fr}
+      section{padding:46px 0}.highlight{padding:23px}
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <nav>
+        <a class="brand" href="/lansend/">
+          <img src="/lansend/assets/lansend-app-icon.png" alt="LAN Send" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+          <span class="mark">L</span>
+          <span>LAN Send</span>
+        </a>
+        <div class="navlinks">
+          <a href="/">RTEK Labs</a>
+          <a href="/lansend/">LAN Send</a>
+          <a href="/lansend/why/">Why LAN Send?</a>
+          <a href="/lansend/android/">Android App</a>
+          <a href="/lansend/help/">Help</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <header class="hero wrap">
+      <span class="eyebrow">Why LAN Send?</span>
+      <h1>Your phone and PC are already beside each other. Your files shouldn't need a trip through the cloud.</h1>
+      <p class="lead">LAN Send is a small, focused bridge between Android and Windows: pair once, then move files, text, links and clipboard content directly across your local network.</p>
+    </header>
+
+    <section>
+      <div class="wrap">
+        <h2>Built for the awkward gap between phone and PC.</h2>
+        <p class="section-lead">Chat apps, email and cloud drives can all move a file. But when the destination is a computer sitting on the same Wi‑Fi, that workflow can be more complicated than it needs to be.</p>
+        <div class="grid">
+          <article class="card"><div class="icon">↔</div><h3>Direct, two-way transfer</h3><p>Send Android → Windows or Windows → Android without first uploading the file somewhere else.</p></article>
+          <article class="card"><div class="icon">⌂</div><h3>Local-network first</h3><p>Supported transfers travel between your paired devices over the local network. RTEK Labs does not operate a cloud server that stores those transferred files.</p></article>
+          <article class="card"><div class="icon">⌁</div><h3>More than files</h3><p>Move notes, links and clipboard text when emailing yourself or opening a chat just to copy one thing feels excessive.</p></article>
+          <article class="card"><div class="icon">✓</div><h3>Pair once, reuse later</h3><p>LAN Send remembers paired devices so everyday transfers become a quick utility rather than a repeated setup process.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="highlight">
+          <h2>“Why not just use WhatsApp, Discord or Teams?”</h2>
+          <p class="section-lead" style="margin-bottom:0;">You absolutely can. LAN Send is not trying to replace messaging platforms. It is for the moments when you <strong>do not want a conversation, upload, account or cloud detour</strong> — you simply want something on the other device.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Where LAN Send earns its place.</h2>
+        <p class="section-lead">It is deliberately narrow. These are the workflows it is designed to make quicker.</p>
+        <div class="usecases">
+          <article class="usecase"><h3>Large local files</h3><p>Move photos, videos, archives or work files straight to the PC without waiting for a cloud upload and download cycle.</p></article>
+          <article class="usecase"><h3>Quick screenshots</h3><p>Take a screenshot on Android and send it directly to the Windows machine where you are editing, documenting or reporting something.</p></article>
+          <article class="usecase"><h3>Links and text</h3><p>Send an address, URL, code snippet or note to the device where you actually need it.</p></article>
+          <article class="usecase"><h3>Clipboard handoff</h3><p>Move copied text between Android and Windows without creating a draft message to yourself.</p></article>
+          <article class="usecase"><h3>Private everyday transfers</h3><p>Keep supported transfers on your trusted local network instead of routing them through a third-party storage or messaging service.</p></article>
+          <article class="usecase"><h3>No cable hunting</h3><p>When both devices are already connected to the same trusted network, transfer without plugging in USB just for one file.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2>Different tools, different jobs.</h2>
+        <p class="section-lead">LAN Send is strongest when both devices are nearby and on the same trusted network.</p>
+        <div class="compare">
+          <table>
+            <thead><tr><th>Workflow</th><th>LAN Send</th><th>Chat / messaging app</th><th>Cloud drive</th><th>USB cable</th></tr></thead>
+            <tbody>
+              <tr><td>Direct Android ↔ Windows handoff</td><td class="good">Designed for it</td><td>Possible, via a conversation</td><td>Possible, via upload/sync</td><td>Yes</td></tr>
+              <tr><td>Cloud upload required for the transfer</td><td class="good">No</td><td>Typically yes</td><td>Yes</td><td>No</td></tr>
+              <tr><td>Account needed for transfer service</td><td class="good">No LAN Send account</td><td>Usually</td><td>Usually</td><td>No</td></tr>
+              <tr><td>Text / link handoff</td><td class="good">Built in</td><td>Yes</td><td>Not its main job</td><td>Awkward</td></tr>
+              <tr><td>Works across the internet</td><td>No — local network</td><td class="good">Yes</td><td class="good">Yes</td><td>No</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note"><strong>LAN Send is not for every network.</strong> Guest, hotel, café or corporate Wi‑Fi may isolate devices from each other. For reliable use, connect both devices to a trusted local network that allows device-to-device communication.</div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="wrap">
+        <div class="cta-box">
+          <h2>A small tool for a very common job.</h2>
+          <p>LAN Send does not try to become another cloud platform or messaging service. It focuses on one thing: making the distance between your Android phone and Windows PC feel smaller.</p>
+          <div class="actions">
+            <a class="btn primary" href="/lansend/win311/">Download Windows Beta</a>
+            <a class="btn secondary" href="/lansend/android/">Get Android app</a>
+            <a class="btn secondary" href="/lansend/help/">Getting started</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <span>© 2026 RTEK Labs · LAN Send</span>
+      <span><a href="/lansend/">LAN Send</a><a href="/lansend/why/">Why LAN Send?</a><a href="/lansend/help/">Help</a><a href="/lansend/privacy/">Privacy</a></span>
+    </div>
+  </footer>
+</body>
+</html>
