@@ -32,7 +32,10 @@ jobs:
                 "https://rteklabs.github.io/lansend/android/",
                 "https://rteklabs.github.io/lansend/why/",
                 "https://rteklabs.github.io/lansend/help/",
-                "https://rteklabs.github.io/lansend/android-to-windows-file-transfer/"
+                "https://rteklabs.github.io/lansend/android-to-windows-file-transfer/",
+                "https://rteklabs.github.io/lansend/guides/",
+                "https://rteklabs.github.io/lansend/send-files-android-to-pc-wifi/",
+                "https://rteklabs.github.io/lansend/local-file-transfer-without-cloud/"
               ]
             }' \
             https://api.indexnow.org/indexnow
