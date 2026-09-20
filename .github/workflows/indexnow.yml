@@ -1,0 +1,38 @@
+name: Notify IndexNow
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "lansend/**"
+      - "sitemap.xml"
+      - "robots.txt"
+      - ".github/workflows/indexnow.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify IndexNow of key LAN Send pages
+        shell: bash
+        run: |
+          curl --fail-with-body --retry 3 --retry-delay 2 \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d '{
+              "host": "rteklabs.github.io",
+              "key": "2a5dc634ca3b48f2aee05e43fc9aa702",
+              "keyLocation": "https://rteklabs.github.io/2a5dc634ca3b48f2aee05e43fc9aa702.txt",
+              "urlList": [
+                "https://rteklabs.github.io/lansend/",
+                "https://rteklabs.github.io/lansend/android/",
+                "https://rteklabs.github.io/lansend/why/",
+                "https://rteklabs.github.io/lansend/help/",
+                "https://rteklabs.github.io/lansend/android-to-windows-file-transfer/"
+              ]
+            }' \
+            https://api.indexnow.org/indexnow
