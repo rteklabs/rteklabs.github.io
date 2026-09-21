@@ -263,7 +263,7 @@
     .gallery-label { margin:0 0 14px;color:#bcd5f8;font-size:17px;font-weight:720;letter-spacing:-.01em; }
     .gallery-label.windows-label { margin-top:30px; }
     .android-gallery { display:grid;grid-template-columns:repeat(3,1fr);gap:16px; }
-    .windows-gallery { display:grid;grid-template-columns:1.1fr 1fr;gap:18px;align-items:start;margin-top:0; }
+    .windows-gallery { display:grid;grid-template-columns:repeat(2,1fr);gap:18px;align-items:start;margin-top:0; }
     .screenshot-card { border:1px solid rgba(126,174,255,.24);background:#0b1628;box-shadow:0 14px 34px rgba(0,0,0,.18);cursor:pointer; }
     .screenshot-card::after { content:"See Preview";position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:20px;background:rgba(4,12,24,.64);color:#eef5ff;font-size:14px;font-weight:760;letter-spacing:.015em;text-align:center;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);pointer-events:none;transition:opacity .24s ease; }
     .screenshot-card:hover::after { opacity:0; }
@@ -273,8 +273,8 @@
     .windows-gallery .asset > img { object-fit:contain;object-position:top center;background:#f6f8fc; }
     .android-gallery .asset > .ph,.windows-gallery .asset > .ph { position:relative;z-index:0; }
     .shot { aspect-ratio:9/16; }
-    .windows-main { aspect-ratio:16/10; }
-    .windows-main > img { transform:scale(1.10);transform-origin:top center; }
+    .windows-main { aspect-ratio:4/3; }
+    .windows-main > img { object-fit:cover!important;object-position:top center;transform:scale(1.08);transform-origin:top center; }
     .windows-settings { aspect-ratio:4/3; }
     .windows-settings > img { transform:scale(1);transform-origin:top center; }
     .cta { text-align:center;padding-bottom:90px; }
