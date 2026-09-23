@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "latestVersion": "0.9.0",
+  "minimumVersion": "0.9.0",
+  "mandatory": false,
+  "downloadUrl": "",
+  "releaseNotes": [
+    "Introduced Riilume Voice Studio branding and the WPF interface.",
+    "Added remote voice-catalog recalibration and engine repair tools.",
+    "Added Spanish voice rollout through the remote catalog.",
+    "Added Help, onboarding, update checking, and issue-reporting support."
+  ]
+}
