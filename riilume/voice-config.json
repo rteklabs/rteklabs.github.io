@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": 1,
+  "catalogVersion": 2,
   "enabledLocales": [
     "en-US",
     "en-GB",
@@ -18,9 +18,11 @@
     "ko-KR",
     "th-TH",
     "vi-VN",
-    "id-ID"
+    "id-ID",
+    "es-ES",
+    "es-MX"
   ],
   "disabledVoices": [],
-  "notice": "",
+  "notice": "Test rollout: Spanish voices enabled.",
   "engineAction": "none"
 }
