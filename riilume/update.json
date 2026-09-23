@@ -9,5 +9,13 @@
     "Added remote voice-catalog recalibration and engine repair tools.",
     "Added Spanish voice rollout through the remote catalog.",
     "Added Help, onboarding, update checking, and issue-reporting support."
-  ]
+  ],
+  "welcomeAnnouncement": {
+    "revision": 1,
+    "enabled": true,
+    "title": "Spanish voices are now available",
+    "message": "Spanish (Spain and Mexico) has been added to Riilume's remote voice catalog. Recalibrate the Voice Engine to refresh your available voices.",
+    "linkText": "View What's New",
+    "linkUrl": ""
+  }
 }
