@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": 1,
+  "enabledLocales": [
+    "en-US",
+    "en-GB",
+    "en-AU",
+    "en-MY",
+    "en-SG",
+    "en-PH",
+    "en-IN",
+    "ms-MY",
+    "zh-CN",
+    "zh-TW",
+    "zh-SG",
+    "zh-HK",
+    "ja-JP",
+    "ko-KR",
+    "th-TH",
+    "vi-VN",
+    "id-ID"
+  ],
+  "disabledVoices": [],
+  "notice": "",
+  "engineAction": "none"
+}
