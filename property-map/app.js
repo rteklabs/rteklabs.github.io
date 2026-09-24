@@ -76,9 +76,14 @@ function fillCategories() { const s=$('poiCategory');Object.keys(categories).for
 
 function clearMarkers() { if(homeMarker)homeMarker.setMap(null);poiMarkers.forEach(m=>m.setMap(null));homeMarker=null;poiMarkers=[]; }
 function roundPinIcon(size,fill,stroke) {
-  const c=size/2,r=size/2-2;
-  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'"><defs><filter id="s" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#0f172a" flood-opacity=".28"/></filter></defs><circle cx="'+c+'" cy="'+c+'" r="'+r+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="2" filter="url(#s)"/></svg>';
-  return {url:'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg),scaledSize:new google.maps.Size(size,size),anchor:new google.maps.Point(c,c),labelOrigin:new google.maps.Point(c,c)};
+  return {
+    path: google.maps.SymbolPath.CIRCLE,
+    scale: size/2,
+    fillColor: fill,
+    fillOpacity: 1,
+    strokeColor: stroke,
+    strokeWeight: 2
+  };
 }
 function popup(p) { return '<strong>'+esc(p.name||'Place')+'</strong><br>'+esc(p.address||'')+(p.note?'<br>'+esc(p.note):'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(p))+'">Open in Google Maps ↗</a>'; }
 function renderMap(fit) {
