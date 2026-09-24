@@ -17,7 +17,7 @@ const $ = id => document.getElementById(id);
 const emptyState = () => ({version:2,title:'',client:'',home:{name:'',address:'',lat:null,lng:null},intro:'',pois:[]});
 let state = emptyState(), lang = 'en', map = null, infoWindow = null, homeMarker = null;
 let poiMarkers = [], selectedMarker = null, selectedIndex = -1, results = [], searchRun = 0;
-let pinTarget = null, repairIndex = null, readOnly = false;
+let pinTarget = null, repairIndex = null, readOnly = false, currentMapId = null;
 const livePlaces = new Map(); // Only in memory. Shared links/drafts keep IDs, not Google place data.
 
 function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
@@ -70,6 +70,41 @@ function portable() {
 }
 function saveDraft() { try { localStorage.setItem('propertySpotMapDraft',JSON.stringify(portable())); } catch (_) {} }
 function loadDraft() { try { const d=JSON.parse(localStorage.getItem('propertySpotMapDraft')); if(d&&d.home&&Array.isArray(d.pois)) state=d; } catch (_) {} }
+function savedMaps() { try { const x=JSON.parse(localStorage.getItem('propertySpotMapLibrary')||'[]'); return Array.isArray(x)?x:[]; } catch (_) { return []; } }
+function loadSavedMap(id) {
+  const record=savedMaps().find(x=>x&&x.id===id);
+  if(!record||!record.data||!record.data.home||!Array.isArray(record.data.pois)) return false;
+  state=record.data;currentMapId=id;return true;
+}
+function makeMapId() { return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function saveToDashboard() {
+  syncFromForm();
+  const home=homeData();
+  if(!state.title&&!home.name){status('homeStatus','Add a map title or property name before saving.','warn');return;}
+  const list=savedMaps(),now=new Date().toISOString();
+  if(!currentMapId) currentMapId=makeMapId();
+  const existing=list.find(x=>x.id===currentMapId);
+  const record={
+    id:currentMapId,
+    title:state.title||home.name||'Untitled map',
+    client:state.client||'',
+    homeName:home.name||'',
+    homeAddress:home.address||'',
+    poiCount:state.pois.length,
+    createdAt:existing&&existing.createdAt?existing.createdAt:now,
+    updatedAt:now,
+    data:portable()
+  };
+  const i=list.findIndex(x=>x.id===currentMapId);
+  if(i>=0) list[i]=record; else list.unshift(record);
+  try {
+    localStorage.setItem('propertySpotMapLibrary',JSON.stringify(list));
+    localStorage.removeItem('propertySpotMapDraft');
+    location.href='dashboard.html';
+  } catch (_) {
+    status('homeStatus','Could not save this map in the browser.','warn');
+  }
+}
 function syncFromForm() { state.title=$('mapTitle').value.trim();state.client=$('clientName').value.trim();state.intro=$('intro').value.trim();if(!state.home.googlePlaceId){state.home.name=$('homeName').value.trim();state.home.address=$('homeAddress').value.trim();state.home.googleUrl=mapsLink($('homeGoogleUrl').value.trim());}saveDraft(); }
 function syncToForm() { const home=homeData();$('mapTitle').value=state.title||'';$('clientName').value=state.client||'';$('homeName').value=home.name||'';$('homeAddress').value=home.address||'';$('homeGoogleUrl').value=state.home.googleUrl||'';$('intro').value=state.intro||''; }
 function fillCategories() { const s=$('poiCategory');Object.keys(categories).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=categories[k].icon+' '+categories[k].en;s.appendChild(o);}); }
@@ -205,7 +240,7 @@ function share() {if(homeData().lat==null){status('homeStatus','Set the main pro
 function copy(text) {if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);const input=document.createElement('textarea');input.value=text;document.body.appendChild(input);input.select();document.execCommand('copy');input.remove();return Promise.resolve();}
 function downloadJson() {syncFromForm();const blob=new Blob([JSON.stringify(portable(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=((homeData().name||'property-map').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').toLowerCase()||'property-map')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
 function importJson(file) {const reader=new FileReader();reader.onload=async()=>{try{const d=JSON.parse(reader.result);if(!d.home||!Array.isArray(d.pois))throw new Error();state=d;livePlaces.clear();saveDraft();renderAll(true);await hydratePlaces();status('homeStatus','Map imported.','ok');}catch(e){status('homeStatus','Invalid map JSON.','warn');}};reader.readAsText(file);}
-function newMap() {if(!confirm('Start a new map? Your current draft will be cleared from this browser.'))return;state=emptyState();livePlaces.clear();pinTarget=null;repairIndex=null;results=[];selectedIndex=-1;if(selectedMarker){selectedMarker.setMap(null);selectedMarker=null;}renderSearchResults();$('placeSearchInput').value='';status('placeSearchStatus','');localStorage.removeItem('propertySpotMapDraft');history.replaceState(null,'',location.pathname+'?edit=1');renderAll(false);if(map){map.setCenter({lat:3.159, lng:101.692});map.setZoom(12);}}
+function newMap() {if(!confirm('Start a new map? Your current draft will be cleared from this browser.'))return;state=emptyState();currentMapId=null;livePlaces.clear();pinTarget=null;repairIndex=null;results=[];selectedIndex=-1;if(selectedMarker){selectedMarker.setMap(null);selectedMarker=null;}renderSearchResults();$('placeSearchInput').value='';status('placeSearchStatus','');localStorage.removeItem('propertySpotMapDraft');history.replaceState(null,'',location.pathname+'?new=1&edit=1');renderAll(false);if(map){map.setCenter({lat:3.159, lng:101.692});map.setZoom(12);}}
 async function loadDemo() {
   state={version:2,title:'Impian Villas — 买菜 & Daily Convenience',client:'China family',home:{name:'Impian Villas',address:'Jalan Kiara 3, Mont Kiara, Kuala Lumpur',lat:null,lng:null},intro:'For daily cooking and groceries, there are both convenient supermarkets and traditional fresh markets within a short drive. 点击地点可在地图查看，Google Maps 按钮可直接导航。',pois:[]};renderAll(false);
   const items=[['market','Kepong Baru Morning Market','Traditional wet market / 早市 — fresh produce.'],['market','ShunYuan Fresh Market','Fresh produce for everyday cooking.'],['grocery','Jaya Grocer 163 Retail Park','Convenient Mont Kiara supermarket.'],['market','Pasar Besar TTDI','Traditional wet market with vegetables, fish and meat.'],['chinese','Wishmart Chinese Supermarket Bandar Menjalara','China-brand groceries and familiar ingredients.']];
@@ -217,7 +252,7 @@ async function loadDemo() {
 function openGoogle(name,address) {const q=[name,address].filter(Boolean).join(' ');if(q)window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q),'_blank','noopener,noreferrer');}
 
 function bindUi() {
-  $('setHomeBtn').onclick=setHome;$('addPoiBtn').onclick=addPoi;$('clearPoiBtn').onclick=clearPoi;$('shareBtn').onclick=share;$('exportBtn').onclick=downloadJson;$('newBtn').onclick=newMap;$('demoBtn').onclick=loadDemo;
+  $('setHomeBtn').onclick=setHome;$('addPoiBtn').onclick=addPoi;$('clearPoiBtn').onclick=clearPoi;$('saveDashboardBtn').onclick=saveToDashboard;$('shareBtn').onclick=share;$('exportBtn').onclick=downloadJson;$('newBtn').onclick=newMap;$('demoBtn').onclick=loadDemo;
   $('findPlacesBtn').onclick=findPlaces;$('placeSearchInput').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();findPlaces();}};
   $('searchHomeBtn').onclick=()=>openGoogle($('homeName').value.trim(),$('homeAddress').value.trim());
   $('searchPoiBtn').onclick=()=>openGoogle($('poiName').value.trim()||$('placeSearchInput').value.trim(),$('poiAddress').value.trim()||homeData().address||'Kuala Lumpur');
@@ -248,8 +283,12 @@ function loadGoogle() {
   const script=document.createElement('script');script.async=true;script.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=weekly&libraries=places&loading=async&callback=propertyMapReady';script.onerror=()=>{$('mapPlaceholder').textContent='Could not load Google Maps. Check the API key and connection.';};document.head.appendChild(script);
 }
 function boot() {
-  fillCategories();if(location.hash.length>1){try{state=decodeState(location.hash.slice(1));}catch(e){loadDraft();}}else loadDraft();
-  readOnly=location.hash.length>1&&new URLSearchParams(location.search).get('edit')!=='1';if(readOnly){$('app').classList.add('readOnly');$('modeLabel').textContent='Client view';}
+  fillCategories();const params=new URLSearchParams(location.search);
+  if(location.hash.length>1){try{state=decodeState(location.hash.slice(1));}catch(e){loadDraft();}}
+  else if(params.get('map')){if(!loadSavedMap(params.get('map')))loadDraft();}
+  else if(params.get('new')==='1'){state=emptyState();currentMapId=null;localStorage.removeItem('propertySpotMapDraft');}
+  else loadDraft();
+  readOnly=location.hash.length>1&&params.get('edit')!=='1';if(readOnly){$('app').classList.add('readOnly');$('modeLabel').textContent='Client view';}
   else $('modeLabel').textContent='Agent builder';bindUi();renderAll(false);loadGoogle();
 }
 boot();
