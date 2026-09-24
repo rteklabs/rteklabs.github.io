@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#405a73" />
+  <title>Property Spot Map</title>
+  <link rel="preconnect" href="https://maps.googleapis.com">
+  <link rel="stylesheet" href="style.css?v=6">
+</head>
+<body>
+<div class="shell" id="viewerApp">
+  <div class="topbar">
+    <div class="brand"><div class="brandmark">P</div><div>Property Spot Map<div class="small">Client view</div></div></div>
+    <div class="row"><button class="btn ghost tiny" id="langBtn">中文</button><button class="btn tiny" id="copyLinkBtn">Copy link</button></div>
+  </div>
+  <main class="panel mapwrap readOnlyViewer">
+    <div id="map"><div class="mapPlaceholder" id="mapPlaceholder">Loading property map…</div></div>
+    <div class="clientbar">
+      <div class="pill"><strong id="clientTopTitle">Property Spot Map</strong><div class="small" id="clientTopRef"></div></div>
+      <div class="pill hideMobile"><span class="small" id="clientCount">0 places</span></div>
+    </div>
+    <section class="clientSheet" id="clientSheet">
+      <h1 class="clientTitle" id="clientHomeName">Property</h1>
+      <div class="clientAddress" id="clientHomeAddress"></div>
+      <div class="summary" id="clientIntro"></div>
+      <div class="clientPoiList" id="clientPoiList"></div>
+    </section>
+  </main>
+  <footer class="siteFooter"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></footer>
+</div>
+<script src="config.js"></script>
+<script src="view.js?v=1"></script>
+</body>
+</html>
