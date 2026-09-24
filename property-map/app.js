@@ -19,6 +19,7 @@ let state = emptyState(), lang = 'en', map = null, infoWindow = null, homeMarker
 let poiMarkers = [], selectedMarker = null, selectedIndex = -1, results = [], searchRun = 0;
 let pinTarget = null, repairIndex = null, readOnly = false, currentMapId = null;
 const livePlaces = new Map(); // Only in memory. Shared links/drafts keep IDs, not Google place data.
+const DATA_API = window.PROPERTY_MAP_DATA_API || '';
 
 function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
 function status(id,message,kind) { const el=$(id); el.textContent=message||''; el.className='status'+(kind?' '+kind:''); }
@@ -86,13 +87,49 @@ function makeMapId(existing) {
   }
   throw new Error('Could not create a unique map ID.');
 }
-function saveToDashboard() {
+function jsonp(params) {
+  return new Promise((resolve,reject)=>{
+    if(!DATA_API){reject(new Error('Publishing service is not configured.'));return;}
+    const cb='psmcb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const timer=setTimeout(()=>{cleanup();reject(new Error('Publishing service timed out.'));},12000);
+    const script=document.createElement('script');
+    function cleanup(){clearTimeout(timer);delete window[cb];script.remove();}
+    window[cb]=value=>{cleanup();resolve(value);};
+    script.onerror=()=>{cleanup();reject(new Error('Could not reach publishing service.'));};
+    const q=new URLSearchParams({...params,callback:cb});
+    script.src=DATA_API+'?'+q.toString();document.head.appendChild(script);
+  });
+}
+function adminWriteKey() {
+  let key=localStorage.getItem('propertySpotMapWriteKey')||'';
+  if(key)return key;
+  key=prompt('Enter your Property Spot Map WRITE_KEY. It will be stored only in this browser.')||'';
+  key=key.trim();if(key)localStorage.setItem('propertySpotMapWriteKey',key);
+  return key;
+}
+async function publishMap(record) {
+  if(!DATA_API) throw new Error('Publishing service is not configured.');
+  const key=adminWriteKey();if(!key)throw new Error('WRITE_KEY is required to publish.');
+  const payload={action:'save',key,map:record.data};
+  // no-cors keeps the write key out of the URL. Apps Script receives the JSON body.
+  await fetch(DATA_API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+  // Because the POST response is opaque cross-origin, verify the save through the public JSONP reader.
+  let last=null;
+  for(let i=0;i<6;i++){
+    await new Promise(r=>setTimeout(r,i?700:350));
+    last=await jsonp({id:record.id});
+    if(last&&last.ok&&last.map&&last.map.id===record.id)return last.map;
+  }
+  throw new Error(last&&last.error?last.error:'The map could not be verified after publishing.');
+}
+async function saveToDashboard() {
   syncFromForm();
   const home=homeData();
   if(!state.title&&!home.name){status('homeStatus','Add a map title or property name before saving.','warn');return;}
   const list=savedMaps(),now=new Date().toISOString();
   if(!currentMapId) currentMapId=makeMapId(list);
   const existing=list.find(x=>x.id===currentMapId);
+  const publishedData={...portable(),id:currentMapId,version:3};
   const record={
     id:currentMapId,
     title:state.title||home.name||'Untitled map',
@@ -102,16 +139,21 @@ function saveToDashboard() {
     poiCount:state.pois.length,
     createdAt:existing&&existing.createdAt?existing.createdAt:now,
     updatedAt:now,
-    data:portable()
+    publishedAt:now,
+    data:publishedData
   };
-  const i=list.findIndex(x=>x.id===currentMapId);
-  if(i>=0) list[i]=record; else list.unshift(record);
+  const btn=$('saveDashboardBtn'),old=btn.textContent;btn.disabled=true;btn.textContent='Publishing…';
   try {
+    await publishMap(record);
+    const i=list.findIndex(x=>x.id===currentMapId);
+    if(i>=0) list[i]=record; else list.unshift(record);
     localStorage.setItem('propertySpotMapLibrary',JSON.stringify(list));
     localStorage.removeItem('propertySpotMapDraft');
     location.href='dashboard.html';
-  } catch (_) {
-    status('homeStatus','Could not save this map in the browser.','warn');
+  } catch (e) {
+    if(/Unauthorized/i.test(e.message||'')) localStorage.removeItem('propertySpotMapWriteKey');
+    status('homeStatus','Publish failed: '+e.message,'warn');
+    btn.disabled=false;btn.textContent=old;
   }
 }
 function syncFromForm() { state.title=$('mapTitle').value.trim();state.client=$('clientName').value.trim();state.intro=$('intro').value.trim();if(!state.home.googlePlaceId){state.home.name=$('homeName').value.trim();state.home.address=$('homeAddress').value.trim();state.home.googleUrl=mapsLink($('homeGoogleUrl').value.trim());}saveDraft(); }
@@ -244,8 +286,8 @@ function pinAt(point) {
 
 function encodeState() {syncFromForm();return btoa(Array.from(new TextEncoder().encode(JSON.stringify(portable())),b=>String.fromCharCode(b)).join('')).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 function decodeState(s) {const b=atob(s.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-s.length%4)%4));const data=JSON.parse(new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0))));if(!data||!data.home||!Array.isArray(data.pois))throw new Error('Invalid map');return data;}
-function links() {const base=location.origin+location.pathname,hash=encodeState();return {client:base+'#'+hash,edit:base+'?edit=1#'+hash};}
-function share() {if(homeData().lat==null){status('homeStatus','Set the main property first.','warn');return;}const u=links();$('clientUrlBox').textContent=u.client;$('editUrlBox').textContent=u.edit;$('shareModal').classList.add('open');}
+function links() {const root=location.origin+location.pathname.replace(/index\.html$/,'');if(currentMapId)return {client:root+'view.html?id='+encodeURIComponent(currentMapId),edit:root+'index.html?map='+encodeURIComponent(currentMapId)+'&edit=1'};const base=location.origin+location.pathname,hash=encodeState();return {client:base+'#'+hash,edit:base+'?edit=1#'+hash};}
+function share() {if(homeData().lat==null){status('homeStatus','Set the main property first.','warn');return;}if(!currentMapId){status('homeStatus','Save & Publish this map first to create its short client link.','warn');return;}const u=links();$('clientUrlBox').textContent=u.client;$('editUrlBox').textContent=u.edit;$('shareModal').classList.add('open');}
 function copy(text) {if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);const input=document.createElement('textarea');input.value=text;document.body.appendChild(input);input.select();document.execCommand('copy');input.remove();return Promise.resolve();}
 function downloadJson() {syncFromForm();const blob=new Blob([JSON.stringify(portable(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=((homeData().name||'property-map').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').toLowerCase()||'property-map')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
 function importJson(file) {const reader=new FileReader();reader.onload=async()=>{try{const d=JSON.parse(reader.result);if(!d.home||!Array.isArray(d.pois))throw new Error();state=d;livePlaces.clear();saveDraft();renderAll(true);await hydratePlaces();status('homeStatus','Map imported.','ok');}catch(e){status('homeStatus','Invalid map JSON.','warn');}};reader.readAsText(file);}
