@@ -118,7 +118,7 @@ async function publishMap(record) {
   for(let i=0;i<6;i++){
     await new Promise(r=>setTimeout(r,i?700:350));
     last=await jsonp({id:record.id});
-    if(last&&last.ok&&last.map&&last.map.id===record.id)return last.map;
+    if(last&&last.ok&&last.map&&last.map.id===record.id&&last.map.publishedAt===record.data.publishedAt)return last.map;
   }
   throw new Error(last&&last.error?last.error:'The map could not be verified after publishing.');
 }
@@ -129,7 +129,7 @@ async function saveToDashboard() {
   const list=savedMaps(),now=new Date().toISOString();
   if(!currentMapId) currentMapId=makeMapId(list);
   const existing=list.find(x=>x.id===currentMapId);
-  const publishedData={...portable(),id:currentMapId,version:3};
+  const publishedData={...portable(),id:currentMapId,version:3,publishedAt:now};
   const record={
     id:currentMapId,
     title:state.title||home.name||'Untitled map',
