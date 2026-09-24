@@ -76,13 +76,22 @@ function loadSavedMap(id) {
   if(!record||!record.data||!record.data.home||!Array.isArray(record.data.pois)) return false;
   state=record.data;currentMapId=id;return true;
 }
-function makeMapId() { return 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function makeMapId(existing) {
+  const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const used=new Set((existing||[]).map(x=>x&&x.id).filter(Boolean));
+  for(let attempt=0;attempt<20;attempt++){
+    const bytes=new Uint8Array(8);crypto.getRandomValues(bytes);
+    let id='psm_';for(const b of bytes)id+=alphabet[b%alphabet.length];
+    if(!used.has(id))return id;
+  }
+  throw new Error('Could not create a unique map ID.');
+}
 function saveToDashboard() {
   syncFromForm();
   const home=homeData();
   if(!state.title&&!home.name){status('homeStatus','Add a map title or property name before saving.','warn');return;}
   const list=savedMaps(),now=new Date().toISOString();
-  if(!currentMapId) currentMapId=makeMapId();
+  if(!currentMapId) currentMapId=makeMapId(list);
   const existing=list.find(x=>x.id===currentMapId);
   const record={
     id:currentMapId,
