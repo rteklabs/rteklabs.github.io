@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#111827" />
   <title>Property Spot Map</title>
   <link rel="preconnect" href="https://maps.googleapis.com">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 <div class="shell" id="app">
@@ -54,6 +54,11 @@
         <div class="poiList" id="poiEditList"></div>
       </div>
       <div class="section">
+        <h3 style="font-size:15px;margin-bottom:5px">Finish</h3>
+        <p class="hint">Save this client map to your dashboard when you are done editing.</p>
+        <div class="actions"><button class="btn primary" id="saveDashboardBtn">Save &amp; back to dashboard</button></div>
+      </div>
+      <div class="section">
         <h3 style="font-size:15px;margin-bottom:5px">Share</h3>
         <p class="hint">The client link opens in clean read-only mode. The edit link re-opens the same map in builder mode.</p>
         <div class="actions"><button class="btn primary" id="shareBtn">Create share links</button><button class="btn ghost" id="exportBtn">Export JSON</button><label class="btn ghost" style="display:inline-flex;align-items:center"><input type="file" id="importFile" accept="application/json" style="display:none">Import JSON</label><button class="btn ghost danger" id="newBtn">New map</button></div>
@@ -88,6 +93,6 @@
   </div>
 </div>
 <script src="config.js"></script>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>
