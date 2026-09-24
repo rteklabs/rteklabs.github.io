@@ -17,7 +17,7 @@
   <div class="layout">
     <aside class="panel editor">
       <h2>Build a client map</h2>
-      <p class="hint">Property first, then add the places that matter to this client. Everything stays in the share link — no database.</p>
+      <p class="hint">Property first, then add the places that matter to this client. Published maps are saved as tiny JSON records in your Google Drive.</p>
       <div class="section" style="border-top:0;padding-top:0;margin-top:12px">
         <div class="grid2">
           <div><label class="label">Map title</label><input class="field" id="mapTitle" placeholder="e.g. Impian Villas — Daily Convenience"></div>
@@ -55,12 +55,12 @@
       </div>
       <div class="section">
         <h3 style="font-size:15px;margin-bottom:5px">Finish</h3>
-        <p class="hint">Save this client map to your dashboard when you are done editing.</p>
-        <div class="actions"><button class="btn primary" id="saveDashboardBtn">Save &amp; back to dashboard</button></div>
+        <p class="hint">Save and publish this client map when you are done editing.</p>
+        <div class="actions"><button class="btn primary" id="saveDashboardBtn">Save &amp; Publish</button></div>
       </div>
       <div class="section">
         <h3 style="font-size:15px;margin-bottom:5px">Share</h3>
-        <p class="hint">The client link opens in clean read-only mode. The edit link re-opens the same map in builder mode.</p>
+        <p class="hint">The client link uses the permanent map ID. Publish first, then copy or open the short link.</p>
         <div class="actions"><button class="btn primary" id="shareBtn">Create share links</button><button class="btn ghost" id="exportBtn">Export JSON</button><label class="btn ghost" style="display:inline-flex;align-items:center"><input type="file" id="importFile" accept="application/json" style="display:none">Import JSON</label><button class="btn ghost danger" id="newBtn">New map</button></div>
         <div class="hint" style="margin-top:10px">Draft is saved automatically on this browser.</div>
       </div>
@@ -93,6 +93,7 @@
   </div>
 </div>
 <script src="config.js"></script>
-<script src="app.js?v=7"></script>
+<script src="api-config.js"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>
