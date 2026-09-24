@@ -75,12 +75,17 @@ function syncToForm() { const home=homeData();$('mapTitle').value=state.title||'
 function fillCategories() { const s=$('poiCategory');Object.keys(categories).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=categories[k].icon+' '+categories[k].en;s.appendChild(o);}); }
 
 function clearMarkers() { if(homeMarker)homeMarker.setMap(null);poiMarkers.forEach(m=>m.setMap(null));homeMarker=null;poiMarkers=[]; }
+function roundPinIcon(size,fill,stroke) {
+  const c=size/2,r=size/2-2;
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'"><defs><filter id="s" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#0f172a" flood-opacity=".28"/></filter></defs><circle cx="'+c+'" cy="'+c+'" r="'+r+'" fill="'+fill+'" stroke="'+stroke+'" stroke-width="2" filter="url(#s)"/></svg>';
+  return {url:'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg),scaledSize:new google.maps.Size(size,size),anchor:new google.maps.Point(c,c),labelOrigin:new google.maps.Point(c,c)};
+}
 function popup(p) { return '<strong>'+esc(p.name||'Place')+'</strong><br>'+esc(p.address||'')+(p.note?'<br>'+esc(p.note):'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(p))+'">Open in Google Maps ↗</a>'; }
 function renderMap(fit) {
   if(!map) return;clearMarkers();const bounds=new google.maps.LatLngBounds();let count=0;
-  const home=homeData();if(home.lat!=null&&home.lng!=null){const pos={lat:home.lat,lng:home.lng};homeMarker=new google.maps.Marker({map,position:pos,title:home.name||'Property',label:'⌂'});homeMarker.addListener('click',()=>{infoWindow.setContent(popup({...home,googlePlaceId:state.home.googlePlaceId,googleUrl:state.home.googleUrl}));infoWindow.open(map,homeMarker);});bounds.extend(pos);count++;}
+  const home=homeData();if(home.lat!=null&&home.lng!=null){const pos={lat:home.lat,lng:home.lng};homeMarker=new google.maps.Marker({map,position:pos,title:home.name||'Property',icon:roundPinIcon(36,'#111827','#ffffff'),label:{text:'⌂',color:'#ffffff',fontSize:'17px',fontWeight:'800'}});homeMarker.addListener('click',()=>{infoWindow.setContent(popup({...home,googlePlaceId:state.home.googlePlaceId,googleUrl:state.home.googleUrl}));infoWindow.open(map,homeMarker);});bounds.extend(pos);count++;}
   state.pois.forEach((raw,i)=>{const p=poiData(raw);if(p.lat==null||p.lng==null)return;const pos={lat:p.lat,lng:p.lng},cat=categories[p.category]||categories.other;
-    const marker=new google.maps.Marker({map,position:pos,title:p.name,label:{text:cat.icon,fontSize:'16px'}});
+    const marker=new google.maps.Marker({map,position:pos,title:p.name,icon:roundPinIcon(32,'#ffffff','#ffffff'),label:{text:cat.icon,fontSize:'16px'}});
     marker.addListener('click',()=>{infoWindow.setContent(popup(p));infoWindow.open(map,marker);});poiMarkers[i]=marker;bounds.extend(pos);count++;
   });
   if(fit&&count){if(count===1){map.setCenter(bounds.getCenter());map.setZoom(15);}else map.fitBounds(bounds,52);}
