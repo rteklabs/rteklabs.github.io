@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <title>Property Spot Map</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://tile.openstreetmap.org">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell" id="app">
+  <div class="topbar">
+    <div class="brand"><div class="brandmark">P</div><div>Property Spot Map<div class="small" id="modeLabel">Agent builder</div></div></div>
+    <div class="row"><button class="btn ghost tiny clientOnly" id="langBtn">中文</button><button class="btn tiny clientOnly" id="copyClientUrlBtn">Copy link</button></div>
+  </div>
+  <div class="layout">
+    <aside class="panel editor">
+      <h2>Build a client map</h2>
+      <p class="hint">Property first, then add the places that matter to this client. Everything stays in the share link — no database.</p>
+      <div class="section" style="border-top:0;padding-top:0;margin-top:12px">
+        <div class="grid2">
+          <div><label class="label">Map title</label><input class="field" id="mapTitle" placeholder="e.g. Impian Villas — Daily Convenience"></div>
+          <div><label class="label">Client / reference</label><input class="field" id="clientName" placeholder="Optional"></div>
+        </div>
+        <div style="margin-top:10px"><label class="label">Main property</label><input class="field" id="homeName" placeholder="Impian Villas"></div>
+        <div style="margin-top:10px"><label class="label">Main address</label><input class="field" id="homeAddress" placeholder="Jalan Kiara 3, Mont Kiara, Kuala Lumpur"></div>
+        <div style="margin-top:10px"><label class="label">Short note for client</label><textarea class="field" id="intro" placeholder="Why this location works for this client…"></textarea></div>
+        <div class="actions"><button class="btn primary" id="setHomeBtn">Set / find property</button><button class="btn ghost" id="demoBtn">Load Impian Villas demo</button></div>
+        <div class="status" id="homeStatus"></div>
+      </div>
+      <div class="section">
+        <h3 style="font-size:15px;margin-bottom:10px">Add point of interest</h3>
+        <div class="poiForm">
+          <div class="grid2">
+            <div><label class="label">Category</label><select class="field" id="poiCategory"></select></div>
+            <div><label class="label">Place name</label><input class="field" id="poiName" placeholder="Kepong Baru Morning Market"></div>
+          </div>
+          <div style="margin-top:9px"><label class="label">Address / search phrase</label><input class="field" id="poiAddress" placeholder="55 Lorong Bangau 2, Kepong Baru, Kuala Lumpur"></div>
+          <div style="margin-top:9px"><label class="label">Client note</label><input class="field" id="poiNote" placeholder="Traditional Chinese wet market; fresh vegetables, pork, fish…"></div>
+          <div class="actions"><button class="btn primary" id="addPoiBtn">Add to map</button><button class="btn ghost" id="clearPoiBtn">Clear</button></div>
+          <div class="status" id="poiStatus"></div>
+        </div>
+        <div class="poiList" id="poiEditList"></div>
+      </div>
+      <div class="section">
+        <h3 style="font-size:15px;margin-bottom:5px">Share</h3>
+        <p class="hint">The client link opens in clean read-only mode. The edit link re-opens the same map in builder mode.</p>
+        <div class="actions"><button class="btn primary" id="shareBtn">Create share links</button><button class="btn ghost" id="exportBtn">Export JSON</button><label class="btn ghost" style="display:inline-flex;align-items:center"><input type="file" id="importFile" accept="application/json" style="display:none">Import JSON</label><button class="btn ghost danger" id="newBtn">New map</button></div>
+        <div class="hint" style="margin-top:10px">Draft is saved automatically on this browser.</div>
+      </div>
+    </aside>
+    <main class="panel mapwrap">
+      <div id="map"></div>
+      <div class="clientbar clientOnly">
+        <div class="pill"><strong id="clientTopTitle">Property Spot Map</strong><div class="small" id="clientTopRef"></div></div>
+        <div class="pill hideMobile"><span class="small" id="clientCount">0 places</span></div>
+      </div>
+      <section class="clientSheet clientOnly" id="clientSheet">
+        <h1 class="clientTitle" id="clientHomeName">Property</h1>
+        <div class="clientAddress" id="clientHomeAddress"></div>
+        <div class="summary" id="clientIntro"></div>
+        <div class="clientPoiList" id="clientPoiList"></div>
+      </section>
+    </main>
+  </div>
+</div>
+<div class="modal" id="shareModal">
+  <div class="modalCard">
+    <h2 style="font-size:19px;margin-bottom:5px">Share this map</h2>
+    <p class="hint">Client link is presentation mode. Keep the edit link for yourself.</p>
+    <label class="label">Client link</label><div class="shareBox" id="clientUrlBox"></div>
+    <div class="actions"><button class="btn primary" data-copy="client">Copy client link</button><button class="btn ghost" data-open="client">Open client view</button></div>
+    <div class="divider"></div>
+    <label class="label">Edit link</label><div class="shareBox" id="editUrlBox"></div>
+    <div class="actions"><button class="btn" data-copy="edit">Copy edit link</button><button class="btn ghost" data-open="edit">Open edit view</button><button class="btn ghost" id="closeShareBtn">Close</button></div>
+  </div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="app.js"></script>
+</body>
+</html>
