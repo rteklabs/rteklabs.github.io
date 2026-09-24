@@ -27,8 +27,9 @@
         </div>
         <div style="margin-top:10px"><label class="label">Main property</label><input class="field" id="homeName" placeholder="Impian Villas"></div>
         <div style="margin-top:10px"><label class="label">Main address</label><input class="field" id="homeAddress" placeholder="Jalan Kiara 3, Mont Kiara, Kuala Lumpur"></div>
+        <div style="margin-top:10px"><label class="label">Google Maps link (optional)</label><input class="field" id="homeGoogleUrl" type="url" placeholder="Paste the selected place's Google Maps link"></div>
         <div style="margin-top:10px"><label class="label">Short note for client</label><textarea class="field" id="intro" placeholder="Why this location works for this client…"></textarea></div>
-        <div class="actions"><button class="btn primary" id="setHomeBtn">Set / find property</button><button class="btn ghost" id="demoBtn">Load Impian Villas demo</button></div>
+        <div class="actions"><button class="btn ghost" id="searchHomeBtn">Search Google Maps ↗</button><button class="btn primary" id="setHomeBtn">Set / find property</button><button class="btn ghost" id="pickHomeBtn">Pin on map</button><button class="btn ghost" id="demoBtn">Load Impian Villas demo</button></div>
         <div class="status" id="homeStatus"></div>
       </div>
       <div class="section">
@@ -39,8 +40,10 @@
             <div><label class="label">Place name</label><input class="field" id="poiName" placeholder="Kepong Baru Morning Market"></div>
           </div>
           <div style="margin-top:9px"><label class="label">Address / search phrase</label><input class="field" id="poiAddress" placeholder="55 Lorong Bangau 2, Kepong Baru, Kuala Lumpur"></div>
+          <div style="margin-top:9px"><label class="label">Google Maps link (optional)</label><input class="field" id="poiGoogleUrl" type="url" placeholder="Paste the selected place's Google Maps link"></div>
           <div style="margin-top:9px"><label class="label">Client note</label><input class="field" id="poiNote" placeholder="Traditional Chinese wet market; fresh vegetables, pork, fish…"></div>
-          <div class="actions"><button class="btn primary" id="addPoiBtn">Add to map</button><button class="btn ghost" id="clearPoiBtn">Clear</button></div>
+          <div class="actions"><button class="btn ghost" id="searchPoiBtn">Search Google Maps ↗</button><button class="btn primary" id="addPoiBtn">Add to map</button><button class="btn ghost" id="pickPoiBtn">Pin on map</button><button class="btn ghost" id="clearPoiBtn">Clear</button></div>
+          <p class="hint">Search in Google Maps, select the place, then copy its link here. A full Maps URL can supply the pin; short share links may need a place name or a pin on the map.</p>
           <div class="status" id="poiStatus"></div>
         </div>
         <div class="poiList" id="poiEditList"></div>
