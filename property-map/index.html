@@ -34,11 +34,17 @@
       </div>
       <div class="section">
         <h3 style="font-size:15px;margin-bottom:10px">Add point of interest</h3>
+        <div class="placeSearch">
+          <label class="label" for="poiCategory">Category for the next place</label><select class="field" id="poiCategory"></select>
+          <label class="label" for="placeSearchInput">Find a place and add it in one click</label>
+          <div class="searchRow"><input class="field" id="placeSearchInput" placeholder="e.g. Kepong Baru Morning Market" autocomplete="off"><button class="btn primary" id="findPlacesBtn">Find places</button></div>
+          <div class="status" id="placeSearchStatus" role="status" aria-live="polite"></div>
+          <div id="placeSearchResults" class="searchResults"></div>
+          <p class="hint">Place results from © OpenStreetMap contributors. Search when ready, then press Add beside the right result.</p>
+        </div>
         <div class="poiForm">
-          <div class="grid2">
-            <div><label class="label">Category</label><select class="field" id="poiCategory"></select></div>
-            <div><label class="label">Place name</label><input class="field" id="poiName" placeholder="Kepong Baru Morning Market"></div>
-          </div>
+          <label class="label">Or add a place manually / with a Google Maps link</label>
+          <div style="margin-top:9px"><label class="label">Place name</label><input class="field" id="poiName" placeholder="Kepong Baru Morning Market"></div>
           <div style="margin-top:9px"><label class="label">Address / search phrase</label><input class="field" id="poiAddress" placeholder="55 Lorong Bangau 2, Kepong Baru, Kuala Lumpur"></div>
           <div style="margin-top:9px"><label class="label">Google Maps link (optional)</label><input class="field" id="poiGoogleUrl" type="url" placeholder="Paste the selected place's Google Maps link"></div>
           <div style="margin-top:9px"><label class="label">Client note</label><input class="field" id="poiNote" placeholder="Traditional Chinese wet market; fresh vegetables, pork, fish…"></div>
