@@ -1,0 +1,31 @@
+{
+  "id": "psm_DEMO0001",
+  "version": 3,
+  "title": "Impian Villas — Daily Convenience",
+  "client": "Demo client",
+  "home": {
+    "name": "Impian Villas",
+    "address": "Jalan Kiara 3, Mont Kiara, Kuala Lumpur",
+    "lat": 3.1739,
+    "lng": 101.6528
+  },
+  "intro": "Demo published map using a short ID-based URL. This record is loaded from a JSON file instead of storing the whole map in the URL.",
+  "pois": [
+    {
+      "category": "grocery",
+      "name": "163 Retail Park",
+      "address": "Mont Kiara, Kuala Lumpur",
+      "lat": 3.1699,
+      "lng": 101.6526,
+      "note": "Nearby shopping and groceries."
+    },
+    {
+      "category": "market",
+      "name": "Pasar Besar TTDI",
+      "address": "Taman Tun Dr Ismail, Kuala Lumpur",
+      "lat": 3.1437,
+      "lng": 101.6258,
+      "note": "Traditional wet market for fresh produce."
+    }
+  ]
+}
