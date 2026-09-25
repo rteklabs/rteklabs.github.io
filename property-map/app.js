@@ -14,7 +14,7 @@ const categories = {
   other:{en:'Other',zh:'其他',icon:'📍'}
 };
 const $ = id => document.getElementById(id);
-const emptyState = () => ({version:3,title:'',client:'',home:{name:'',address:'',lat:null,lng:null},intro:'',pois:[],customCategories:{}});
+const emptyState = () => ({version:3,title:'',client:'',home:{name:'',address:'',lat:null,lng:null},intro:'',googleListUrl:'',pois:[],customCategories:{}});
 let state = emptyState(), lang = 'en', map = null, infoWindow = null, homeMarker = null;
 let poiMarkers = [], selectedMarker = null, selectedIndex = -1, results = [], searchRun = 0;
 let pinTarget = null, repairIndex = null, readOnly = false, currentMapId = null;
@@ -248,6 +248,13 @@ function validLink(id,statusId) {
   if(raw&&!mapsLink(raw)){status(statusId,'Paste a Google Maps link beginning https://www.google.com/maps/ or https://maps.app.goo.gl/.','warn');return null;}
   return raw;
 }
+function validateGoogleListUrl(){
+  const raw=$('googleListUrl').value.trim();
+  if(!raw){state.googleListUrl='';status('googleListStatus','');saveDraft();return true;}
+  const safe=mapsLink(raw);
+  if(!safe){status('googleListStatus','Paste the share link from a Google Maps list.','warn');return false;}
+  state.googleListUrl=safe;status('googleListStatus','Google Maps list linked.','ok');saveDraft();return true;
+}
 function latLng(place) {
   if(!place || !place.location) return null;
   const loc=place.location, lat=typeof loc.lat==='function'?loc.lat():loc.lat, lng=typeof loc.lng==='function'?loc.lng():loc.lng;
@@ -274,7 +281,7 @@ function portable() {
     const def=normalizeCategoryDef((state.customCategories&&state.customCategories[p.category])||customCategoryLibrary[p.category]);
     if(def)usedCustom[p.category]=def;
   });
-  return {version:3,title:state.title,client:state.client,home,intro:state.intro,customCategories:usedCustom,
+  return {version:3,title:state.title,client:state.client,home,intro:state.intro,googleListUrl:state.googleListUrl||'',customCategories:usedCustom,
     pois:state.pois.map(p=>p.placeId?{placeId:p.placeId,category:p.category,note:p.note||''}:{...p})};
 }
 function saveDraft() { try { localStorage.setItem('propertySpotMapDraft',JSON.stringify(portable())); } catch (_) {} }
@@ -376,8 +383,8 @@ async function saveToDashboard() {
     btn.disabled=false;btn.textContent=old;
   }
 }
-function syncFromForm() { state.title=$('mapTitle').value.trim();state.client=$('clientName').value.trim();state.intro=$('intro').value.trim();if(!state.home.googlePlaceId){state.home.name=$('homeName').value.trim();state.home.address=$('homeAddress').value.trim();state.home.googleUrl=mapsLink($('homeGoogleUrl').value.trim());}saveDraft(); }
-function syncToForm() { const home=homeData();$('mapTitle').value=state.title||'';$('clientName').value=state.client||'';$('homeName').value=home.name||'';$('homeAddress').value=home.address||'';$('homeGoogleUrl').value=state.home.googleUrl||'';$('intro').value=state.intro||''; }
+function syncFromForm() { state.title=$('mapTitle').value.trim();state.client=$('clientName').value.trim();state.intro=$('intro').value.trim();state.googleListUrl=mapsLink($('googleListUrl').value.trim())||'';if(!state.home.googlePlaceId){state.home.name=$('homeName').value.trim();state.home.address=$('homeAddress').value.trim();state.home.googleUrl=mapsLink($('homeGoogleUrl').value.trim());}saveDraft(); }
+function syncToForm() { const home=homeData();$('mapTitle').value=state.title||'';$('clientName').value=state.client||'';$('homeName').value=home.name||'';$('homeAddress').value=home.address||'';$('homeGoogleUrl').value=state.home.googleUrl||'';$('intro').value=state.intro||'';$('googleListUrl').value=state.googleListUrl||''; }
 
 function clearMarkers() { if(homeMarker)homeMarker.setMap(null);poiMarkers.forEach(m=>m.setMap(null));homeMarker=null;poiMarkers=[]; }
 function roundPinIcon(size,fill,stroke) {
@@ -524,6 +531,7 @@ function bindUi() {
   ['mapTitle','clientName','intro'].forEach(id=>$(id).addEventListener('input',()=>{syncFromForm();renderClient();}));
   ['homeName','homeAddress'].forEach(id=>$(id).addEventListener('input',onHomeChanged));
   $('homeGoogleUrl').onchange=()=>{if(validLink('homeGoogleUrl','homeStatus')!==null)syncFromForm();};
+  $('googleListUrl').onchange=validateGoogleListUrl;
   $('importFile').onchange=function(){if(this.files&&this.files[0])importJson(this.files[0]);this.value='';};
 
   $('copyClientUrlBtn').onclick=()=>copy(location.href).then(()=>{const btn=$('copyClientUrlBtn'),old=btn.textContent;btn.textContent=lang==='zh'?'已复制':'Copied';setTimeout(()=>btn.textContent=old,1200);});
