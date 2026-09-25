@@ -409,8 +409,23 @@ function focusPoi(i) {
   }
   map.setCenter({lat:p.lat,lng:p.lng});map.setZoom(16);const marker=poiMarkers[i];if(marker){infoWindow.setContent(popup(p));infoWindow.open(map,marker);} $('map').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+function renderGoogleListingLimit(){
+  const el=$('googleListingLimit');if(!el)return;
+  const total=state.pois.length,googleLinked=state.pois.filter(p=>p&&p.placeId).length,shown=Math.min(20,googleLinked);
+  if(!total){
+    el.innerHTML='<strong>Google Listing:</strong> up to 20 Google-linked POIs can appear with Google place cards. Map and Expanded view will show all POIs.';
+    return;
+  }
+  if(googleLinked>20){
+    el.className='googleListingLimit over';
+    el.innerHTML='<strong>'+total+' POIs added.</strong> Google Listing will show only the first 20 Google-linked POIs. Map and Expanded view will still show all '+total+'.';
+  }else{
+    el.className='googleListingLimit';
+    el.innerHTML='<strong>'+total+' POI'+(total===1?'':'s')+' added.</strong> Google Listing: '+shown+'/20 Google-linked places available. Map and Expanded view will show all POIs.';
+  }
+}
 function renderEditorList() {
-  const el=$('poiEditList');el.replaceChildren();if(!state.pois.length){el.innerHTML='<div class="empty">No places added yet. Search above to add one.</div>';return;}
+  const el=$('poiEditList');el.replaceChildren();renderGoogleListingLimit();if(!state.pois.length){el.innerHTML='<div class="empty">No places added yet. Search above to add one.</div>';return;}
   state.pois.forEach((raw,i)=>{const p=poiData(raw),cat=categoryMeta(p.category),card=document.createElement('div');card.className='poiEdit';card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','Show '+p.name+' on map');
     card.innerHTML='<div class="poiIcon">'+cat.icon+'</div><div><div class="poiTitle">'+esc(p.name)+'</div><div class="poiMeta">'+esc(cat.en)+(distanceText(p)?' · '+esc(distanceText(p)):' · Pin pending')+'</div><div class="poiMeta">'+esc(p.address)+'</div>'+(p.note?'<div class="poiMeta">'+esc(p.note)+'</div>':'')+'</div><div class="row"><button type="button" class="btn tiny ghost" data-focus>Map</button><button type="button" class="btn tiny ghost danger" data-delete aria-label="Remove '+esc(p.name)+'">Remove</button></div>';
     card.onclick=()=>focusPoi(i);card.onkeydown=e=>{if(e.target===card&&(e.key==='Enter'||e.key===' ')){e.preventDefault();focusPoi(i);}};
