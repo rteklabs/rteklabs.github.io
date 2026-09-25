@@ -37,6 +37,63 @@ function focusPoi(i){const p=poiData((data.pois||[])[i]||{});if(p.lat==null||p.l
 function renderClient(){const home=homeData(),title=data.title||home.name||'Property Spot Map';$('clientTopTitle').textContent=title;$('clientTopRef').textContent=data.client?(lang==='zh'?'客户 / 参考：':'Client / ref: ')+data.client:'';$('clientHomeName').textContent=home.name||(lang==='zh'?'物业':'Property');$('clientHomeAddress').textContent=home.address||'';$('clientIntro').textContent=data.intro||'';$('clientCount').textContent=(data.pois||[]).length+(lang==='zh'?' 个地点':' places');$('langBtn').textContent=lang==='en'?'中文':'EN';const list=$('clientPoiList');list.replaceChildren();if(!(data.pois||[]).length){list.innerHTML='<div class="empty">'+(lang==='zh'?'暂时没有加入附近地点。':'No nearby places added yet.')+'</div>';return;}
   data.pois.map((raw,i)=>({p:poiData(raw),i})).sort((a,b)=>(distance(home,a.p)??999)-(distance(home,b.p)??999)).forEach(({p,i})=>{const cat=categories[p.category]||categories.other,item=document.createElement('div');item.className='clientPoi';item.innerHTML='<div class="poiIcon">'+cat.icon+'</div><div><div class="poiTitle">'+esc(p.name||'Place')+'</div><div class="poiMeta">'+esc(lang==='zh'?cat.zh:cat.en)+(distanceText(p)?' · '+esc(distanceText(p)):'')+'</div>'+(p.note?'<div class="note">'+esc(p.note)+'</div>':'')+'</div><a class="gmaps" target="_blank" rel="noopener" href="'+esc(googleUrl(p))+'">Google Maps ↗</a>';item.onclick=e=>{if(e.target.closest('a'))return;focusPoi(i);};list.appendChild(item);});
 }
+function initMobileSheet(){
+  const sheet=$('clientSheet'),handle=$('sheetHandle');
+  if(!sheet||!handle)return;
+  let state='half',dragging=false,startY=0,startH=0,moved=false;
+  const order=['peek','half','full'];
+
+  function heightFor(next){
+    const host=sheet.parentElement.getBoundingClientRect().height;
+    if(next==='peek')return 112;
+    if(next==='full')return Math.max(180,host-12);
+    return Math.max(220,Math.min(host*.46,440));
+  }
+  function apply(next,animate=true){
+    state=next;
+    sheet.classList.remove('sheetPeek','sheetHalf','sheetFull');
+    sheet.classList.add('sheet'+next[0].toUpperCase()+next.slice(1));
+    if(!animate)sheet.style.transition='none';
+    sheet.style.height='';
+    handle.setAttribute('aria-expanded',next!=='peek'?'true':'false');
+    if(!animate)requestAnimationFrame(()=>sheet.style.transition='');
+  }
+  function snapFromHeight(h){
+    const values=order.map(x=>({x,h:heightFor(x)}));
+    values.sort((a,b)=>Math.abs(a.h-h)-Math.abs(b.h-h));
+    apply(values[0].x);
+  }
+  handle.addEventListener('pointerdown',e=>{
+    if(!matchMedia('(max-width:900px)').matches)return;
+    dragging=true;moved=false;startY=e.clientY;startH=sheet.getBoundingClientRect().height;
+    sheet.style.transition='none';handle.setPointerCapture(e.pointerId);
+  });
+  handle.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    const dy=e.clientY-startY;if(Math.abs(dy)>4)moved=true;
+    const min=heightFor('peek'),max=heightFor('full');
+    const next=Math.max(min,Math.min(max,startH-dy));
+    sheet.style.height=next+'px';
+  });
+  handle.addEventListener('pointerup',e=>{
+    if(!dragging)return;dragging=false;sheet.style.transition='';try{handle.releasePointerCapture(e.pointerId);}catch(_){}
+    if(!moved){
+      const i=order.indexOf(state);
+      apply(order[i===2?1:i+1]);
+      return;
+    }
+    snapFromHeight(sheet.getBoundingClientRect().height);
+  });
+  handle.addEventListener('pointercancel',()=>{dragging=false;sheet.style.transition='';apply(state);});
+  handle.addEventListener('keydown',e=>{
+    const i=order.indexOf(state);
+    if(e.key==='ArrowUp'){e.preventDefault();apply(order[Math.min(2,i+1)]);}
+    if(e.key==='ArrowDown'){e.preventDefault();apply(order[Math.max(0,i-1)]);}
+  });
+  addEventListener('resize',()=>{if(matchMedia('(max-width:900px)').matches)apply(state,false);});
+  apply('half',false);
+}
+
 async function hydrate(){const ids=[data.home&&data.home.googlePlaceId,...(data.pois||[]).map(p=>p.placeId)].filter(Boolean);await Promise.all([...new Set(ids)].map(async id=>{try{const place=new google.maps.places.Place({id});await place.fetchFields({fields:['displayName','formattedAddress','location','primaryTypeDisplayName']});livePlaces.set(id,asPlace(place));}catch(e){console.warn('Place details unavailable',id,e);}}));renderClient();renderMap(true);}
 async function initGoogle(){map=new google.maps.Map($('map'),{center:{lat:3.159,lng:101.692},zoom:12,mapTypeControl:false,streetViewControl:false,gestureHandling:'greedy'});infoWindow=new google.maps.InfoWindow();await hydrate();$('mapPlaceholder')?.remove();}
 function loadGoogle(){const key=window.PROPERTY_MAP_CONFIG&&window.PROPERTY_MAP_CONFIG.apiKey;if(!key||key==='YOUR_GOOGLE_MAPS_API_KEY'){$('mapPlaceholder').textContent='Google Maps is not configured.';return;}window.propertyMapViewerReady=()=>initGoogle().catch(e=>{$('mapPlaceholder').textContent='Google Maps could not initialize: '+e.message;});const s=document.createElement('script');s.async=true;s.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=weekly&libraries=places&loading=async&callback=propertyMapViewerReady';s.onerror=()=>{$('mapPlaceholder').textContent='Could not load Google Maps.';};document.head.appendChild(s);}
@@ -45,5 +102,6 @@ async function loadPublishedMap(id){if(DATA_API){const result=await jsonpMap(id)
 async function boot(){const id=new URLSearchParams(location.search).get('id');if(!validId(id)){$('mapPlaceholder').textContent='Invalid property map link.';return;}try{data=await loadPublishedMap(id);if(!data||data.id!==id||!data.home||!Array.isArray(data.pois))throw new Error('Property map data is invalid.');renderClient();loadGoogle();}catch(e){$('mapPlaceholder').textContent=e.message;}}
 $('langBtn').onclick=()=>{lang=lang==='en'?'zh':'en';if(data)renderClient();};
 $('copyLinkBtn').onclick=()=>navigator.clipboard.writeText(location.href).then(()=>{const b=$('copyLinkBtn'),old=b.textContent;b.textContent='Copied';setTimeout(()=>b.textContent=old,1200);});
+initMobileSheet();
 boot();
 })();
