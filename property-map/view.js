@@ -18,7 +18,7 @@ let availableCategories=[],selectedCategories=new Set(),activePoiIndex=null,setM
 const livePlaces=new Map();
 const DATA_API=window.PROPERTY_MAP_DATA_API||'';
 const ROUTES_ENABLED=window.PROPERTY_MAP_ROUTES_ENABLED===true;
-const routeModes={DRIVING:{icon:'🚗',en:'Drive',zh:'驾车'},WALKING:{icon:'🚶',en:'Walk',zh:'步行'},BICYCLING:{icon:'🚲',en:'Cycle',zh:'骑行'},TRANSIT:{icon:'🚆',en:'Transit',zh:'公交'}};
+const routeModes={DRIVING:{icon:'🚗',en:'Drive',zh:'驾车'}};
 let routeMode='DRIVING',routeReversed=false,routeBaseLine=null,routeFlowLine=null,routeFlowFrame=0,currentRoute=null,routeRequestSerial=0;
 const routeCache=new Map();
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
@@ -216,15 +216,44 @@ function renderRoutePanel(){
     $('routeSummary').textContent=lang==='zh'?'计算路线…':'Calculating route…';
   }
 }
+function decodePolyline(encoded){
+  const path=[];let index=0,lat=0,lng=0;
+  while(index<encoded.length){
+    let result=0,shift=0,b;
+    do{b=encoded.charCodeAt(index++)-63;result|=(b&31)<<shift;shift+=5;}while(b>=32);
+    const dlat=(result&1)?~(result>>1):(result>>1);lat+=dlat;
+    result=0;shift=0;
+    do{b=encoded.charCodeAt(index++)-63;result|=(b&31)<<shift;shift+=5;}while(b>=32);
+    const dlng=(result&1)?~(result>>1):(result>>1);lng+=dlng;
+    path.push({lat:lat/1e5,lng:lng/1e5});
+  }
+  return path;
+}
+function routeGateway(id,poiIndex,reversed,mode){
+  return new Promise((resolve,reject)=>{
+    if(!DATA_API){reject(new Error('Route service is not configured.'));return;}
+    const cb='psmroute_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    const script=document.createElement('script');
+    const timer=setTimeout(()=>{cleanup();reject(new Error('Route service timed out.'));},15000);
+    function cleanup(){clearTimeout(timer);delete window[cb];script.remove();}
+    window[cb]=value=>{cleanup();resolve(value);};
+    script.onerror=()=>{cleanup();reject(new Error('Could not reach route service.'));};
+    const q=new URLSearchParams({
+      action:'route',id:String(id||''),poi:String(poiIndex),
+      reverse:reversed?'1':'0',mode:String(mode||'DRIVING'),callback:cb
+    });
+    script.src=DATA_API+'?'+q.toString();
+    document.head.appendChild(script);
+  });
+}
 async function requestActiveRoute(){
   if(!ROUTES_ENABLED||!map||activePoiIndex==null)return;
   const raw=(data&&data.pois||[])[activePoiIndex];
   if(!raw||!isCategoryVisible(raw))return;
   const home=homeData(),poi=poiData(raw);
-  if(home.lat==null||home.lng==null||poi.lat==null||poi.lng==null)return;
-
   currentRoute=null;
   renderRoutePanel();
+
   const cacheKey=routeCacheKey(home,poi),cached=routeCache.get(cacheKey);
   if(cached){
     currentRoute=cached;
@@ -236,21 +265,17 @@ async function requestActiveRoute(){
   const serial=++routeRequestSerial;
   $('routeStatus').textContent=lang==='zh'?'正在读取路线…':'Loading route…';
   try{
-    const {Route}=await google.maps.importLibrary('routes');
-    const origin=routeReversed?{lat:poi.lat,lng:poi.lng}:{lat:home.lat,lng:home.lng};
-    const destination=routeReversed?{lat:home.lat,lng:home.lng}:{lat:poi.lat,lng:poi.lng};
-    const request={
-      origin,destination,
-      travelMode:routeMode,
-      computeAlternativeRoutes:false,
-      fields:['path','distanceMeters','durationMillis']
-    };
-    if(routeMode==='DRIVING')request.routingPreference='TRAFFIC_UNAWARE';
-    const result=await Route.computeRoutes(request);
+    const result=await routeGateway(data.id,activePoiIndex,routeReversed,routeMode);
     if(serial!==routeRequestSerial)return;
-    const route=result&&result.routes&&result.routes[0];
-    if(!route||!route.path||!route.path.length)throw new Error('No route found.');
-    currentRoute={path:route.path,distanceMeters:route.distanceMeters,durationMillis:route.durationMillis};
+    if(!result||!result.ok)throw new Error(result&&result.error?result.error:'Route unavailable.');
+    if(!result.route||!result.route.encodedPolyline)throw new Error('No route found.');
+    const path=decodePolyline(result.route.encodedPolyline);
+    if(!path.length)throw new Error('No route path returned.');
+    currentRoute={
+      path,
+      distanceMeters:Number(result.route.distanceMeters),
+      durationMillis:Number(result.route.durationSeconds)*1000
+    };
     routeCache.set(cacheKey,currentRoute);
     drawRoutePath(currentRoute,true);
     $('routeStatus').textContent='';
