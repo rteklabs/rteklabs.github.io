@@ -136,7 +136,8 @@ async function publishMap(record) {
 async function saveToDashboard() {
   syncFromForm();
   const home=homeData();
-  if(!state.title&&!home.name){status('homeStatus','Add a map title or property name before saving.','warn');return;}
+  if(!state.title){status('homeStatus','Map title is required before publishing.','warn');$('mapTitle').focus();return;}
+  if(home.lat==null||home.lng==null){status('homeStatus','Choose the main property from Google suggestions, find it from details, or pin it manually before publishing.','warn');return;}
   const list=savedMaps(),now=new Date().toISOString();
   if(!currentMapId) currentMapId=makeMapId(list);
   const existing=list.find(x=>x.id===currentMapId);
@@ -297,35 +298,20 @@ function pinAt(point) {
 
 function encodeState() {syncFromForm();return btoa(Array.from(new TextEncoder().encode(JSON.stringify(portable())),b=>String.fromCharCode(b)).join('')).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 function decodeState(s) {const b=atob(s.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-s.length%4)%4));const data=JSON.parse(new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0))));if(!data||!data.home||!Array.isArray(data.pois))throw new Error('Invalid map');return data;}
-function links() {const root=location.origin+location.pathname.replace(/index\.html$/,'');if(currentMapId)return {client:root+'view.html?id='+encodeURIComponent(currentMapId),edit:root+'index.html?map='+encodeURIComponent(currentMapId)+'&edit=1'};const base=location.origin+location.pathname,hash=encodeState();return {client:base+'#'+hash,edit:base+'?edit=1#'+hash};}
-function share() {if(homeData().lat==null){status('homeStatus','Set the main property first.','warn');return;}if(!currentMapId){status('homeStatus','Save & Publish this map first to create its short client link.','warn');return;}const u=links();$('clientUrlBox').textContent=u.client;$('editUrlBox').textContent=u.edit;$('shareModal').classList.add('open');}
 function copy(text) {if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);const input=document.createElement('textarea');input.value=text;document.body.appendChild(input);input.select();document.execCommand('copy');input.remove();return Promise.resolve();}
 function downloadJson() {syncFromForm();const blob=new Blob([JSON.stringify(portable(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=((homeData().name||'property-map').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').toLowerCase()||'property-map')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
 function importJson(file) {const reader=new FileReader();reader.onload=async()=>{try{const d=JSON.parse(reader.result);if(!d.home||!Array.isArray(d.pois))throw new Error();state=d;livePlaces.clear();saveDraft();renderAll(true);await hydratePlaces();status('homeStatus','Map imported.','ok');}catch(e){status('homeStatus','Invalid map JSON.','warn');}};reader.readAsText(file);}
 function newMap() {if(!confirm('Start a new map? Your current draft will be cleared from this browser.'))return;state=emptyState();currentMapId=null;livePlaces.clear();pinTarget=null;repairIndex=null;results=[];selectedIndex=-1;if(selectedMarker){selectedMarker.setMap(null);selectedMarker=null;}renderSearchResults();$('placeSearchInput').value='';status('placeSearchStatus','');localStorage.removeItem('propertySpotMapDraft');history.replaceState(null,'',location.pathname+'?new=1&edit=1');renderAll(false);if(map){map.setCenter({lat:3.159, lng:101.692});map.setZoom(12);}}
-async function loadDemo() {
-  state={version:2,title:'Impian Villas — 买菜 & Daily Convenience',client:'China family',home:{name:'Impian Villas',address:'Jalan Kiara 3, Mont Kiara, Kuala Lumpur',lat:null,lng:null},intro:'For daily cooking and groceries, there are both convenient supermarkets and traditional fresh markets within a short drive. 点击地点可在地图查看，Google Maps 按钮可直接导航。',pois:[]};renderAll(false);
-  const items=[['market','Kepong Baru Morning Market','Traditional wet market / 早市 — fresh produce.'],['market','ShunYuan Fresh Market','Fresh produce for everyday cooking.'],['grocery','Jaya Grocer 163 Retail Park','Convenient Mont Kiara supermarket.'],['market','Pasar Besar TTDI','Traditional wet market with vegetables, fish and meat.'],['chinese','Wishmart Chinese Supermarket Bandar Menjalara','China-brand groceries and familiar ingredients.']];
-  try {status('homeStatus','Finding Impian Villas…');const home=await google.maps.places.Place.searchByText({textQuery:'Impian Villas Jalan Kiara 3 Mont Kiara',fields:['id','displayName','formattedAddress','location'],region:'my',maxResultCount:1});if(!home.places.length)throw new Error('Impian Villas not found');setHomeFromPlace(home.places[0]);
-    for(const [cat,q,note] of items){status('homeStatus','Finding '+q+'…');try{const found=await google.maps.places.Place.searchByText({textQuery:q,fields:['id','displayName','formattedAddress','location','primaryTypeDisplayName'],locationBias:{center:{lat:homeData().lat,lng:homeData().lng},radius:25000},region:'my',maxResultCount:1});if(found.places.length){const p=asPlace(found.places[0]);livePlaces.set(p.placeId,p);state.pois.push({placeId:p.placeId,category:cat,note});}}catch(e){console.warn(q,e);}}
-    saveDraft();renderAll(true);status('homeStatus','Demo loaded. Please check each Google result before sharing.','ok');}
-  catch(e){status('homeStatus','Demo could not load: '+e.message,'warn');}
-}
-function openGoogle(name,address) {const q=[name,address].filter(Boolean).join(' ');if(q)window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q),'_blank','noopener,noreferrer');}
 
 function bindUi() {
-  $('setHomeBtn').onclick=setHome;$('addPoiBtn').onclick=addPoi;$('clearPoiBtn').onclick=clearPoi;$('saveDashboardBtn').onclick=saveToDashboard;$('shareBtn').onclick=share;$('exportBtn').onclick=downloadJson;$('newBtn').onclick=newMap;$('demoBtn').onclick=loadDemo;
+  $('setHomeBtn').onclick=setHome;$('addPoiBtn').onclick=addPoi;$('clearPoiBtn').onclick=clearPoi;$('saveDashboardBtn').onclick=saveToDashboard;$('exportBtn').onclick=downloadJson;$('newBtn').onclick=newMap;
   $('findPlacesBtn').onclick=findPlaces;$('placeSearchInput').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();findPlaces();}};
-  $('searchHomeBtn').onclick=()=>openGoogle($('homeName').value.trim(),$('homeAddress').value.trim());
-  $('searchPoiBtn').onclick=()=>openGoogle($('poiName').value.trim()||$('placeSearchInput').value.trim(),$('poiAddress').value.trim()||homeData().address||'Kuala Lumpur');
   $('pickHomeBtn').onclick=()=>startPin('home');$('pickPoiBtn').onclick=()=>startPin('poi');
   ['mapTitle','clientName','intro'].forEach(id=>$(id).addEventListener('input',()=>{syncFromForm();renderClient();}));
   ['homeName','homeAddress'].forEach(id=>$(id).addEventListener('input',onHomeChanged));
   $('homeGoogleUrl').onchange=()=>{if(validLink('homeGoogleUrl','homeStatus')!==null)syncFromForm();};
   $('importFile').onchange=function(){if(this.files&&this.files[0])importJson(this.files[0]);this.value='';};
-  $('closeShareBtn').onclick=()=>$('shareModal').classList.remove('open');$('shareModal').onclick=e=>{if(e.target===$('shareModal'))$('shareModal').classList.remove('open');};
-  document.querySelectorAll('[data-copy]').forEach(btn=>btn.onclick=()=>copy(links()[btn.dataset.copy]).then(()=>{const old=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=old,1200);}));
-  document.querySelectorAll('[data-open]').forEach(btn=>btn.onclick=()=>window.open(links()[btn.dataset.open],'_blank','noopener'));
+
   $('copyClientUrlBtn').onclick=()=>copy(location.href).then(()=>{const btn=$('copyClientUrlBtn'),old=btn.textContent;btn.textContent=lang==='zh'?'已复制':'Copied';setTimeout(()=>btn.textContent=old,1200);});
   $('langBtn').onclick=()=>{lang=lang==='en'?'zh':'en';renderClient();};
 }
