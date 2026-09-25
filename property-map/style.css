@@ -227,3 +227,40 @@ h1,h2,h3,p{margin-top:0}.editor h2{font-size:18px;line-height:1.25;margin-bottom
     box-shadow:0 0 0 2px rgba(82,97,116,.12);
   }
 }
+
+
+/* Route feature plumbing — hidden until PROPERTY_MAP_ROUTES_ENABLED is turned on */
+.routePanel{
+  margin-top:10px;
+  padding:10px;
+  border:1px solid #dbe4ee;
+  border-radius:13px;
+  background:#f8fafc;
+  flex:0 0 auto;
+}
+.routePanel[hidden]{display:none!important}
+.routeTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.routeText{min-width:0}
+.routeDirectionLabel{font-size:11px;font-weight:750;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.routeSummary{font-size:17px;font-weight:900;color:#243244;margin-top:2px}
+.routeReverseBtn{
+  width:32px;height:32px;flex:0 0 32px;border:1px solid #d8e0e9;border-radius:10px;
+  background:#fff;color:#405a73;font-size:18px;font-weight:800;cursor:pointer
+}
+.routeReverseBtn:hover{background:#eef3f8}
+.routeModes{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:9px}
+.routeModes::-webkit-scrollbar{display:none}
+.routeModeBtn{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;border:1px solid #d8e0e9;
+  border-radius:999px;background:#fff;color:#526174;padding:6px 9px;font-size:10.5px;font-weight:750;cursor:pointer
+}
+.routeModeBtn.active{background:#405a73;border-color:#405a73;color:#fff}
+.routeWarning{font-size:9.5px;line-height:1.3;color:#7c8799;margin-top:7px}
+.routeStatus{font-size:10px;line-height:1.3;color:#7c8799;min-height:0;margin-top:4px}
+.routeStatus:empty{display:none}
+@media(max-width:900px){
+  #viewerApp .routePanel{margin-top:8px;padding:9px}
+  #viewerApp .routeSummary{font-size:15px}
+  #viewerApp .routeReverseBtn{width:30px;height:30px;flex-basis:30px}
+  #viewerApp .clientSheet.sheetPeek .routePanel{display:none}
+}
