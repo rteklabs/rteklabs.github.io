@@ -159,3 +159,54 @@ h1,h2,h3,p{margin-top:0}.editor h2{font-size:18px;line-height:1.25;margin-bottom
   #viewerApp .filterChip{padding:6px 9px;font-size:10.5px}
   #viewerApp .clientSheet.sheetPeek .categoryFilters{display:none}
 }
+
+
+/* Desktop category-strip scroll affordance */
+.categoryFilterWrap{
+  position:relative;
+  display:flex;
+  align-items:center;
+  min-width:0;
+}
+.categoryFilterWrap .categoryFilters{min-width:0;flex:1}
+.filterScrollBtn{
+  display:none;
+  position:absolute;
+  z-index:3;
+  top:50%;
+  transform:translateY(-50%);
+  width:27px;
+  height:27px;
+  padding:0;
+  border:1px solid #d8e0e9;
+  border-radius:999px;
+  background:rgba(255,255,255,.96);
+  color:#526174;
+  box-shadow:0 2px 8px rgba(15,23,42,.12);
+  font-size:20px;
+  line-height:1;
+  cursor:pointer;
+}
+.filterScrollBtn:hover{background:#f8fafc;color:#243244}
+.filterScrollBtn[hidden]{display:none!important}
+.filterScrollLeft{left:2px}
+.filterScrollRight{right:2px}
+@media(min-width:901px){
+  .filterScrollBtn:not([hidden]){display:grid;place-items:center}
+  .categoryFilterWrap::before,
+  .categoryFilterWrap::after{
+    content:'';
+    position:absolute;
+    z-index:2;
+    top:5px;
+    bottom:0;
+    width:28px;
+    pointer-events:none;
+  }
+  .categoryFilterWrap::before{left:0;background:linear-gradient(90deg,rgba(255,255,255,.98),rgba(255,255,255,0))}
+  .categoryFilterWrap::after{right:0;background:linear-gradient(270deg,rgba(255,255,255,.98),rgba(255,255,255,0))}
+}
+@media(max-width:900px){
+  .filterScrollBtn{display:none!important}
+  .categoryFilterWrap::before,.categoryFilterWrap::after{display:none}
+}
