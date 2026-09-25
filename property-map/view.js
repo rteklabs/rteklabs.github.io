@@ -533,8 +533,34 @@ function initMobileSheet(){
 async function hydrate(){const ids=[data.home&&data.home.googlePlaceId,...(data.pois||[]).map(p=>p.placeId)].filter(Boolean);await Promise.all([...new Set(ids)].map(async id=>{try{const place=new google.maps.places.Place({id});await place.fetchFields({fields:['displayName','formattedAddress','location','primaryTypeDisplayName']});livePlaces.set(id,asPlace(place));}catch(e){console.warn('Place details unavailable',id,e);}}));renderClient();renderPlacesPage();renderMap(true);}
 async function initGoogle(){map=new google.maps.Map($('map'),{center:{lat:3.159,lng:101.692},zoom:12,mapTypeControl:false,streetViewControl:false,gestureHandling:'greedy'});infoWindow=new google.maps.InfoWindow();await hydrate();$('mapPlaceholder')?.remove();}
 function loadGoogle(){const key=window.PROPERTY_MAP_CONFIG&&window.PROPERTY_MAP_CONFIG.apiKey;if(!key||key==='YOUR_GOOGLE_MAPS_API_KEY'){$('mapPlaceholder').textContent='Google Maps is not configured.';return;}window.propertyMapViewerReady=()=>initGoogle().catch(e=>{$('mapPlaceholder').textContent='Google Maps could not initialize: '+e.message;});const s=document.createElement('script');s.async=true;s.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=weekly&libraries=places&loading=async&callback=propertyMapViewerReady';s.onerror=()=>{$('mapPlaceholder').textContent='Could not load Google Maps.';};document.head.appendChild(s);}
-function jsonpMap(id){return new Promise((resolve,reject)=>{if(!DATA_API){reject(new Error('Map service is not configured.'));return;}const cb='psmview_'+Date.now()+'_'+Math.random().toString(36).slice(2),s=document.createElement('script'),timer=setTimeout(()=>{cleanup();reject(new Error('Property map service timed out.'));},12000);function cleanup(){clearTimeout(timer);delete window[cb];s.remove();}window[cb]=x=>{cleanup();resolve(x);};s.onerror=()=>{cleanup();reject(new Error('Could not reach property map service.'));};s.src=DATA_API+'?id='+encodeURIComponent(id)+'&callback='+encodeURIComponent(cb);document.head.appendChild(s);});}
-async function loadPublishedMap(id){if(DATA_API){const result=await jsonpMap(id);if(result&&result.ok&&result.map)return result.map;if(result&&result.error&&result.error!=='Map not found')throw new Error(result.error);}const res=await fetch('maps/'+encodeURIComponent(id)+'.json',{cache:'no-store'});if(!res.ok)throw new Error('Property map not found.');return res.json();}
+function jsonpMap(id,timeoutMs=15000){return new Promise((resolve,reject)=>{if(!DATA_API){reject(new Error('Map service is not configured.'));return;}const cb='psmview_'+Date.now()+'_'+Math.random().toString(36).slice(2),s=document.createElement('script'),timer=setTimeout(()=>{cleanup();reject(new Error('Property map service timed out.'));},timeoutMs);function cleanup(){clearTimeout(timer);delete window[cb];s.remove();}window[cb]=x=>{cleanup();resolve(x);};s.onerror=()=>{cleanup();reject(new Error('Could not reach property map service.'));};s.src=DATA_API+'?id='+encodeURIComponent(id)+'&callback='+encodeURIComponent(cb)+'&_='+Date.now();document.head.appendChild(s);});}
+function mapSessionKey(id){return 'propertySpotMapViewCache:'+id;}
+function readSessionMap(id){try{const x=JSON.parse(sessionStorage.getItem(mapSessionKey(id))||'null');return x&&x.id===id?x:null;}catch(_){return null;}}
+function writeSessionMap(id,mapData){try{sessionStorage.setItem(mapSessionKey(id),JSON.stringify(mapData));}catch(_){}}
+async function loadPublishedMap(id){
+  const cached=readSessionMap(id);
+  if(DATA_API){
+    let lastError=null;
+    for(let attempt=0;attempt<2;attempt++){
+      try{
+        if(attempt===1){
+          const ph=$('mapPlaceholder');
+          if(ph)ph.textContent=lang==='zh'?'正在重新连接物业地图服务…':'Reconnecting to property map service…';
+          await new Promise(r=>setTimeout(r,650));
+        }
+        const result=await jsonpMap(id,attempt===0?15000:22000);
+        if(result&&result.ok&&result.map){writeSessionMap(id,result.map);return result.map;}
+        if(result&&result.error==='Map not found')break;
+        if(result&&result.error)throw new Error(result.error);
+      }catch(err){lastError=err;}
+    }
+    if(cached)return cached;
+    if(lastError)throw lastError;
+  }
+  const res=await fetch('maps/'+encodeURIComponent(id)+'.json',{cache:'no-store'});
+  if(!res.ok){if(cached)return cached;throw new Error('Property map not found.');}
+  const mapData=await res.json();writeSessionMap(id,mapData);return mapData;
+}
 async function boot(){const params=new URLSearchParams(location.search),id=params.get('id');if(!validId(id)){$('mapPlaceholder').textContent='Invalid property map link.';return;}try{data=await loadPublishedMap(id);if(!data||data.id!==id||!data.home||!Array.isArray(data.pois))throw new Error('Property map data is invalid.');initCategoryFilters();renderClient();renderPlacesPage();applyViewMode(params.get('view')==='list'?'list':'map',false);loadGoogle();}catch(e){$('mapPlaceholder').textContent=e.message;}}
 $('langBtn').onclick=()=>{lang=lang==='en'?'zh':'en';if(data){renderClient();renderPlacesPage();updateViewModeButton();}};
 $('copyLinkBtn').onclick=()=>navigator.clipboard.writeText(location.href).then(()=>{const b=$('copyLinkBtn'),old=b.textContent;b.textContent=lang==='zh'?'已复制':'Copied';setTimeout(()=>b.textContent=old,1200);});
