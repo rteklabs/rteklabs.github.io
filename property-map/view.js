@@ -13,7 +13,7 @@ const categories={
   other:{en:'Other',zh:'其他',icon:'📍'}
 };
 const $=id=>document.getElementById(id);
-let data=null,map=null,infoWindow=null,lang='en',homeMarker=null,poiMarkers=[];
+let data=null,map=null,infoWindow=null,lang='en',homeMarker=null,homeHaloMarker=null,poiMarkers=[];
 const livePlaces=new Map();
 const DATA_API=window.PROPERTY_MAP_DATA_API||'';
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
@@ -27,9 +27,9 @@ function distanceText(p){const km=distance(homeData(),p);return km==null?'':km<1
 function googleUrl(p){const id=p.placeId||p.googlePlaceId;if(id)return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name||'place')+'&query_place_id='+encodeURIComponent(id);return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.address].filter(Boolean).join(' '));}
 function roundPinIcon(size,fill,stroke){return {path:google.maps.SymbolPath.CIRCLE,scale:size/2,fillColor:fill,fillOpacity:1,strokeColor:stroke,strokeWeight:2};}
 function popup(p){return '<strong>'+esc(p.name||'Place')+'</strong><br>'+esc(p.address||'')+(p.note?'<br>'+esc(p.note):'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(p))+'">Open in Google Maps ↗</a>';}
-function clearMarkers(){if(homeMarker)homeMarker.setMap(null);poiMarkers.forEach(m=>m&&m.setMap(null));homeMarker=null;poiMarkers=[];}
+function clearMarkers(){if(homeMarker)homeMarker.setMap(null);if(homeHaloMarker)homeHaloMarker.setMap(null);poiMarkers.forEach(m=>m&&m.setMap(null));homeMarker=null;homeHaloMarker=null;poiMarkers=[];}
 function renderMap(fit){if(!map||!data)return;clearMarkers();const bounds=new google.maps.LatLngBounds();let count=0,home=homeData();
-  if(home.lat!=null&&home.lng!=null){const pos={lat:home.lat,lng:home.lng};homeMarker=new google.maps.Marker({map,position:pos,title:home.name||'Property',icon:roundPinIcon(36,'#111827','#fff'),label:{text:'⌂',color:'#fff',fontSize:'17px',fontWeight:'800'}});homeMarker.addListener('click',()=>{infoWindow.setContent(popup(home));infoWindow.open(map,homeMarker);});bounds.extend(pos);count++;}
+  if(home.lat!=null&&home.lng!=null){const pos={lat:home.lat,lng:home.lng};homeHaloMarker=new google.maps.Marker({map,position:pos,clickable:false,zIndex:998,icon:{path:google.maps.SymbolPath.CIRCLE,scale:28,fillColor:'#111827',fillOpacity:.16,strokeColor:'#111827',strokeOpacity:.08,strokeWeight:2}});homeMarker=new google.maps.Marker({map,position:pos,zIndex:999,title:(home.name||'Property')+' — Main property',icon:{path:google.maps.SymbolPath.CIRCLE,scale:22,fillColor:'#111827',fillOpacity:1,strokeColor:'#ffffff',strokeOpacity:1,strokeWeight:4},label:{text:'⌂',color:'#ffffff',fontSize:'21px',fontWeight:'900'}});homeMarker.addListener('click',()=>{infoWindow.setContent('<strong>'+esc(home.name||'Property')+'</strong><br><span style="font-size:11px;font-weight:700;color:#64748b">MAIN PROPERTY</span><br>'+esc(home.address||'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(home))+'">Open in Google Maps ↗</a>');infoWindow.open(map,homeMarker);});bounds.extend(pos);count++;}
   (data.pois||[]).forEach((raw,i)=>{const p=poiData(raw);if(p.lat==null||p.lng==null)return;const cat=categories[p.category]||categories.other,pos={lat:p.lat,lng:p.lng};const m=new google.maps.Marker({map,position:pos,title:p.name,icon:roundPinIcon(32,'#fff','#fff'),label:{text:cat.icon,fontSize:'16px'}});m.addListener('click',()=>{infoWindow.setContent(popup(p));infoWindow.open(map,m);});poiMarkers[i]=m;bounds.extend(pos);count++;});
   if(fit&&count){if(count===1){map.setCenter(bounds.getCenter());map.setZoom(15);}else map.fitBounds(bounds,52);}
 }
