@@ -18,7 +18,7 @@ let availableCategories=[],selectedCategories=new Set(),activePoiIndex=null,setM
 const livePlaces=new Map();
 const DATA_API=window.PROPERTY_MAP_DATA_API||'';
 const ROUTES_ENABLED=window.PROPERTY_MAP_ROUTES_ENABLED===true;
-const routeModes={DRIVING:{icon:'🚗',en:'Drive',zh:'驾车'}};
+const routeModes={DRIVING:{icon:'🚗',en:'Drive',zh:'驾车'},WALKING:{icon:'🚶',en:'Walk',zh:'步行'}};
 let routeMode='DRIVING',routeReversed=false,routeBaseLine=null,routeFlowLine=null,routeFlowFrame=0,currentRoute=null,routeRequestSerial=0,routeLoading=false,routeError='',routePendingKey='';
 const routeCache=new Map();
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
