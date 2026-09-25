@@ -375,3 +375,52 @@ h1,h2,h3,p{margin-top:0}.editor h2{font-size:18px;line-height:1.25;margin-bottom
   #viewerApp .topbar .row{gap:5px}
   #viewerApp .topbar .btn{padding-left:7px;padding-right:7px}
 }
+
+
+/* Builder: Google Listing capacity note */
+.googleListingLimit{
+  margin-top:10px;padding:9px 11px;border:1px solid #dbe4ee;border-radius:11px;
+  background:#f8fafc;color:#64748b;font-size:11px;line-height:1.45;
+}
+.googleListingLimit strong{color:#405166}
+.googleListingLimit.over{border-color:#f0d39d;background:#fffaf0;color:#9a6700}
+
+/* Map card toolbar / expanded-card launcher */
+.clientListToolbar{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:9px;padding-top:8px;border-top:1px solid #edf1f5;
+  font-size:11px;font-weight:800;color:#64748b;flex:0 0 auto;
+}
+.clientListToolbar .btn{padding:5px 8px}
+.placesHeroTop{display:flex;justify-content:flex-start;margin-bottom:10px}
+
+/* Google-powered Listing page. The Advanced Place List is created only after Listing is opened. */
+.googleListingPage{
+  max-width:980px;margin:0 auto 18px;padding:2px 0 18px;
+}
+.googleListingPage[hidden]{display:none!important}
+.googleListingHero{
+  background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);
+  padding:22px 24px;margin-bottom:12px;
+}
+.googleListingMeta{font-size:11px;font-weight:750;color:#8a97a8;margin-top:10px}
+.googleListingStatus{
+  padding:10px 12px;margin-bottom:10px;border:1px solid var(--line);border-radius:12px;
+  background:#fbfcfe;color:#718096;font-size:11.5px;line-height:1.4;
+}
+.googleListingStatus:empty{display:none}
+.googleListingStatus.warn{color:#9a6700;border-color:#f0d39d;background:#fffaf0}
+.googleListingHost{min-height:80px}
+.googleListingHost gmp-advanced-place-list{
+  display:block;width:100%;
+  --gmp-card-border-radius:16px;
+  --gmp-thumbnail-border-radius:12px;
+  --gmp-button-border-radius:10px;
+  --gmp-mat-font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+@media(max-width:900px){
+  #viewerApp .clientListToolbar{margin-top:7px;padding-top:7px}
+  #viewerApp .clientSheet.sheetPeek .clientListToolbar{display:none}
+  .googleListingPage{padding:0}
+  .googleListingHero{padding:18px;border-radius:15px;margin-bottom:10px}
+}
