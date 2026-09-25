@@ -410,7 +410,7 @@ h1,h2,h3,p{margin-top:0}.editor h2{font-size:18px;line-height:1.25;margin-bottom
 }
 .googleListingStatus:empty{display:none}
 .googleListingStatus.warn{color:#9a6700;border-color:#f0d39d;background:#fffaf0}
-.googleListingHost{min-height:80px}
+.googleListingHost{min-height:80px;color-scheme:light}
 .googleListingHost gmp-advanced-place-list{
   display:block;width:100%;
   --gmp-card-border-radius:16px;
