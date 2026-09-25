@@ -13,7 +13,7 @@ const categories={
   other:{en:'Other',zh:'其他',icon:'📍'}
 };
 const $=id=>document.getElementById(id);
-let data=null,map=null,infoWindow=null,lang='en',homeMarker=null,poiMarkers=[];
+let data=null,map=null,infoWindow=null,lang='en',homeMarker=null,homePulseMarkers=[],homePulseFrame=0,poiMarkers=[];
 const livePlaces=new Map();
 const DATA_API=window.PROPERTY_MAP_DATA_API||'';
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
@@ -27,34 +27,37 @@ function distanceText(p){const km=distance(homeData(),p);return km==null?'':km<1
 function googleUrl(p){const id=p.placeId||p.googlePlaceId;if(id)return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name||'place')+'&query_place_id='+encodeURIComponent(id);return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.address].filter(Boolean).join(' '));}
 function roundPinIcon(size,fill,stroke,strokeWeight=2){return {path:google.maps.SymbolPath.CIRCLE,scale:size/2,fillColor:fill,fillOpacity:1,strokeColor:stroke,strokeWeight};}
 function createPropertyPulseMarker(position,title,onClick){
-  const overlay=new google.maps.OverlayView();
-  let wrap=null;
-  overlay.onAdd=function(){
-    wrap=document.createElement('div');
-    wrap.className='propertyPulseWrap';
-    wrap.title=title||'Main property';
-    wrap.style.position='absolute';
-    wrap.style.cursor='pointer';
-    wrap.innerHTML='<span class="propertyPulseRing ringA"></span><span class="propertyPulseRing ringB"></span><span class="propertyPulseCore">⌂</span>';
-    if(onClick)wrap.addEventListener('click',onClick);
-    this.getPanes().overlayMouseTarget.appendChild(wrap);
+  const makeHalo=()=>new google.maps.Marker({
+    map,position,clickable:false,zIndex:997,
+    icon:{path:google.maps.SymbolPath.CIRCLE,scale:21,fillOpacity:0,strokeColor:'#60a5fa',strokeOpacity:.6,strokeWeight:2}
+  });
+  const haloA=makeHalo(),haloB=makeHalo();
+  homePulseMarkers=[haloA,haloB];
+
+  const core=new google.maps.Marker({
+    map,position,zIndex:999,title,
+    icon:{path:google.maps.SymbolPath.CIRCLE,scale:19,fillColor:'#0f172a',fillOpacity:1,strokeColor:'#ffffff',strokeOpacity:1,strokeWeight:3},
+    label:{text:'⌂',color:'#ffffff',fontSize:'18px',fontWeight:'900'}
+  });
+  if(onClick)core.addListener('click',onClick);
+
+  const start=performance.now();
+  const animate=now=>{
+    const cycle=1900;
+    const phases=[((now-start)%cycle)/cycle,(((now-start)+cycle/2)%cycle)/cycle];
+    homePulseMarkers.forEach((marker,i)=>{
+      const p=phases[i],scale=20+(p*15),opacity=Math.max(0,.72*(1-p));
+      marker.setIcon({path:google.maps.SymbolPath.CIRCLE,scale,fillOpacity:0,strokeColor:'#60a5fa',strokeOpacity:opacity,strokeWeight:2});
+    });
+    homePulseFrame=requestAnimationFrame(animate);
   };
-  overlay.draw=function(){
-    if(!wrap)return;
-    const p=this.getProjection().fromLatLngToDivPixel(new google.maps.LatLng(position));
-    if(!p)return;
-    wrap.style.left=p.x+'px';
-    wrap.style.top=p.y+'px';
-    wrap.style.transform='translate(-50%,-50%)';
-  };
-  overlay.onRemove=function(){if(wrap){wrap.remove();wrap=null;}};
-  overlay.setMap(map);
-  return overlay;
+  homePulseFrame=requestAnimationFrame(animate);
+  return core;
 }
 function popup(p){return '<strong>'+esc(p.name||'Place')+'</strong><br>'+esc(p.address||'')+(p.note?'<br>'+esc(p.note):'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(p))+'">Open in Google Maps ↗</a>';}
-function clearMarkers(){if(homeMarker)homeMarker.setMap(null);poiMarkers.forEach(m=>m&&m.setMap(null));homeMarker=null;poiMarkers=[];}
+function clearMarkers(){if(homePulseFrame)cancelAnimationFrame(homePulseFrame);homePulseFrame=0;if(homeMarker)homeMarker.setMap(null);homePulseMarkers.forEach(m=>m&&m.setMap(null));poiMarkers.forEach(m=>m&&m.setMap(null));homeMarker=null;homePulseMarkers=[];poiMarkers=[];}
 function renderMap(fit){if(!map||!data)return;clearMarkers();const bounds=new google.maps.LatLngBounds();let count=0,home=homeData();
-  if(home.lat!=null&&home.lng!=null){const pos={lat:home.lat,lng:home.lng};homeMarker=createPropertyPulseMarker(pos,(home.name||'Property')+' — Main property',()=>{infoWindow.setContent('<strong>'+esc(home.name||'Property')+'</strong><br><span style="font-size:11px;font-weight:700;color:#64748b">MAIN PROPERTY</span><br>'+esc(home.address||'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(home))+'">Open in Google Maps ↗</a>');infoWindow.setPosition(pos);infoWindow.open(map);});bounds.extend(pos);count++;}
+  if(home.lat!=null&&home.lng!=null){const pos={lat:home.lat,lng:home.lng};homeMarker=createPropertyPulseMarker(pos,(home.name||'Property')+' — Main property',()=>{infoWindow.setContent('<strong>'+esc(home.name||'Property')+'</strong><br><span style="font-size:11px;font-weight:700;color:#64748b">MAIN PROPERTY</span><br>'+esc(home.address||'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(home))+'">Open in Google Maps ↗</a>');infoWindow.open(map,homeMarker);});bounds.extend(pos);count++;}
   (data.pois||[]).forEach((raw,i)=>{const p=poiData(raw);if(p.lat==null||p.lng==null)return;const cat=categories[p.category]||categories.other,pos={lat:p.lat,lng:p.lng};const m=new google.maps.Marker({map,position:pos,title:p.name,icon:roundPinIcon(32,'#ffffff','#94a3b8',1.5),label:{text:cat.icon,fontSize:'16px'}});m.addListener('click',()=>{infoWindow.setContent(popup(p));infoWindow.open(map,m);});poiMarkers[i]=m;bounds.extend(pos);count++;});
   if(fit&&count){if(count===1){map.setCenter(bounds.getCenter());map.setZoom(15);}else map.fitBounds(bounds,52);}
 }
