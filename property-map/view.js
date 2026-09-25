@@ -26,17 +26,35 @@ function distance(a,b){if(a.lat==null||a.lng==null||b.lat==null||b.lng==null)ret
 function distanceText(p){const km=distance(homeData(),p);return km==null?'':km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km';}
 function googleUrl(p){const id=p.placeId||p.googlePlaceId;if(id)return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name||'place')+'&query_place_id='+encodeURIComponent(id);return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.address].filter(Boolean).join(' '));}
 function roundPinIcon(size,fill,stroke,strokeWeight=2){return {path:google.maps.SymbolPath.CIRCLE,scale:size/2,fillColor:fill,fillOpacity:1,strokeColor:stroke,strokeWeight};}
-function createPropertyPulseMarker(position,title){
-  const wrap=document.createElement('div');
-  wrap.className='propertyPulseWrap';
-  wrap.innerHTML='<span class="propertyPulseRing ringA"></span><span class="propertyPulseRing ringB"></span><span class="propertyPulseCore">⌂</span>';
-  const marker=new google.maps.marker.AdvancedMarkerElement({map,position,title,content:wrap,zIndex:999});
-  return marker;
+function createPropertyPulseMarker(position,title,onClick){
+  const overlay=new google.maps.OverlayView();
+  let wrap=null;
+  overlay.onAdd=function(){
+    wrap=document.createElement('div');
+    wrap.className='propertyPulseWrap';
+    wrap.title=title||'Main property';
+    wrap.style.position='absolute';
+    wrap.style.cursor='pointer';
+    wrap.innerHTML='<span class="propertyPulseRing ringA"></span><span class="propertyPulseRing ringB"></span><span class="propertyPulseCore">⌂</span>';
+    if(onClick)wrap.addEventListener('click',onClick);
+    this.getPanes().overlayMouseTarget.appendChild(wrap);
+  };
+  overlay.draw=function(){
+    if(!wrap)return;
+    const p=this.getProjection().fromLatLngToDivPixel(new google.maps.LatLng(position));
+    if(!p)return;
+    wrap.style.left=p.x+'px';
+    wrap.style.top=p.y+'px';
+    wrap.style.transform='translate(-50%,-50%)';
+  };
+  overlay.onRemove=function(){if(wrap){wrap.remove();wrap=null;}};
+  overlay.setMap(map);
+  return overlay;
 }
 function popup(p){return '<strong>'+esc(p.name||'Place')+'</strong><br>'+esc(p.address||'')+(p.note?'<br>'+esc(p.note):'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(p))+'">Open in Google Maps ↗</a>';}
 function clearMarkers(){if(homeMarker)homeMarker.setMap(null);poiMarkers.forEach(m=>m&&m.setMap(null));homeMarker=null;poiMarkers=[];}
 function renderMap(fit){if(!map||!data)return;clearMarkers();const bounds=new google.maps.LatLngBounds();let count=0,home=homeData();
-  if(home.lat!=null&&home.lng!=null){const pos={lat:home.lat,lng:home.lng};homeMarker=createPropertyPulseMarker(pos,(home.name||'Property')+' — Main property');homeMarker.addListener('click',()=>{infoWindow.setContent('<strong>'+esc(home.name||'Property')+'</strong><br><span style="font-size:11px;font-weight:700;color:#64748b">MAIN PROPERTY</span><br>'+esc(home.address||'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(home))+'">Open in Google Maps ↗</a>');infoWindow.open({map,anchor:homeMarker});});bounds.extend(pos);count++;}
+  if(home.lat!=null&&home.lng!=null){const pos={lat:home.lat,lng:home.lng};homeMarker=createPropertyPulseMarker(pos,(home.name||'Property')+' — Main property',()=>{infoWindow.setContent('<strong>'+esc(home.name||'Property')+'</strong><br><span style="font-size:11px;font-weight:700;color:#64748b">MAIN PROPERTY</span><br>'+esc(home.address||'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(home))+'">Open in Google Maps ↗</a>');infoWindow.setPosition(pos);infoWindow.open(map);});bounds.extend(pos);count++;}
   (data.pois||[]).forEach((raw,i)=>{const p=poiData(raw);if(p.lat==null||p.lng==null)return;const cat=categories[p.category]||categories.other,pos={lat:p.lat,lng:p.lng};const m=new google.maps.Marker({map,position:pos,title:p.name,icon:roundPinIcon(32,'#ffffff','#94a3b8',1.5),label:{text:cat.icon,fontSize:'16px'}});m.addListener('click',()=>{infoWindow.setContent(popup(p));infoWindow.open(map,m);});poiMarkers[i]=m;bounds.extend(pos);count++;});
   if(fit&&count){if(count===1){map.setCenter(bounds.getCenter());map.setZoom(15);}else map.fitBounds(bounds,52);}
 }
@@ -103,7 +121,7 @@ function initMobileSheet(){
 
 async function hydrate(){const ids=[data.home&&data.home.googlePlaceId,...(data.pois||[]).map(p=>p.placeId)].filter(Boolean);await Promise.all([...new Set(ids)].map(async id=>{try{const place=new google.maps.places.Place({id});await place.fetchFields({fields:['displayName','formattedAddress','location','primaryTypeDisplayName']});livePlaces.set(id,asPlace(place));}catch(e){console.warn('Place details unavailable',id,e);}}));renderClient();renderMap(true);}
 async function initGoogle(){map=new google.maps.Map($('map'),{center:{lat:3.159,lng:101.692},zoom:12,mapTypeControl:false,streetViewControl:false,gestureHandling:'greedy'});infoWindow=new google.maps.InfoWindow();await hydrate();$('mapPlaceholder')?.remove();}
-function loadGoogle(){const key=window.PROPERTY_MAP_CONFIG&&window.PROPERTY_MAP_CONFIG.apiKey;if(!key||key==='YOUR_GOOGLE_MAPS_API_KEY'){$('mapPlaceholder').textContent='Google Maps is not configured.';return;}window.propertyMapViewerReady=()=>initGoogle().catch(e=>{$('mapPlaceholder').textContent='Google Maps could not initialize: '+e.message;});const s=document.createElement('script');s.async=true;s.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=weekly&libraries=places,marker&loading=async&callback=propertyMapViewerReady';s.onerror=()=>{$('mapPlaceholder').textContent='Could not load Google Maps.';};document.head.appendChild(s);}
+function loadGoogle(){const key=window.PROPERTY_MAP_CONFIG&&window.PROPERTY_MAP_CONFIG.apiKey;if(!key||key==='YOUR_GOOGLE_MAPS_API_KEY'){$('mapPlaceholder').textContent='Google Maps is not configured.';return;}window.propertyMapViewerReady=()=>initGoogle().catch(e=>{$('mapPlaceholder').textContent='Google Maps could not initialize: '+e.message;});const s=document.createElement('script');s.async=true;s.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=weekly&libraries=places&loading=async&callback=propertyMapViewerReady';s.onerror=()=>{$('mapPlaceholder').textContent='Could not load Google Maps.';};document.head.appendChild(s);}
 function jsonpMap(id){return new Promise((resolve,reject)=>{if(!DATA_API){reject(new Error('Map service is not configured.'));return;}const cb='psmview_'+Date.now()+'_'+Math.random().toString(36).slice(2),s=document.createElement('script'),timer=setTimeout(()=>{cleanup();reject(new Error('Property map service timed out.'));},12000);function cleanup(){clearTimeout(timer);delete window[cb];s.remove();}window[cb]=x=>{cleanup();resolve(x);};s.onerror=()=>{cleanup();reject(new Error('Could not reach property map service.'));};s.src=DATA_API+'?id='+encodeURIComponent(id)+'&callback='+encodeURIComponent(cb);document.head.appendChild(s);});}
 async function loadPublishedMap(id){if(DATA_API){const result=await jsonpMap(id);if(result&&result.ok&&result.map)return result.map;if(result&&result.error&&result.error!=='Map not found')throw new Error(result.error);}const res=await fetch('maps/'+encodeURIComponent(id)+'.json',{cache:'no-store'});if(!res.ok)throw new Error('Property map not found.');return res.json();}
 async function boot(){const id=new URLSearchParams(location.search).get('id');if(!validId(id)){$('mapPlaceholder').textContent='Invalid property map link.';return;}try{data=await loadPublishedMap(id);if(!data||data.id!==id||!data.home||!Array.isArray(data.pois))throw new Error('Property map data is invalid.');renderClient();loadGoogle();}catch(e){$('mapPlaceholder').textContent=e.message;}}
