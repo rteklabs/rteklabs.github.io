@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#111827" />
   <title>Property Spot Map</title>
   <link rel="preconnect" href="https://maps.googleapis.com">
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 <div class="shell" id="app">
@@ -20,15 +20,37 @@
       <p class="hint">Property first, then add the places that matter to this client. Published maps are saved as tiny JSON records in your Google Drive.</p>
       <div class="section" style="border-top:0;padding-top:0;margin-top:12px">
         <div class="grid2">
-          <div><label class="label">Map title</label><input class="field" id="mapTitle" placeholder="e.g. Impian Villas — Daily Convenience"></div>
-          <div><label class="label">Client / reference</label><input class="field" id="clientName" placeholder="Optional"></div>
+          <div class="requiredFieldGroup">
+            <div class="labelLine"><label class="label" for="mapTitle">Map title</label><span class="requiredBadge">Required</span></div>
+            <input class="field" id="mapTitle" aria-required="true" placeholder="e.g. Impian Villas — Daily Convenience">
+          </div>
+          <div>
+            <div class="labelLine"><label class="label" for="clientName">Client / reference</label><span class="optionalBadge">Optional</span></div>
+            <input class="field" id="clientName" placeholder="e.g. Mr Gu">
+          </div>
         </div>
-        <div style="margin-top:10px"><label class="label">Main property</label><input class="field" id="homeName" placeholder="Impian Villas"></div>
-        <div style="margin-top:10px"><label class="label">Search property / address</label><div id="homeAutocomplete"></div><p class="hint">Select a Google suggestion to set the exact property pin.</p></div>
-        <div style="margin-top:10px"><label class="label">Main address (editable)</label><input class="field" id="homeAddress" placeholder="Jalan Kiara 3, Mont Kiara, Kuala Lumpur"></div>
-        <div style="margin-top:10px"><label class="label">Google Maps link (optional)</label><input class="field" id="homeGoogleUrl" type="url" placeholder="Paste the selected place's Google Maps link"></div>
-        <div style="margin-top:10px"><label class="label">Short note for client</label><textarea class="field" id="intro" placeholder="Why this location works for this client…"></textarea></div>
-        <div class="actions"><button class="btn ghost" id="searchHomeBtn">Search Google Maps ↗</button><button class="btn primary" id="setHomeBtn">Set / find property</button><button class="btn ghost" id="pickHomeBtn">Pin on map</button><button class="btn ghost" id="demoBtn">Load Impian Villas demo</button></div>
+
+        <div class="requiredFieldGroup" style="margin-top:12px">
+          <div class="labelLine"><label class="label">Main property location</label><span class="requiredBadge">Required</span></div>
+          <div id="homeAutocomplete"></div>
+          <p class="hint">Choose a Google suggestion to set the exact property pin.</p>
+        </div>
+
+        <div style="margin-top:10px"><label class="label" for="homeName">Property name</label><input class="field" id="homeName" placeholder="Impian Villas"></div>
+        <div style="margin-top:10px"><label class="label" for="homeAddress">Property address</label><input class="field" id="homeAddress" placeholder="Jalan Kiara 3, Mont Kiara, Kuala Lumpur"></div>
+        <div style="margin-top:10px">
+          <div class="labelLine"><label class="label" for="intro">Short note for client</label><span class="optionalBadge">Optional</span></div>
+          <textarea class="field" id="intro" placeholder="Why this location works for this client…"></textarea>
+        </div>
+
+        <details class="advancedDetails">
+          <summary>Can't find the property? Manual options</summary>
+          <div class="advancedBody">
+            <div><label class="label" for="homeGoogleUrl">Google Maps link</label><input class="field" id="homeGoogleUrl" type="url" placeholder="Paste a Google Maps link"></div>
+            <div class="actions"><button class="btn ghost" id="setHomeBtn">Find from details</button><button class="btn ghost" id="pickHomeBtn">Pin manually</button></div>
+            <p class="hint">Use these only when Google suggestions do not find the exact property.</p>
+          </div>
+        </details>
         <div class="status" id="homeStatus"></div>
       </div>
       <div class="section">
@@ -41,16 +63,17 @@
           <div id="placeSearchResults" class="searchResults"></div>
           <p class="hint">Google Places results near the property. Select a result to inspect it, then press Add.</p>
         </div>
-        <div class="poiForm">
-          <label class="label">Or add a place manually / with a Google Maps link</label>
-          <div style="margin-top:9px"><label class="label">Place name</label><input class="field" id="poiName" placeholder="Kepong Baru Morning Market"></div>
-          <div style="margin-top:9px"><label class="label">Address / search phrase</label><input class="field" id="poiAddress" placeholder="55 Lorong Bangau 2, Kepong Baru, Kuala Lumpur"></div>
-          <div style="margin-top:9px"><label class="label">Google Maps link (optional)</label><input class="field" id="poiGoogleUrl" type="url" placeholder="Paste the selected place's Google Maps link"></div>
-          <div style="margin-top:9px"><label class="label">Client note</label><input class="field" id="poiNote" placeholder="Traditional Chinese wet market; fresh vegetables, pork, fish…"></div>
-          <div class="actions"><button class="btn ghost" id="searchPoiBtn">Search Google Maps ↗</button><button class="btn primary" id="addPoiBtn">Add to map</button><button class="btn ghost" id="pickPoiBtn">Pin on map</button><button class="btn ghost" id="clearPoiBtn">Clear</button></div>
-          <p class="hint">For a place you cannot find in the results, paste its Google Maps link or choose a pin manually.</p>
-          <div class="status" id="poiStatus"></div>
-        </div>
+        <details class="advancedDetails poiManual">
+          <summary>Can't find the place? Add it manually</summary>
+          <div class="advancedBody poiForm">
+            <div><label class="label" for="poiName">Place name</label><input class="field" id="poiName" placeholder="Kepong Baru Morning Market"></div>
+            <div style="margin-top:9px"><label class="label" for="poiAddress">Address / search phrase</label><input class="field" id="poiAddress" placeholder="55 Lorong Bangau 2, Kepong Baru, Kuala Lumpur"></div>
+            <div style="margin-top:9px"><div class="labelLine"><label class="label" for="poiGoogleUrl">Google Maps link</label><span class="optionalBadge">Optional</span></div><input class="field" id="poiGoogleUrl" type="url" placeholder="Paste a Google Maps link"></div>
+            <div style="margin-top:9px"><div class="labelLine"><label class="label" for="poiNote">Client note</label><span class="optionalBadge">Optional</span></div><input class="field" id="poiNote" placeholder="Traditional Chinese wet market; fresh vegetables, pork, fish…"></div>
+            <div class="actions"><button class="btn primary" id="addPoiBtn">Add to map</button><button class="btn ghost" id="pickPoiBtn">Pin manually</button><button class="btn ghost" id="clearPoiBtn">Clear</button></div>
+            <div class="status" id="poiStatus"></div>
+          </div>
+        </details>
         <div class="poiList" id="poiEditList"></div>
       </div>
       <div class="section">
@@ -59,10 +82,10 @@
         <div class="actions"><button class="btn primary" id="saveDashboardBtn">Save &amp; Publish</button></div>
       </div>
       <div class="section">
-        <h3 style="font-size:15px;margin-bottom:5px">Share</h3>
-        <p class="hint">The client link uses the permanent map ID. Publish first, then copy or open the short link.</p>
-        <div class="actions"><button class="btn primary" id="shareBtn">Create share links</button><button class="btn ghost" id="exportBtn">Export JSON</button><label class="btn ghost" style="display:inline-flex;align-items:center"><input type="file" id="importFile" accept="application/json" style="display:none">Import JSON</label><button class="btn ghost danger" id="newBtn">New map</button></div>
-        <div class="hint" style="margin-top:10px">Draft is saved automatically on this browser.</div>
+        <h3 style="font-size:15px;margin-bottom:5px">Utilities</h3>
+        <p class="hint">Normally you only need Save &amp; Publish. These tools are for backup or starting over.</p>
+        <div class="actions"><button class="btn ghost" id="exportBtn">Export JSON</button><label class="btn ghost" style="display:inline-flex;align-items:center"><input type="file" id="importFile" accept="application/json" style="display:none">Import JSON</label><button class="btn ghost danger" id="newBtn">New map</button></div>
+        <div class="hint" style="margin-top:10px">Draft is saved automatically on this browser. Client links are available from the Dashboard after publishing.</div>
       </div>
     </aside>
     <main class="panel mapwrap">
@@ -81,19 +104,8 @@
   </div>
   <footer class="siteFooter"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></footer>
 </div>
-<div class="modal" id="shareModal">
-  <div class="modalCard">
-    <h2 style="font-size:19px;margin-bottom:5px">Share this map</h2>
-    <p class="hint">Client link is presentation mode. Keep the edit link for yourself.</p>
-    <label class="label">Client link</label><div class="shareBox" id="clientUrlBox"></div>
-    <div class="actions"><button class="btn primary" data-copy="client">Copy client link</button><button class="btn ghost" data-open="client">Open client view</button></div>
-    <div class="divider"></div>
-    <label class="label">Edit link</label><div class="shareBox" id="editUrlBox"></div>
-    <div class="actions"><button class="btn" data-copy="edit">Copy edit link</button><button class="btn ghost" data-open="edit">Open edit view</button><button class="btn ghost" id="closeShareBtn">Close</button></div>
-  </div>
-</div>
 <script src="config.js"></script>
 <script src="api-config.js"></script>
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>
