@@ -14,7 +14,7 @@ const categories={
 };
 const $=id=>document.getElementById(id);
 let data=null,map=null,infoWindow=null,lang='en',homeMarker=null,homePulseMarkers=[],homePulseFrame=0,poiMarkers=[];
-let availableCategories=[],selectedCategories=new Set(),activePoiIndex=null,setMobileSheetState=null;
+let availableCategories=[],selectedCategories=new Set(),activePoiIndex=null,setMobileSheetState=null,placesMode=false;
 const livePlaces=new Map();
 const DATA_API=window.PROPERTY_MAP_DATA_API||'';
 const ROUTES_ENABLED=window.PROPERTY_MAP_ROUTES_ENABLED===true;
@@ -30,7 +30,6 @@ function poiData(p){return p.placeId?{...(livePlaces.get(p.placeId)||{name:p.nam
 function distance(a,b){if(a.lat==null||a.lng==null||b.lat==null||b.lng==null)return null;const r=Math.PI/180,dLat=(b.lat-a.lat)*r,dLng=(b.lng-a.lng)*r,x=Math.sin(dLat/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dLng/2)**2;return 12742*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
 function distanceText(p){const km=distance(homeData(),p);return km==null?'':km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km';}
 function googleUrl(p){const id=p.placeId||p.googlePlaceId;if(id)return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name||'place')+'&query_place_id='+encodeURIComponent(id);return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.address].filter(Boolean).join(' '));}
-function safeGoogleMapsUrl(raw){try{const u=new URL(raw);if(u.protocol!=='https:')return '';if(u.hostname==='maps.app.goo.gl')return u.href;if(['www.google.com','google.com','maps.google.com','www.google.com.my','google.com.my'].includes(u.hostname)&&u.pathname.startsWith('/maps'))return u.href;}catch(_){}return '';}
 function categoryMeta(key){return categories[key]||(data&&data.customCategories&&data.customCategories[key])||categories.other;}
 function categoryKey(raw){const key=raw&&raw.category;return categories[key]||(data&&data.customCategories&&data.customCategories[key])?key:'other';}
 function initCategoryFilters(){
@@ -41,14 +40,13 @@ function initCategoryFilters(){
 }
 function isCategoryVisible(raw){return selectedCategories.has(categoryKey(raw));}
 function visiblePoiCount(){return (data&&data.pois||[]).filter(isCategoryVisible).length;}
-function setAllCategories(){selectedCategories=new Set(availableCategories);renderFilters();renderClient();renderMap(true);}
+function setAllCategories(){selectedCategories=new Set(availableCategories);renderClient();renderPlacesPage();renderMap(true);}
 function toggleCategory(key){
   if(selectedCategories.has(key))selectedCategories.delete(key);else selectedCategories.add(key);
   if(activePoiIndex!=null&&data&&data.pois&&data.pois[activePoiIndex]&&!isCategoryVisible(data.pois[activePoiIndex])){activePoiIndex=null;clearActiveRoute();}
-  renderFilters();renderClient();renderMap(true);
+  renderClient();renderPlacesPage();renderMap(true);
 }
-function renderFilters(){
-  const host=$('categoryFilters');
+function renderFilterHost(host){
   if(!host)return;
   host.replaceChildren();
   if(!availableCategories.length){host.hidden=true;return;}
@@ -65,6 +63,10 @@ function renderFilters(){
     btn.innerHTML='<span class="filterChipIcon">'+cat.icon+'</span><span>'+esc(lang==='zh'?cat.zh:cat.en)+'</span>';
     btn.onclick=()=>toggleCategory(key);host.appendChild(btn);
   });
+}
+function renderFilters(){
+  renderFilterHost($('categoryFilters'));
+  renderFilterHost($('placesCategoryFilters'));
   requestAnimationFrame(updateFilterScrollButtons);
 }
 function updateFilterScrollButtons(){
@@ -371,6 +373,70 @@ function focusHome(){
     infoWindow.open(map,homeMarker);
   }
 }
+function updateViewModeButton(){
+  const b=$('viewModeBtn');if(!b)return;
+  b.textContent=placesMode?(lang==='zh'?'← 地图':'← Map'):(lang==='zh'?'☰ 全部地点':'☰ Places');
+  b.setAttribute('aria-label',placesMode?(lang==='zh'?'返回地图':'Back to map'):(lang==='zh'?'查看全部地点':'View all places'));
+}
+function applyViewMode(next,push){
+  placesMode=next==='list';
+  const mapView=document.querySelector('.readOnlyViewer'),page=$('placesPage');
+  if(mapView)mapView.hidden=placesMode;
+  if(page)page.hidden=!placesMode;
+  $('viewerApp').classList.toggle('placesMode',placesMode);
+  updateViewModeButton();
+  if(placesMode){renderPlacesPage();window.scrollTo({top:0,behavior:'instant'});}
+  else if(map){
+    requestAnimationFrame(()=>{
+      google.maps.event.trigger(map,'resize');
+      if(activePoiIndex!=null&&data&&data.pois&&data.pois[activePoiIndex])focusPoi(activePoiIndex);
+      else focusHome();
+    });
+  }
+  if(push){
+    const u=new URL(location.href);
+    if(placesMode)u.searchParams.set('view','list');else u.searchParams.delete('view');
+    history.pushState({view:placesMode?'list':'map'},'',u);
+  }
+}
+function renderPlacesPage(){
+  if(!data)return;
+  const home=homeData(),visibleItems=(data.pois||[]).map((raw,i)=>({raw,p:poiData(raw),i})).filter(x=>isCategoryVisible(x.raw));
+  $('placesEyebrow').textContent=lang==='zh'?'附近地点一览':'All nearby places';
+  $('placesHomeName').textContent=home.name||(lang==='zh'?'物业':'Property');
+  $('placesHomeAddress').textContent=home.address||'';
+  $('placesIntro').textContent=data.intro||'';
+  $('placesMeta').textContent=(data.pois||[]).length+(lang==='zh'?' 个已整理地点':' curated places');
+  renderFilters();
+  const grid=$('placesGrid');grid.replaceChildren();
+  if(!visibleItems.length){
+    if((data.pois||[]).length){
+      grid.innerHTML='<div class="placesEmpty"><div>'+(lang==='zh'?'没有选择任何类别。':'No categories selected.')+'</div><button type="button" class="btn primary tiny" id="placesShowAllBtn">'+(lang==='zh'?'显示全部':'Show all')+'</button></div>';
+      $('placesShowAllBtn').onclick=setAllCategories;
+    }else{
+      grid.innerHTML='<div class="placesEmpty">'+(lang==='zh'?'暂时没有加入附近地点。':'No nearby places added yet.')+'</div>';
+    }
+    return;
+  }
+  visibleItems.sort((a,b)=>(distance(home,a.p)??999)-(distance(home,b.p)??999)).forEach(({p,i})=>{
+    const cat=categoryMeta(p.category),card=document.createElement('article');
+    card.className='placesCard';
+    card.innerHTML=
+      '<div class="placesCardIcon">'+cat.icon+'</div>'+
+      '<div class="placesCardBody">'+
+        '<div class="placesCardTitle">'+esc(p.name||'Place')+'</div>'+
+        '<div class="placesCardMeta">'+esc(lang==='zh'?cat.zh:cat.en)+(distanceText(p)?' · '+esc(distanceText(p)):'')+'</div>'+
+        (p.address?'<div class="placesCardAddress">'+esc(p.address)+'</div>':'')+
+        (p.note?'<div class="placesCardNote">'+esc(p.note)+'</div>':'')+
+        '<div class="placesCardActions">'+
+          '<button type="button" class="btn ghost tiny placesMapBtn" data-poi-index="'+i+'">'+(lang==='zh'?'在地图查看':'View on map')+'</button>'+
+          '<a class="btn ghost tiny placesGoogleBtn" target="_blank" rel="noopener" href="'+esc(googleUrl(p))+'">Google Maps ↗</a>'+
+        '</div>'+
+      '</div>';
+    card.querySelector('.placesMapBtn').onclick=()=>{applyViewMode('map',true);setTimeout(()=>focusPoi(i),0);};
+    grid.appendChild(card);
+  });
+}
 function renderClient(){
   const home=homeData(),title=data.title||home.name||'Property Spot Map',visible=visiblePoiCount();
   $('clientTopTitle').textContent=title;
@@ -378,14 +444,6 @@ function renderClient(){
   $('clientHomeName').textContent=home.name||(lang==='zh'?'物业':'Property');
   $('clientHomeAddress').textContent=home.address||'';
   $('clientIntro').textContent=data.intro||'';
-  const listUrl=safeGoogleMapsUrl(data.googleListUrl||''),listCta=$('googleListCta');
-  if(listCta){
-    listCta.hidden=!listUrl;
-    if(listUrl){
-      listCta.href=listUrl;
-      listCta.textContent=lang==='zh'?'🗺 在 Google 地图查看全部地点 ↗':'🗺 Open all in Google Maps ↗';
-    }
-  }
   $('clientCount').textContent=visible+(lang==='zh'?' 个地点':' places');
   $('langBtn').textContent=lang==='en'?'中文':'EN';
   renderFilters();
@@ -472,14 +530,16 @@ function initMobileSheet(){
   apply('half',false);
 }
 
-async function hydrate(){const ids=[data.home&&data.home.googlePlaceId,...(data.pois||[]).map(p=>p.placeId)].filter(Boolean);await Promise.all([...new Set(ids)].map(async id=>{try{const place=new google.maps.places.Place({id});await place.fetchFields({fields:['displayName','formattedAddress','location','primaryTypeDisplayName']});livePlaces.set(id,asPlace(place));}catch(e){console.warn('Place details unavailable',id,e);}}));renderClient();renderMap(true);}
+async function hydrate(){const ids=[data.home&&data.home.googlePlaceId,...(data.pois||[]).map(p=>p.placeId)].filter(Boolean);await Promise.all([...new Set(ids)].map(async id=>{try{const place=new google.maps.places.Place({id});await place.fetchFields({fields:['displayName','formattedAddress','location','primaryTypeDisplayName']});livePlaces.set(id,asPlace(place));}catch(e){console.warn('Place details unavailable',id,e);}}));renderClient();renderPlacesPage();renderMap(true);}
 async function initGoogle(){map=new google.maps.Map($('map'),{center:{lat:3.159,lng:101.692},zoom:12,mapTypeControl:false,streetViewControl:false,gestureHandling:'greedy'});infoWindow=new google.maps.InfoWindow();await hydrate();$('mapPlaceholder')?.remove();}
 function loadGoogle(){const key=window.PROPERTY_MAP_CONFIG&&window.PROPERTY_MAP_CONFIG.apiKey;if(!key||key==='YOUR_GOOGLE_MAPS_API_KEY'){$('mapPlaceholder').textContent='Google Maps is not configured.';return;}window.propertyMapViewerReady=()=>initGoogle().catch(e=>{$('mapPlaceholder').textContent='Google Maps could not initialize: '+e.message;});const s=document.createElement('script');s.async=true;s.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=weekly&libraries=places&loading=async&callback=propertyMapViewerReady';s.onerror=()=>{$('mapPlaceholder').textContent='Could not load Google Maps.';};document.head.appendChild(s);}
 function jsonpMap(id){return new Promise((resolve,reject)=>{if(!DATA_API){reject(new Error('Map service is not configured.'));return;}const cb='psmview_'+Date.now()+'_'+Math.random().toString(36).slice(2),s=document.createElement('script'),timer=setTimeout(()=>{cleanup();reject(new Error('Property map service timed out.'));},12000);function cleanup(){clearTimeout(timer);delete window[cb];s.remove();}window[cb]=x=>{cleanup();resolve(x);};s.onerror=()=>{cleanup();reject(new Error('Could not reach property map service.'));};s.src=DATA_API+'?id='+encodeURIComponent(id)+'&callback='+encodeURIComponent(cb);document.head.appendChild(s);});}
 async function loadPublishedMap(id){if(DATA_API){const result=await jsonpMap(id);if(result&&result.ok&&result.map)return result.map;if(result&&result.error&&result.error!=='Map not found')throw new Error(result.error);}const res=await fetch('maps/'+encodeURIComponent(id)+'.json',{cache:'no-store'});if(!res.ok)throw new Error('Property map not found.');return res.json();}
-async function boot(){const id=new URLSearchParams(location.search).get('id');if(!validId(id)){$('mapPlaceholder').textContent='Invalid property map link.';return;}try{data=await loadPublishedMap(id);if(!data||data.id!==id||!data.home||!Array.isArray(data.pois))throw new Error('Property map data is invalid.');initCategoryFilters();renderClient();loadGoogle();}catch(e){$('mapPlaceholder').textContent=e.message;}}
-$('langBtn').onclick=()=>{lang=lang==='en'?'zh':'en';if(data)renderClient();};
-$('copyLinkBtn').onclick=()=>navigator.clipboard.writeText(location.href).then(()=>{const b=$('copyLinkBtn'),old=b.textContent;b.textContent='Copied';setTimeout(()=>b.textContent=old,1200);});
+async function boot(){const params=new URLSearchParams(location.search),id=params.get('id');if(!validId(id)){$('mapPlaceholder').textContent='Invalid property map link.';return;}try{data=await loadPublishedMap(id);if(!data||data.id!==id||!data.home||!Array.isArray(data.pois))throw new Error('Property map data is invalid.');initCategoryFilters();renderClient();renderPlacesPage();applyViewMode(params.get('view')==='list'?'list':'map',false);loadGoogle();}catch(e){$('mapPlaceholder').textContent=e.message;}}
+$('langBtn').onclick=()=>{lang=lang==='en'?'zh':'en';if(data){renderClient();renderPlacesPage();updateViewModeButton();}};
+$('copyLinkBtn').onclick=()=>navigator.clipboard.writeText(location.href).then(()=>{const b=$('copyLinkBtn'),old=b.textContent;b.textContent=lang==='zh'?'已复制':'Copied';setTimeout(()=>b.textContent=old,1200);});
+$('viewModeBtn').onclick=()=>applyViewMode(placesMode?'map':'list',true);
+addEventListener('popstate',()=>applyViewMode(new URLSearchParams(location.search).get('view')==='list'?'list':'map',false));
 $('homeReturnBtn').onclick=focusHome;
 $('homeReturnBtn').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();focusHome();}};
 initMobileSheet();
