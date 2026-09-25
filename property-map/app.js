@@ -22,6 +22,32 @@ const livePlaces = new Map(); // Only in memory. Shared links/drafts keep IDs, n
 const DATA_API = window.PROPERTY_MAP_DATA_API || '';
 const CUSTOM_CATEGORY_KEY='propertySpotMapCustomCategories';
 const emojiChoices=['✈️','🛫','💼','🏢','🏭','🍸','🍺','🍻','☕','🍽️','🥐','🏪','⛽','🚗','🅿️','🚕','🚌','🚇','🚆','🏫','🎓','🧸','🏥','🩺','💊','🦷','🏦','💳','🏬','🛍️','🌳','🛝','🏋️','🏊','⚽','🏀','🎾','⛳','🎬','🍿','🏨','📸','📍','🕌','⛪','🛕','🥕','🥩','🐟','🐾','💇','🧺','🔧','🏛️','🛂','📦','🚚','👶','🌊','🏖️','🥾','⭐'];
+const categoryZhSuggestions={
+  'airport':'机场','international airport':'国际机场','domestic airport':'国内机场',
+  'workplace':'工作地点','work place':'工作地点','office':'办公室','office building':'办公楼','business district':'商业区',
+  'factory':'工厂','industrial':'工业区','industrial area':'工业区','warehouse':'仓库',
+  'bar':'酒吧','pub':'酒吧','bar / pub':'酒吧 / 酒馆','bar and pub':'酒吧 / 酒馆','nightlife':'夜生活',
+  'cafe':'咖啡馆','coffee shop':'咖啡馆','restaurant':'餐厅','chinese restaurant':'中餐厅','food court':'美食广场',
+  'bakery':'面包店','convenience store':'便利店','supermarket':'超市','grocery':'杂货店','grocery store':'杂货店',
+  'wet market':'菜市场','fresh market':'鲜货市场','wet / fresh market':'菜市场 / 鲜货市场','chinese grocery':'中国超市',
+  'petrol station':'加油站','gas station':'加油站','ev charging':'电动车充电站','car wash':'洗车店',
+  'parking':'停车场','taxi':'出租车','grab':'网约车','bus stop':'巴士站','bus station':'巴士总站',
+  'lrt':'轻快铁','mrt':'捷运','lrt / mrt':'轻快铁 / 捷运','train station':'火车站','transport':'交通',
+  'school':'学校','university':'大学','college':'学院','kindergarten':'幼儿园','childcare':'托儿所',
+  'hospital':'医院','clinic':'诊所','pharmacy':'药房','dentist':'牙医诊所','medical':'医疗',
+  'shopping mall':'购物中心','mall':'购物中心','shopping':'购物','retail':'零售',
+  'bank':'银行','atm':'自动提款机','post office':'邮局','courier':'快递','parcel':'包裹服务',
+  'police station':'警察局','fire station':'消防局','government office':'政府部门','embassy':'大使馆','immigration':'移民局',
+  'park':'公园','playground':'游乐场','gym':'健身房','swimming pool':'游泳池','sports':'运动',
+  'golf':'高尔夫','golf club':'高尔夫俱乐部','cinema':'电影院','movie theatre':'电影院','entertainment':'娱乐',
+  'hotel':'酒店','homestay':'民宿','airbnb':'民宿','tourist attraction':'旅游景点','landmark':'地标',
+  'mosque':'清真寺','church':'教堂','temple':'寺庙',
+  'organic grocery':'有机食品店','butcher':'肉店','seafood market':'海鲜市场',
+  'pet shop':'宠物店','veterinary':'兽医诊所','vet':'兽医诊所','salon':'美发店','laundry':'洗衣店',
+  'automotive':'汽车服务','car workshop':'汽车维修店','mechanic':'汽车维修店',
+  'beach':'海滩','hiking':'徒步','nature':'自然景点','other':'其他'
+};
+let customZhAutoValue='';
 let customCategoryLibrary=readCustomCategoryLibrary();
 let selectedCustomEmoji='✈️';
 
@@ -76,6 +102,26 @@ function fillCategories(selected){
     .forEach(([k,cat])=>{const o=document.createElement('option');o.value=k;o.textContent=cat.icon+' '+cat.en;s.appendChild(o);});
   s.value=[...s.options].some(o=>o.value===wanted)?wanted:'market';
 }
+function normalizeCategoryName(value){
+  return String(value||'').trim().toLowerCase()
+    .replace(/&/g,' and ')
+    .replace(/[–—]/g,'-')
+    .replace(/\s+/g,' ');
+}
+function suggestCategoryChinese(value){
+  const key=normalizeCategoryName(value);
+  if(!key)return '';
+  return categoryZhSuggestions[key]||'';
+}
+function updateCategoryChineseSuggestion(){
+  const en=$('customCategoryEn'),zh=$('customCategoryZh');
+  if(!en||!zh)return;
+  const suggestion=suggestCategoryChinese(en.value);
+  const canReplace=!zh.value.trim()||zh.value===customZhAutoValue;
+  if(!canReplace)return;
+  zh.value=suggestion;
+  customZhAutoValue=suggestion;
+}
 function renderEmojiPicker(){
   const host=$('emojiPicker');if(!host)return;
   host.replaceChildren();
@@ -88,7 +134,7 @@ function renderEmojiPicker(){
   });
 }
 function openCategoryModal(){
-  selectedCustomEmoji='✈️';
+  selectedCustomEmoji='✈️';customZhAutoValue='';
   $('selectedEmoji').textContent=selectedCustomEmoji;
   $('customCategoryEn').value='';$('customCategoryZh').value='';status('categoryStatus','');
   renderEmojiPicker();
@@ -469,6 +515,8 @@ function newMap() {if(!confirm('Start a new map? Your current draft will be clea
 function bindUi() {
   $('setHomeBtn').onclick=setHome;$('addPoiBtn').onclick=addPoi;$('clearPoiBtn').onclick=clearPoi;$('saveDashboardBtn').onclick=saveToDashboard;$('exportBtn').onclick=downloadJson;$('newBtn').onclick=newMap;
   $('addCategoryBtn').onclick=openCategoryModal;$('closeCategoryBtn').onclick=closeCategoryModal;$('saveCategoryBtn').onclick=saveCustomCategory;
+  $('customCategoryEn').addEventListener('input',updateCategoryChineseSuggestion);
+  $('customCategoryZh').addEventListener('input',()=>{if($('customCategoryZh').value!==customZhAutoValue)customZhAutoValue='';});
   $('categoryModal').onclick=e=>{if(e.target===$('categoryModal'))closeCategoryModal();};
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('categoryModal').classList.contains('open'))closeCategoryModal();});
   $('findPlacesBtn').onclick=findPlaces;$('placeSearchInput').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();findPlaces();}};
