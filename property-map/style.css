@@ -271,3 +271,29 @@ h1,h2,h3,p{margin-top:0}.editor h2{font-size:18px;line-height:1.25;margin-bottom
 .homeReturn:hover{background:rgba(255,255,255,.98);box-shadow:0 10px 28px rgba(15,23,42,.14)}
 .homeReturn:active{transform:translateY(1px)}
 .homeReturn:focus-visible{outline:2px solid #405a73;outline-offset:2px}
+
+
+/* Builder housekeeping: clearer required fields and quieter fallbacks */
+.labelLine{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
+.labelLine .label{margin-bottom:0}
+.requiredBadge,.optionalBadge{display:inline-flex;align-items:center;border-radius:999px;padding:3px 7px;font-size:9.5px;font-weight:800;line-height:1;letter-spacing:.02em}
+.requiredBadge{background:#e8f7f0;color:#087f5b;border:1px solid #bfe7d5}
+.optionalBadge{background:#f3f6f9;color:#7b8797;border:1px solid #e1e7ee}
+.requiredFieldGroup{
+  padding:10px;
+  border:1px solid #bfe7d5;
+  border-radius:13px;
+  background:linear-gradient(135deg,#f4fff9 0%,#fbfffd 100%);
+  box-shadow:0 0 0 1px rgba(8,127,91,.02);
+}
+.requiredFieldGroup .field,
+.requiredFieldGroup gmp-place-autocomplete{background:#fff}
+.requiredFieldGroup:focus-within{border-color:#79c7a5;box-shadow:0 0 0 3px rgba(8,127,91,.08)}
+.advancedDetails{margin-top:11px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe;overflow:hidden}
+.advancedDetails>summary{cursor:pointer;list-style:none;padding:10px 12px;font-size:11.5px;font-weight:750;color:#607086;user-select:none}
+.advancedDetails>summary::-webkit-details-marker{display:none}
+.advancedDetails>summary::before{content:'＋';display:inline-block;width:18px;color:#8a97a8;font-weight:800}
+.advancedDetails[open]>summary::before{content:'−'}
+.advancedDetails[open]>summary{border-bottom:1px solid var(--line);background:#f7f9fc}
+.advancedBody{padding:12px}
+.poiManual .poiForm{margin:0;border:0;border-radius:0;background:transparent;padding:12px}
