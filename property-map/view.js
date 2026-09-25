@@ -30,10 +30,12 @@ function poiData(p){return p.placeId?{...(livePlaces.get(p.placeId)||{name:p.nam
 function distance(a,b){if(a.lat==null||a.lng==null||b.lat==null||b.lng==null)return null;const r=Math.PI/180,dLat=(b.lat-a.lat)*r,dLng=(b.lng-a.lng)*r,x=Math.sin(dLat/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dLng/2)**2;return 12742*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
 function distanceText(p){const km=distance(homeData(),p);return km==null?'':km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km';}
 function googleUrl(p){const id=p.placeId||p.googlePlaceId;if(id)return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name||'place')+'&query_place_id='+encodeURIComponent(id);return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.address].filter(Boolean).join(' '));}
-function categoryKey(raw){return categories[raw&&raw.category]?raw.category:'other';}
+function categoryMeta(key){return categories[key]||(data&&data.customCategories&&data.customCategories[key])||categories.other;}
+function categoryKey(raw){const key=raw&&raw.category;return categories[key]||(data&&data.customCategories&&data.customCategories[key])?key:'other';}
 function initCategoryFilters(){
   const used=new Set((data&&data.pois||[]).map(categoryKey));
-  availableCategories=Object.keys(categories).filter(key=>used.has(key));
+  const order=[...Object.keys(categories),...Object.keys((data&&data.customCategories)||{})];
+  availableCategories=[...new Set(order)].filter(key=>used.has(key));
   selectedCategories=new Set(availableCategories);
 }
 function isCategoryVisible(raw){return selectedCategories.has(categoryKey(raw));}
@@ -56,7 +58,7 @@ function renderFilters(){
   all.setAttribute('aria-pressed',allActive?'true':'false');
   all.onclick=setAllCategories;host.appendChild(all);
   availableCategories.forEach(key=>{
-    const cat=categories[key]||categories.other,active=selectedCategories.has(key),btn=document.createElement('button');
+    const cat=categoryMeta(key),active=selectedCategories.has(key),btn=document.createElement('button');
     btn.type='button';btn.className='filterChip'+(active?' active':'');
     btn.setAttribute('aria-pressed',active?'true':'false');
     btn.innerHTML='<span class="filterChipIcon">'+cat.icon+'</span><span>'+esc(lang==='zh'?cat.zh:cat.en)+'</span>';
@@ -349,7 +351,7 @@ function popup(p){return '<strong>'+esc(p.name||'Place')+'</strong><br>'+esc(p.a
 function clearMarkers(){if(homePulseFrame)cancelAnimationFrame(homePulseFrame);homePulseFrame=0;if(homeMarker)homeMarker.setMap(null);homePulseMarkers.forEach(m=>m&&m.setMap(null));poiMarkers.forEach(m=>m&&m.setMap(null));homeMarker=null;homePulseMarkers=[];poiMarkers=[];}
 function renderMap(fit){if(!map||!data)return;clearMarkers();const bounds=new google.maps.LatLngBounds();let count=0,home=homeData();
   if(home.lat!=null&&home.lng!=null){const pos={lat:home.lat,lng:home.lng};homeMarker=createPropertyPulseMarker(pos,(home.name||'Property')+' — Main property',()=>{infoWindow.setContent('<strong>'+esc(home.name||'Property')+'</strong><br><span style="font-size:11px;font-weight:700;color:#64748b">MAIN PROPERTY</span><br>'+esc(home.address||'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(home))+'">Open in Google Maps ↗</a>');infoWindow.open(map,homeMarker);});bounds.extend(pos);count++;}
-  (data.pois||[]).forEach((raw,i)=>{if(!isCategoryVisible(raw))return;const p=poiData(raw);if(p.lat==null||p.lng==null)return;const cat=categories[p.category]||categories.other,pos={lat:p.lat,lng:p.lng};const m=new google.maps.Marker({map,position:pos,title:p.name,icon:poiMarkerIcon(i),label:{text:cat.icon,fontSize:'16px'},zIndex:i===activePoiIndex?900:undefined});m.addListener('click',()=>selectPoi(i,{expandSheet:true,scroll:true,info:true}));poiMarkers[i]=m;bounds.extend(pos);count++;});
+  (data.pois||[]).forEach((raw,i)=>{if(!isCategoryVisible(raw))return;const p=poiData(raw);if(p.lat==null||p.lng==null)return;const cat=categoryMeta(p.category),pos={lat:p.lat,lng:p.lng};const m=new google.maps.Marker({map,position:pos,title:p.name,icon:poiMarkerIcon(i),label:{text:cat.icon,fontSize:'16px'},zIndex:i===activePoiIndex?900:undefined});m.addListener('click',()=>selectPoi(i,{expandSheet:true,scroll:true,info:true}));poiMarkers[i]=m;bounds.extend(pos);count++;});
   if(fit&&count){if(count===1){map.setCenter(bounds.getCenter());map.setZoom(15);}else map.fitBounds(bounds,52);}
 }
 function focusPoi(i){selectPoi(i,{center:true,zoom:true,info:true,openFallback:true});}
@@ -393,7 +395,7 @@ function renderClient(){
   }
 
   visibleItems.sort((a,b)=>(distance(home,a.p)??999)-(distance(home,b.p)??999)).forEach(({p,i})=>{
-    const cat=categories[p.category]||categories.other,item=document.createElement('div');
+    const cat=categoryMeta(p.category),item=document.createElement('div');
     item.className='clientPoi'+(i===activePoiIndex?' selected':'');
     item.dataset.poiIndex=String(i);
     item.setAttribute('aria-selected',i===activePoiIndex?'true':'false');
