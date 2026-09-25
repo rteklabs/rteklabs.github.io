@@ -297,3 +297,18 @@ h1,h2,h3,p{margin-top:0}.editor h2{font-size:18px;line-height:1.25;margin-bottom
 .advancedDetails[open]>summary{border-bottom:1px solid var(--line);background:#f7f9fc}
 .advancedBody{padding:12px}
 .poiManual .poiForm{margin:0;border:0;border-radius:0;background:transparent;padding:12px}
+
+
+/* Custom POI category picker */
+.categoryPickerRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.categoryPickerRow .btn{min-height:40px;white-space:nowrap}
+.categoryModalCard{width:min(620px,100%)}
+.modalHeader{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.modalHeader h2{font-size:19px;margin:0 0 4px}
+.emojiPicker{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:7px;max-height:220px;overflow:auto;padding:8px;border:1px solid var(--line);border-radius:13px;background:#f8fafc}
+.emojiChoice{width:100%;aspect-ratio:1;border:1px solid #d8e0e9;border-radius:10px;background:#fff;font-size:22px;cursor:pointer;display:grid;place-items:center}
+.emojiChoice:hover{background:#f1f5f9}
+.emojiChoice.selected{border-color:#405a73;background:#eaf0f6;box-shadow:0 0 0 2px rgba(64,90,115,.13)}
+.selectedEmojiRow{display:flex;align-items:center;gap:9px;margin-top:8px}
+.selectedEmoji{width:38px;height:38px;border-radius:10px;background:#eef2f7;display:grid;place-items:center;font-size:22px}
+@media(max-width:560px){.categoryPickerRow{grid-template-columns:1fr}.categoryPickerRow .btn{width:100%}.categoryModalCard .grid2{grid-template-columns:1fr}}
