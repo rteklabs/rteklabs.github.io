@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#405a73" />
   <title>Property Spot Map</title>
   <link rel="preconnect" href="https://maps.googleapis.com">
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
 <div class="shell" id="viewerApp">
@@ -27,6 +27,23 @@
       <h1 class="clientTitle" id="clientHomeName">Property</h1>
       <div class="clientAddress" id="clientHomeAddress"></div>
       <div class="summary" id="clientIntro"></div>
+      <div class="routePanel" id="routePanel" hidden>
+        <div class="routeTop">
+          <div class="routeText">
+            <div class="routeDirectionLabel" id="routeDirectionLabel"></div>
+            <div class="routeSummary" id="routeSummary">Calculating route…</div>
+          </div>
+          <button class="routeReverseBtn" id="routeReverseBtn" type="button" aria-label="Reverse direction" title="Reverse direction">⇄</button>
+        </div>
+        <div class="routeModes" id="routeModes">
+          <button class="routeModeBtn active" type="button" data-route-mode="DRIVING" aria-pressed="true"><span>🚗</span><span>Drive</span></button>
+          <button class="routeModeBtn" type="button" data-route-mode="WALKING" aria-pressed="false"><span>🚶</span><span>Walk</span></button>
+          <button class="routeModeBtn" type="button" data-route-mode="BICYCLING" aria-pressed="false"><span>🚲</span><span>Cycle</span></button>
+          <button class="routeModeBtn" type="button" data-route-mode="TRANSIT" aria-pressed="false"><span>🚆</span><span>Transit</span></button>
+        </div>
+        <div class="routeWarning" id="routeWarning" hidden></div>
+        <div class="routeStatus" id="routeStatus" aria-live="polite"></div>
+      </div>
       <div class="categoryFilterWrap">
         <button class="filterScrollBtn filterScrollLeft" id="filterScrollLeft" type="button" aria-label="Scroll categories left">‹</button>
         <div class="categoryFilters" id="categoryFilters" aria-label="Point of interest categories"></div>
@@ -39,6 +56,6 @@
 </div>
 <script src="config.js"></script>
 <script src="api-config.js"></script>
-<script src="view.js?v=11"></script>
+<script src="view.js?v=12"></script>
 </body>
 </html>
