@@ -107,3 +107,55 @@ h1,h2,h3,p{margin-top:0}.editor h2{font-size:18px;line-height:1.25;margin-bottom
 @media(prefers-reduced-motion:reduce){
   .propertyPulseRing{animation:none;transform:scale(1.35);opacity:.28}
 }
+
+
+/* Client POI category filters */
+.categoryFilters{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+  scrollbar-width:none;
+  padding:10px 1px 2px;
+  flex:0 0 auto;
+}
+.categoryFilters::-webkit-scrollbar{display:none}
+.filterChip{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  border:1px solid #d8e0e9;
+  background:#fff;
+  color:#526174;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:750;
+  line-height:1;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.filterChip.active{
+  background:#243244;
+  border-color:#243244;
+  color:#fff;
+  box-shadow:0 2px 6px rgba(15,23,42,.12);
+}
+.filterChipIcon{font-size:13px;line-height:1}
+.filterEmpty{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  color:var(--muted);
+  font-size:12px;
+  padding:24px 12px;
+  text-align:center;
+}
+@media(max-width:900px){
+  #viewerApp .categoryFilters{padding-top:8px}
+  #viewerApp .filterChip{padding:6px 9px;font-size:10.5px}
+  #viewerApp .clientSheet.sheetPeek .categoryFilters{display:none}
+}
