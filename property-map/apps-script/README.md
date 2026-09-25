@@ -7,8 +7,9 @@ This folder is a versioned backup/reference for the Apps Script web app that ser
 - Route requests are **lazy**: no route request occurs until a client selects a POI.
 - The browser sends only map ID, POI index, direction, and mode.
 - The server loads the published map JSON and derives the real Google Place IDs itself, so callers cannot use the endpoint as an arbitrary routing proxy.
-- First cut allows **DRIVING only**.
+- Allowed modes: **DRIVING** and **WALKING**.
 - Driving is explicitly `TRAFFIC_UNAWARE`.
+- Walking uses Google Routes `WALK` mode. Google marks walking routes as beta, so the client must display the pedestrian-path warning whenever Walking is shown.
 - Hard application-side cap: **300 route attempts/day**.
 - `ROUTES_API_KEY` stays in Apps Script Script Properties; it is never shipped to GitHub Pages.
 - The public viewer remains disabled until `PROPERTY_MAP_ROUTES_ENABLED` is deliberately switched to `true`.
