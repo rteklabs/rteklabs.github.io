@@ -264,3 +264,10 @@ h1,h2,h3,p{margin-top:0}.editor h2{font-size:18px;line-height:1.25;margin-bottom
   #viewerApp .routeReverseBtn{width:30px;height:30px;flex-basis:30px}
   #viewerApp .clientSheet.sheetPeek .routePanel{display:none}
 }
+
+
+/* Top-left property pill also acts as a return-to-property control */
+.homeReturn{cursor:pointer;transition:box-shadow .16s ease,transform .16s ease,background .16s ease}
+.homeReturn:hover{background:rgba(255,255,255,.98);box-shadow:0 10px 28px rgba(15,23,42,.14)}
+.homeReturn:active{transform:translateY(1px)}
+.homeReturn:focus-visible{outline:2px solid #405a73;outline-offset:2px}
