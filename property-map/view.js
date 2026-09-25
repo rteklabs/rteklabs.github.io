@@ -279,6 +279,7 @@ async function requestActiveRoute(){
     routeCache.set(cacheKey,currentRoute);
     drawRoutePath(currentRoute,true);
     $('routeStatus').textContent='';
+    renderRoutePanel();
   }catch(err){
     if(serial!==routeRequestSerial)return;
     clearRouteOverlay();
