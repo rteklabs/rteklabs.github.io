@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#405a73" />
   <title>Property Spot Map</title>
   <link rel="preconnect" href="https://maps.googleapis.com">
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
 <div class="shell" id="viewerApp">
@@ -20,7 +20,10 @@
       <div class="pill"><strong id="clientTopTitle">Property Spot Map</strong><div class="small" id="clientTopRef"></div></div>
       <div class="pill hideMobile"><span class="small" id="clientCount">0 places</span></div>
     </div>
-    <section class="clientSheet" id="clientSheet">
+    <section class="clientSheet sheetHalf" id="clientSheet">
+      <div class="sheetHandle" id="sheetHandle" role="button" tabindex="0" aria-label="Resize nearby places panel" aria-expanded="true">
+        <span class="sheetHandleBar"></span>
+      </div>
       <h1 class="clientTitle" id="clientHomeName">Property</h1>
       <div class="clientAddress" id="clientHomeAddress"></div>
       <div class="summary" id="clientIntro"></div>
@@ -31,6 +34,6 @@
 </div>
 <script src="config.js"></script>
 <script src="api-config.js"></script>
-<script src="view.js?v=2"></script>
+<script src="view.js?v=3"></script>
 </body>
 </html>
