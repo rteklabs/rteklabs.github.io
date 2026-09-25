@@ -6,13 +6,13 @@
   <meta name="theme-color" content="#405a73" />
   <title>Property Spot Map</title>
   <link rel="preconnect" href="https://maps.googleapis.com">
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
 <div class="shell" id="viewerApp">
   <div class="topbar">
     <div class="brand"><div class="brandmark">P</div><div>Property Spot Map<div class="small">Client view</div></div></div>
-    <div class="row"><button class="btn ghost tiny" id="viewModeBtn">☰ Places</button><button class="btn ghost tiny" id="langBtn">中文</button><button class="btn tiny" id="copyLinkBtn">Copy link</button></div>
+    <div class="row"><button class="btn ghost tiny" id="viewModeBtn">▤ Listing</button><button class="btn ghost tiny" id="langBtn">中文</button><button class="btn tiny" id="copyLinkBtn">Copy link</button></div>
   </div>
   <main class="panel mapwrap readOnlyViewer">
     <div id="map"><div class="mapPlaceholder" id="mapPlaceholder">Loading property map…</div></div>
@@ -44,6 +44,10 @@
         <div class="routeWarning" id="routeWarning" hidden></div>
         <div class="routeStatus" id="routeStatus" aria-live="polite"></div>
       </div>
+      <div class="clientListToolbar">
+        <span id="clientListLabel">Nearby places</span>
+        <button class="btn ghost tiny" type="button" id="expandCardsBtn">⛶ Expand</button>
+      </div>
       <div class="categoryFilterWrap">
         <button class="filterScrollBtn filterScrollLeft" id="filterScrollLeft" type="button" aria-label="Scroll categories left">‹</button>
         <div class="categoryFilters" id="categoryFilters" aria-label="Point of interest categories"></div>
@@ -54,6 +58,7 @@
   </main>
   <section class="placesPage" id="placesPage" hidden>
     <div class="placesHero">
+      <div class="placesHeroTop"><button class="btn ghost tiny" type="button" id="collapseCardsBtn">← Map</button></div>
       <div class="placesEyebrow" id="placesEyebrow">All nearby places</div>
       <h1 class="placesTitle" id="placesHomeName">Property</h1>
       <div class="placesAddress" id="placesHomeAddress"></div>
@@ -65,10 +70,20 @@
     </div>
     <div class="placesGrid" id="placesGrid"></div>
   </section>
+  <section class="googleListingPage" id="googleListingPage" hidden>
+    <div class="googleListingHero">
+      <div class="placesEyebrow" id="googleListingEyebrow">Google Listing</div>
+      <h1 class="placesTitle" id="googleListingHomeName">Property</h1>
+      <div class="placesAddress" id="googleListingHomeAddress"></div>
+      <div class="googleListingMeta" id="googleListingMeta"></div>
+    </div>
+    <div class="googleListingStatus" id="googleListingStatus">Open Listing to load Google place cards.</div>
+    <div class="googleListingHost" id="googleListingHost"></div>
+  </section>
   <footer class="siteFooter"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></footer>
 </div>
 <script src="config.js"></script>
 <script src="api-config.js"></script>
-<script src="view.js?v=21"></script>
+<script src="view.js?v=22"></script>
 </body>
 </html>
