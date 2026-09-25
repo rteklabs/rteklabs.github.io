@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#405a73" />
   <title>Property Spot Map</title>
   <link rel="preconnect" href="https://maps.googleapis.com">
-  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="style.css?v=13">
 </head>
 <body>
 <div class="shell" id="viewerApp">
@@ -17,7 +17,9 @@
   <main class="panel mapwrap readOnlyViewer">
     <div id="map"><div class="mapPlaceholder" id="mapPlaceholder">Loading property map…</div></div>
     <div class="clientbar">
-      <div class="pill"><strong id="clientTopTitle">Property Spot Map</strong><div class="small" id="clientTopRef"></div></div>
+      <div class="pill homeReturn" id="homeReturnBtn" role="button" tabindex="0" aria-label="Return to property" title="Return to property">
+        <strong id="clientTopTitle">Property Spot Map</strong><div class="small" id="clientTopRef"></div>
+      </div>
       <div class="pill hideMobile"><span class="small" id="clientCount">0 places</span></div>
     </div>
     <section class="clientSheet sheetHalf" id="clientSheet">
@@ -56,6 +58,6 @@
 </div>
 <script src="config.js"></script>
 <script src="api-config.js"></script>
-<script src="view.js?v=12"></script>
+<script src="view.js?v=13"></script>
 </body>
 </html>
