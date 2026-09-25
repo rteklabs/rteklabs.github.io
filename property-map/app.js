@@ -14,12 +14,101 @@ const categories = {
   other:{en:'Other',zh:'其他',icon:'📍'}
 };
 const $ = id => document.getElementById(id);
-const emptyState = () => ({version:2,title:'',client:'',home:{name:'',address:'',lat:null,lng:null},intro:'',pois:[]});
+const emptyState = () => ({version:3,title:'',client:'',home:{name:'',address:'',lat:null,lng:null},intro:'',pois:[],customCategories:{}});
 let state = emptyState(), lang = 'en', map = null, infoWindow = null, homeMarker = null;
 let poiMarkers = [], selectedMarker = null, selectedIndex = -1, results = [], searchRun = 0;
 let pinTarget = null, repairIndex = null, readOnly = false, currentMapId = null;
 const livePlaces = new Map(); // Only in memory. Shared links/drafts keep IDs, not Google place data.
 const DATA_API = window.PROPERTY_MAP_DATA_API || '';
+const CUSTOM_CATEGORY_KEY='propertySpotMapCustomCategories';
+const emojiChoices=['✈️','🛫','💼','🏢','🏭','🍸','🍺','🍻','☕','🍽️','🥐','🏪','⛽','🚗','🅿️','🚕','🚌','🚇','🚆','🏫','🎓','🧸','🏥','🩺','💊','🦷','🏦','💳','🏬','🛍️','🌳','🛝','🏋️','🏊','⚽','🏀','🎾','⛳','🎬','🍿','🏨','📸','📍','🕌','⛪','🛕','🥕','🥩','🐟','🐾','💇','🧺','🔧','🏛️','🛂','📦','🚚','👶','🌊','🏖️','🥾','⭐'];
+let customCategoryLibrary=readCustomCategoryLibrary();
+let selectedCustomEmoji='✈️';
+
+function readCustomCategoryLibrary(){
+  try{
+    const value=JSON.parse(localStorage.getItem(CUSTOM_CATEGORY_KEY)||'{}');
+    return value&&typeof value==='object'&&!Array.isArray(value)?value:{};
+  }catch(_){return {};}
+}
+function writeCustomCategoryLibrary(){
+  try{localStorage.setItem(CUSTOM_CATEGORY_KEY,JSON.stringify(customCategoryLibrary));}catch(_){}
+}
+function normalizeCategoryDef(def){
+  if(!def||typeof def!=='object')return null;
+  const en=String(def.en||'').trim(),zh=String(def.zh||'').trim(),icon=String(def.icon||'📍').trim()||'📍';
+  return en?{en,zh:zh||en,icon}:null;
+}
+function syncCustomCategoriesFromState(){
+  if(!state.customCategories||typeof state.customCategories!=='object'||Array.isArray(state.customCategories))state.customCategories={};
+  Object.entries(state.customCategories).forEach(([key,def])=>{
+    const clean=normalizeCategoryDef(def);
+    if(clean&&key.startsWith('custom_'))customCategoryLibrary[key]=clean;
+  });
+  writeCustomCategoryLibrary();
+}
+function categoryMeta(key){
+  return categories[key]||(state.customCategories&&state.customCategories[key])||customCategoryLibrary[key]||categories.other;
+}
+function rememberCategoryForMap(key){
+  if(categories[key])return;
+  const def=normalizeCategoryDef(customCategoryLibrary[key]||(state.customCategories&&state.customCategories[key]));
+  if(!def)return;
+  if(!state.customCategories||typeof state.customCategories!=='object')state.customCategories={};
+  state.customCategories[key]=def;
+}
+function makeCustomCategoryKey(){
+  const bytes=new Uint8Array(5);crypto.getRandomValues(bytes);
+  return 'custom_'+Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+}
+function fillCategories(selected){
+  const s=$('poiCategory');if(!s)return;
+  const wanted=selected||s.value||'market';
+  s.replaceChildren();
+  Object.entries(categories).forEach(([k,cat])=>{
+    const o=document.createElement('option');o.value=k;o.textContent=cat.icon+' '+cat.en;s.appendChild(o);
+  });
+  const merged={...(state.customCategories||{}),...customCategoryLibrary};
+  Object.entries(merged)
+    .map(([k,v])=>[k,normalizeCategoryDef(v)])
+    .filter(([,v])=>v)
+    .sort((a,b)=>a[1].en.localeCompare(b[1].en))
+    .forEach(([k,cat])=>{const o=document.createElement('option');o.value=k;o.textContent=cat.icon+' '+cat.en;s.appendChild(o);});
+  s.value=[...s.options].some(o=>o.value===wanted)?wanted:'market';
+}
+function renderEmojiPicker(){
+  const host=$('emojiPicker');if(!host)return;
+  host.replaceChildren();
+  emojiChoices.forEach(icon=>{
+    const b=document.createElement('button');
+    b.type='button';b.className='emojiChoice'+(icon===selectedCustomEmoji?' selected':'');
+    b.textContent=icon;b.setAttribute('role','option');b.setAttribute('aria-selected',icon===selectedCustomEmoji?'true':'false');
+    b.onclick=()=>{selectedCustomEmoji=icon;$('selectedEmoji').textContent=icon;renderEmojiPicker();};
+    host.appendChild(b);
+  });
+}
+function openCategoryModal(){
+  selectedCustomEmoji='✈️';
+  $('selectedEmoji').textContent=selectedCustomEmoji;
+  $('customCategoryEn').value='';$('customCategoryZh').value='';status('categoryStatus','');
+  renderEmojiPicker();
+  $('categoryModal').classList.add('open');$('categoryModal').setAttribute('aria-hidden','false');
+  setTimeout(()=>$('customCategoryEn').focus(),0);
+}
+function closeCategoryModal(){
+  $('categoryModal').classList.remove('open');$('categoryModal').setAttribute('aria-hidden','true');
+}
+function saveCustomCategory(){
+  const en=$('customCategoryEn').value.trim(),zh=$('customCategoryZh').value.trim();
+  if(!en){status('categoryStatus','Enter a category name.','warn');$('customCategoryEn').focus();return;}
+  const duplicate=Object.entries({...categories,...customCategoryLibrary}).find(([,def])=>String(def.en||'').toLowerCase()===en.toLowerCase());
+  if(duplicate){fillCategories(duplicate[0]);closeCategoryModal();return;}
+  const key=makeCustomCategoryKey(),def={en,zh:zh||en,icon:selectedCustomEmoji};
+  customCategoryLibrary[key]=def;writeCustomCategoryLibrary();
+  if(!state.customCategories||typeof state.customCategories!=='object')state.customCategories={};
+  state.customCategories[key]=def;
+  fillCategories(key);saveDraft();closeCategoryModal();
+}
 const placeholderExamples = [
   {
     title:'e.g. Nadi Bangsar — Daily Convenience',
@@ -133,7 +222,13 @@ function distance(a,b) {
 function distanceText(p) { const km=distance(homeData(),p); return km==null?'':(km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km'); }
 function portable() {
   const home=state.home.googlePlaceId?{googlePlaceId:state.home.googlePlaceId}:{...state.home};
-  return {version:2,title:state.title,client:state.client,home,intro:state.intro,
+  const usedCustom={};
+  state.pois.forEach(p=>{
+    if(categories[p.category])return;
+    const def=normalizeCategoryDef((state.customCategories&&state.customCategories[p.category])||customCategoryLibrary[p.category]);
+    if(def)usedCustom[p.category]=def;
+  });
+  return {version:3,title:state.title,client:state.client,home,intro:state.intro,customCategories:usedCustom,
     pois:state.pois.map(p=>p.placeId?{placeId:p.placeId,category:p.category,note:p.note||''}:{...p})};
 }
 function saveDraft() { try { localStorage.setItem('propertySpotMapDraft',JSON.stringify(portable())); } catch (_) {} }
@@ -237,7 +332,6 @@ async function saveToDashboard() {
 }
 function syncFromForm() { state.title=$('mapTitle').value.trim();state.client=$('clientName').value.trim();state.intro=$('intro').value.trim();if(!state.home.googlePlaceId){state.home.name=$('homeName').value.trim();state.home.address=$('homeAddress').value.trim();state.home.googleUrl=mapsLink($('homeGoogleUrl').value.trim());}saveDraft(); }
 function syncToForm() { const home=homeData();$('mapTitle').value=state.title||'';$('clientName').value=state.client||'';$('homeName').value=home.name||'';$('homeAddress').value=home.address||'';$('homeGoogleUrl').value=state.home.googleUrl||'';$('intro').value=state.intro||''; }
-function fillCategories() { const s=$('poiCategory');Object.keys(categories).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=categories[k].icon+' '+categories[k].en;s.appendChild(o);}); }
 
 function clearMarkers() { if(homeMarker)homeMarker.setMap(null);poiMarkers.forEach(m=>m.setMap(null));homeMarker=null;poiMarkers=[]; }
 function roundPinIcon(size,fill,stroke) {
@@ -254,7 +348,7 @@ function popup(p) { return '<strong>'+esc(p.name||'Place')+'</strong><br>'+esc(p
 function renderMap(fit) {
   if(!map) return;clearMarkers();const bounds=new google.maps.LatLngBounds();let count=0;
   const home=homeData();if(home.lat!=null&&home.lng!=null){const pos={lat:home.lat,lng:home.lng};homeMarker=new google.maps.Marker({map,position:pos,title:home.name||'Property',icon:roundPinIcon(36,'#111827','#ffffff'),label:{text:'⌂',color:'#ffffff',fontSize:'17px',fontWeight:'800'}});homeMarker.addListener('click',()=>{infoWindow.setContent(popup({...home,googlePlaceId:state.home.googlePlaceId,googleUrl:state.home.googleUrl}));infoWindow.open(map,homeMarker);});bounds.extend(pos);count++;}
-  state.pois.forEach((raw,i)=>{const p=poiData(raw);if(p.lat==null||p.lng==null)return;const pos={lat:p.lat,lng:p.lng},cat=categories[p.category]||categories.other;
+  state.pois.forEach((raw,i)=>{const p=poiData(raw);if(p.lat==null||p.lng==null)return;const pos={lat:p.lat,lng:p.lng},cat=categoryMeta(p.category);
     const marker=new google.maps.Marker({map,position:pos,title:p.name,icon:roundPinIcon(32,'#ffffff','#ffffff'),label:{text:cat.icon,fontSize:'16px'}});
     marker.addListener('click',()=>{infoWindow.setContent(popup(p));infoWindow.open(map,marker);});poiMarkers[i]=marker;bounds.extend(pos);count++;
   });
@@ -271,7 +365,7 @@ function focusPoi(i) {
 }
 function renderEditorList() {
   const el=$('poiEditList');el.replaceChildren();if(!state.pois.length){el.innerHTML='<div class="empty">No places added yet. Search above to add one.</div>';return;}
-  state.pois.forEach((raw,i)=>{const p=poiData(raw),cat=categories[p.category]||categories.other,card=document.createElement('div');card.className='poiEdit';card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','Show '+p.name+' on map');
+  state.pois.forEach((raw,i)=>{const p=poiData(raw),cat=categoryMeta(p.category),card=document.createElement('div');card.className='poiEdit';card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','Show '+p.name+' on map');
     card.innerHTML='<div class="poiIcon">'+cat.icon+'</div><div><div class="poiTitle">'+esc(p.name)+'</div><div class="poiMeta">'+esc(cat.en)+(distanceText(p)?' · '+esc(distanceText(p)):' · Pin pending')+'</div><div class="poiMeta">'+esc(p.address)+'</div>'+(p.note?'<div class="poiMeta">'+esc(p.note)+'</div>':'')+'</div><div class="row"><button type="button" class="btn tiny ghost" data-focus>Map</button><button type="button" class="btn tiny ghost danger" data-delete aria-label="Remove '+esc(p.name)+'">Remove</button></div>';
     card.onclick=()=>focusPoi(i);card.onkeydown=e=>{if(e.target===card&&(e.key==='Enter'||e.key===' ')){e.preventDefault();focusPoi(i);}};
     card.querySelector('[data-focus]').onclick=e=>{e.stopPropagation();focusPoi(i);};card.querySelector('[data-delete]').onclick=e=>{e.stopPropagation();state.pois.splice(i,1);repairIndex=null;saveDraft();renderAll(true);};el.appendChild(card);
@@ -282,7 +376,7 @@ function renderClient() {
   $('clientHomeName').textContent=home.name||(lang==='zh'?'物业':'Property');$('clientHomeAddress').textContent=home.address||'';$('clientIntro').textContent=state.intro||'';$('clientCount').textContent=state.pois.length+(lang==='zh'?' 个地点':' places');$('langBtn').textContent=lang==='en'?'中文':'EN';
   const list=$('clientPoiList');list.replaceChildren();if(!state.pois.length){list.innerHTML='<div class="empty">'+(lang==='zh'?'暂时没有加入附近地点。':'No nearby places added yet.')+'</div>';return;}
   state.pois.map((raw,i)=>({p:poiData(raw),i})).sort((a,b)=>(distance(home,a.p)??999)-(distance(home,b.p)??999)).forEach(({p,i})=>{
-    const cat=categories[p.category]||categories.other,item=document.createElement('div');item.className='clientPoi';item.innerHTML='<div class="poiIcon">'+cat.icon+'</div><div><div class="poiTitle">'+esc(p.name)+'</div><div class="poiMeta">'+esc(lang==='zh'?cat.zh:cat.en)+(distanceText(p)?' · '+esc(distanceText(p)):'')+'</div>'+(p.note?'<div class="note">'+esc(p.note)+'</div>':'')+'</div><a class="gmaps" target="_blank" rel="noopener" href="'+esc(googleUrl(p))+'">Google Maps ↗</a>';
+    const cat=categoryMeta(p.category),item=document.createElement('div');item.className='clientPoi';item.innerHTML='<div class="poiIcon">'+cat.icon+'</div><div><div class="poiTitle">'+esc(p.name)+'</div><div class="poiMeta">'+esc(lang==='zh'?cat.zh:cat.en)+(distanceText(p)?' · '+esc(distanceText(p)):'')+'</div>'+(p.note?'<div class="note">'+esc(p.note)+'</div>':'')+'</div><a class="gmaps" target="_blank" rel="noopener" href="'+esc(googleUrl(p))+'">Google Maps ↗</a>';
     item.onclick=e=>{if(e.target.closest('a'))return;focusPoi(i);};list.appendChild(item);
   });
 }
@@ -313,6 +407,7 @@ async function setHome() {
 function poiFromForm() {return {category:$('poiCategory').value,name:$('poiName').value.trim(),address:$('poiAddress').value.trim(),googleUrl:mapsLink($('poiGoogleUrl').value.trim()),note:$('poiNote').value.trim(),lat:null,lng:null};}
 function clearPoi() {repairIndex=null;['poiName','poiAddress','poiGoogleUrl','poiNote'].forEach(id=>$(id).value='');status('poiStatus','');}
 function commitPoi(p) {
+  rememberCategoryForMap(p.category);
   if(repairIndex!=null&&state.pois[repairIndex]&&state.pois[repairIndex].name===p.name)state.pois[repairIndex]=p;else state.pois.push(p);
   clearPoi();saveDraft();renderAll(true);status('poiStatus','Added to map.','ok');
 }
@@ -350,7 +445,8 @@ async function findPlaces() {
 }
 function addSearchResult(i) {
   const p=results[i];if(!p||state.pois.some(x=>x.placeId===p.placeId))return;
-  livePlaces.set(p.placeId,p);repairIndex=null;state.pois.push({placeId:p.placeId,category:$('poiCategory').value,note:''});saveDraft();renderAll(true);renderSearchResults();showSelection(i);status('placeSearchStatus','Added '+p.name+'.','ok');
+  const category=$('poiCategory').value;rememberCategoryForMap(category);
+  livePlaces.set(p.placeId,p);repairIndex=null;state.pois.push({placeId:p.placeId,category,note:''});saveDraft();renderAll(true);renderSearchResults();showSelection(i);status('placeSearchStatus','Added '+p.name+'.','ok');
 }
 function startPin(target) {
   if(!map)return;const link=validLink(target==='home'?'homeGoogleUrl':'poiGoogleUrl',target==='home'?'homeStatus':'poiStatus');if(link===null)return;
@@ -367,11 +463,14 @@ function encodeState() {syncFromForm();return btoa(Array.from(new TextEncoder().
 function decodeState(s) {const b=atob(s.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-s.length%4)%4));const data=JSON.parse(new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0))));if(!data||!data.home||!Array.isArray(data.pois))throw new Error('Invalid map');return data;}
 function copy(text) {if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);const input=document.createElement('textarea');input.value=text;document.body.appendChild(input);input.select();document.execCommand('copy');input.remove();return Promise.resolve();}
 function downloadJson() {syncFromForm();const blob=new Blob([JSON.stringify(portable(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=((homeData().name||'property-map').replace(/[^a-z0-9]+/gi,'-').replace(/^-|-$/g,'').toLowerCase()||'property-map')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
-function importJson(file) {const reader=new FileReader();reader.onload=async()=>{try{const d=JSON.parse(reader.result);if(!d.home||!Array.isArray(d.pois))throw new Error();state=d;livePlaces.clear();saveDraft();renderAll(true);await hydratePlaces();status('homeStatus','Map imported.','ok');}catch(e){status('homeStatus','Invalid map JSON.','warn');}};reader.readAsText(file);}
+function importJson(file) {const reader=new FileReader();reader.onload=async()=>{try{const d=JSON.parse(reader.result);if(!d.home||!Array.isArray(d.pois))throw new Error();state=d;syncCustomCategoriesFromState();fillCategories();livePlaces.clear();saveDraft();renderAll(true);await hydratePlaces();status('homeStatus','Map imported.','ok');}catch(e){status('homeStatus','Invalid map JSON.','warn');}};reader.readAsText(file);}
 function newMap() {if(!confirm('Start a new map? Your current draft will be cleared from this browser.'))return;state=emptyState();currentMapId=null;livePlaces.clear();pinTarget=null;repairIndex=null;results=[];selectedIndex=-1;if(selectedMarker){selectedMarker.setMap(null);selectedMarker=null;}renderSearchResults();$('placeSearchInput').value='';status('placeSearchStatus','');localStorage.removeItem('propertySpotMapDraft');history.replaceState(null,'',location.pathname+'?new=1&edit=1');renderAll(false);if(map){map.setCenter({lat:3.159, lng:101.692});map.setZoom(12);}}
 
 function bindUi() {
   $('setHomeBtn').onclick=setHome;$('addPoiBtn').onclick=addPoi;$('clearPoiBtn').onclick=clearPoi;$('saveDashboardBtn').onclick=saveToDashboard;$('exportBtn').onclick=downloadJson;$('newBtn').onclick=newMap;
+  $('addCategoryBtn').onclick=openCategoryModal;$('closeCategoryBtn').onclick=closeCategoryModal;$('saveCategoryBtn').onclick=saveCustomCategory;
+  $('categoryModal').onclick=e=>{if(e.target===$('categoryModal'))closeCategoryModal();};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('categoryModal').classList.contains('open'))closeCategoryModal();});
   $('findPlacesBtn').onclick=findPlaces;$('placeSearchInput').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();findPlaces();}};
   $('pickHomeBtn').onclick=()=>startPin('home');$('pickPoiBtn').onclick=()=>startPin('poi');
   ['mapTitle','clientName','intro'].forEach(id=>$(id).addEventListener('input',()=>{syncFromForm();renderClient();}));
@@ -398,7 +497,7 @@ function loadGoogle() {
   const script=document.createElement('script');script.async=true;script.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=weekly&libraries=places&loading=async&callback=propertyMapReady';script.onerror=()=>{$('mapPlaceholder').textContent='Could not load Google Maps. Check the API key and connection.';};document.head.appendChild(script);
 }
 async function boot() {
-  fillCategories();applyRandomPlaceholders();const params=new URLSearchParams(location.search);
+  applyRandomPlaceholders();const params=new URLSearchParams(location.search);
   let loadWarning='';
   if(location.hash.length>1){try{state=decodeState(location.hash.slice(1));}catch(e){loadDraft();}}
   else if(params.get('map')){
@@ -410,6 +509,8 @@ async function boot() {
   }
   else if(params.get('new')==='1'){state=emptyState();currentMapId=null;localStorage.removeItem('propertySpotMapDraft');}
   else loadDraft();
+  syncCustomCategoriesFromState();
+  fillCategories();
   readOnly=location.hash.length>1&&params.get('edit')!=='1';if(readOnly){$('app').classList.add('readOnly');$('modeLabel').textContent='Client view';}
   else $('modeLabel').textContent='Agent builder';
   bindUi();renderAll(false);
