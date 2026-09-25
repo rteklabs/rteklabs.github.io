@@ -77,6 +77,17 @@ function loadSavedMap(id) {
   if(!record||!record.data||!record.data.home||!Array.isArray(record.data.pois)) return false;
   state=record.data;currentMapId=id;return true;
 }
+async function loadPublishedMapForEdit(id) {
+  if(!/^psm_[A-Z2-9]{8}$/.test(id||'')) throw new Error('Invalid map ID.');
+  if(!DATA_API) throw new Error('Publishing service is not configured.');
+  const result=await jsonp({id});
+  if(!result||!result.ok||!result.map) throw new Error(result&&result.error?result.error:'Published map could not be loaded.');
+  if(!result.map.home||!Array.isArray(result.map.pois)) throw new Error('Published map data is invalid.');
+  state=result.map;
+  currentMapId=id;
+  saveDraft();
+  return true;
+}
 function makeMapId(existing) {
   const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const used=new Set((existing||[]).map(x=>x&&x.id).filter(Boolean));
@@ -333,14 +344,24 @@ function loadGoogle() {
   window.gm_authFailure=()=>{$('mapPlaceholder').textContent='Google Maps rejected the API key. Check website and API restrictions.';status('homeStatus','Check the API key website restriction and enabled APIs.','warn');};
   const script=document.createElement('script');script.async=true;script.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=weekly&libraries=places&loading=async&callback=propertyMapReady';script.onerror=()=>{$('mapPlaceholder').textContent='Could not load Google Maps. Check the API key and connection.';};document.head.appendChild(script);
 }
-function boot() {
+async function boot() {
   fillCategories();const params=new URLSearchParams(location.search);
+  let loadWarning='';
   if(location.hash.length>1){try{state=decodeState(location.hash.slice(1));}catch(e){loadDraft();}}
-  else if(params.get('map')){if(!loadSavedMap(params.get('map')))loadDraft();}
+  else if(params.get('map')){
+    const id=params.get('map');
+    if(!loadSavedMap(id)){
+      try{await loadPublishedMapForEdit(id);}
+      catch(e){state=emptyState();currentMapId=null;loadWarning='Could not load published map: '+e.message;}
+    }
+  }
   else if(params.get('new')==='1'){state=emptyState();currentMapId=null;localStorage.removeItem('propertySpotMapDraft');}
   else loadDraft();
   readOnly=location.hash.length>1&&params.get('edit')!=='1';if(readOnly){$('app').classList.add('readOnly');$('modeLabel').textContent='Client view';}
-  else $('modeLabel').textContent='Agent builder';bindUi();renderAll(false);loadGoogle();
+  else $('modeLabel').textContent='Agent builder';
+  bindUi();renderAll(false);
+  if(loadWarning)status('homeStatus',loadWarning,'warn');
+  loadGoogle();
 }
 boot();
 })();
