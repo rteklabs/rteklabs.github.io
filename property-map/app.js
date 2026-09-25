@@ -20,6 +20,73 @@ let poiMarkers = [], selectedMarker = null, selectedIndex = -1, results = [], se
 let pinTarget = null, repairIndex = null, readOnly = false, currentMapId = null;
 const livePlaces = new Map(); // Only in memory. Shared links/drafts keep IDs, not Google place data.
 const DATA_API = window.PROPERTY_MAP_DATA_API || '';
+const placeholderExamples = [
+  {
+    title:'e.g. Nadi Bangsar — Daily Convenience',
+    client:'e.g. Ms Lim',
+    property:'Nadi Bangsar',
+    address:'Jalan Tandok, Bangsar, Kuala Lumpur',
+    search:'e.g. Bangsar Village',
+    poi:'Bangsar Village',
+    poiAddress:'Jalan Telawi 1, Bangsar Baru, Kuala Lumpur',
+    note:'Convenient for groceries, dining and daily essentials nearby.'
+  },
+  {
+    title:'e.g. The Westside One — Family Essentials',
+    client:'e.g. Mr Tan',
+    property:'The Westside One',
+    address:'Desa ParkCity, Kuala Lumpur',
+    search:'e.g. Plaza Arkadia',
+    poi:'Plaza Arkadia',
+    poiAddress:'Desa ParkCity, Kuala Lumpur',
+    note:'Useful for groceries, cafes and family-friendly amenities.'
+  },
+  {
+    title:'e.g. The Troika — City Living',
+    client:'e.g. Mr Chen',
+    property:'The Troika',
+    address:'Persiaran KLCC, Kuala Lumpur',
+    search:'e.g. Suria KLCC',
+    poi:'Suria KLCC',
+    poiAddress:'Kuala Lumpur City Centre, Kuala Lumpur',
+    note:'Nearby shopping, dining and everyday conveniences.'
+  },
+  {
+    title:'e.g. The Park Sky Residence — Nearby Essentials',
+    client:'e.g. Mr Wong',
+    property:'The Park Sky Residence',
+    address:'Bukit Jalil, Kuala Lumpur',
+    search:'e.g. Pavilion Bukit Jalil',
+    poi:'Pavilion Bukit Jalil',
+    poiAddress:'Persiaran Jalil 8, Bukit Jalil, Kuala Lumpur',
+    note:'Convenient access to shopping, groceries and restaurants.'
+  },
+  {
+    title:'e.g. Tropicana Grande — Lifestyle Nearby',
+    client:'e.g. Ms Ng',
+    property:'Tropicana Grande',
+    address:'Tropicana, Petaling Jaya, Selangor',
+    search:'e.g. Tropicana Gardens Mall',
+    poi:'Tropicana Gardens Mall',
+    poiAddress:'Persiaran Surian, Kota Damansara, Selangor',
+    note:'Good access to retail, groceries, dining and transport.'
+  }
+];
+const placeholderExample = placeholderExamples[Math.floor(Math.random()*placeholderExamples.length)];
+
+function applyRandomPlaceholders(){
+  const values={
+    mapTitle:placeholderExample.title,
+    clientName:placeholderExample.client,
+    homeName:placeholderExample.property,
+    homeAddress:placeholderExample.address,
+    placeSearchInput:placeholderExample.search,
+    poiName:placeholderExample.poi,
+    poiAddress:placeholderExample.poiAddress,
+    poiNote:placeholderExample.note
+  };
+  Object.entries(values).forEach(([id,value])=>{const el=$(id);if(el)el.placeholder=value;});
+}
 
 function esc(value) { return String(value == null ? '' : value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
 function status(id,message,kind) { const el=$(id); el.textContent=message||''; el.className='status'+(kind?' '+kind:''); }
@@ -319,7 +386,7 @@ async function initGoogle() {
   map=new google.maps.Map($('map'),{center:{lat:3.159,lng:101.692},zoom:12,mapTypeControl:false,streetViewControl:false,gestureHandling:'greedy'});
   infoWindow=new google.maps.InfoWindow();map.addListener('click',e=>{if(!readOnly)pinAt(e.latLng);});
   const {PlaceAutocompleteElement}=await google.maps.importLibrary('places');
-  const autocomplete=new PlaceAutocompleteElement();autocomplete.placeholder='Search a property or address in Malaysia';autocomplete.includedRegionCodes=['my'];$('homeAutocomplete').appendChild(autocomplete);
+  const autocomplete=new PlaceAutocompleteElement();autocomplete.placeholder='Search e.g. '+placeholderExample.property+' or any address in Malaysia';autocomplete.includedRegionCodes=['my'];$('homeAutocomplete').appendChild(autocomplete);
   autocomplete.addEventListener('gmp-select',async e=>{try{const place=e.placePrediction.toPlace();await place.fetchFields({fields:['displayName','formattedAddress','location']});setHomeFromPlace(place);}catch(error){status('homeStatus','Address selection failed: '+error.message,'warn');}});
   await hydratePlaces();renderAll(true);$('mapPlaceholder')?.remove();
 }
@@ -331,7 +398,7 @@ function loadGoogle() {
   const script=document.createElement('script');script.async=true;script.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=weekly&libraries=places&loading=async&callback=propertyMapReady';script.onerror=()=>{$('mapPlaceholder').textContent='Could not load Google Maps. Check the API key and connection.';};document.head.appendChild(script);
 }
 async function boot() {
-  fillCategories();const params=new URLSearchParams(location.search);
+  fillCategories();applyRandomPlaceholders();const params=new URLSearchParams(location.search);
   let loadWarning='';
   if(location.hash.length>1){try{state=decodeState(location.hash.slice(1));}catch(e){loadDraft();}}
   else if(params.get('map')){
