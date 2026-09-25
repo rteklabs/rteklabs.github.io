@@ -14,3 +14,48 @@ h1,h2,h3,p{margin-top:0}.editor h2{font-size:18px;line-height:1.25;margin-bottom
 
 .dashboardShell{max-width:1180px}.dashboardTopbar{margin-bottom:18px}.dashboardTopbar .btn{text-decoration:none}.dashboardPanel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}.dashboardHeading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:18px}.dashboardHeading h1{font-size:22px;margin-bottom:4px;color:#1f2d3d}.savedMapGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}.savedMapCard{border:1px solid var(--line);border-radius:14px;background:#fff;padding:15px;display:flex;flex-direction:column;gap:14px;min-height:190px}.savedMapBody{flex:1}.savedMapTitle{font-size:16px;font-weight:800;color:#243244}.savedMapClient{font-size:12px;color:var(--accent);font-weight:700;margin-top:3px}.savedMapProperty{font-size:13px;font-weight:700;color:#526174;margin-top:12px}.savedMapAddress{font-size:12px;line-height:1.4;color:var(--muted);margin-top:3px}.savedMapMeta{font-size:11px;color:#8a97a8;margin-top:12px}.savedMapActions{display:flex;gap:8px;justify-content:flex-end}.savedMapActions .btn{text-decoration:none}.dashboardEmpty{grid-column:1/-1;text-align:center;padding:54px 20px;border:1px dashed var(--line);border-radius:14px;background:#fbfcfe}.dashboardEmpty .hint{max-width:440px;margin:8px auto 16px}
 @media(max-width:640px){.dashboardPanel{padding:16px}.dashboardHeading{align-items:flex-start;flex-direction:column}.savedMapGrid{grid-template-columns:1fr}}
+
+
+/* Mobile client viewer: map-first layout with draggable bottom sheet */
+.sheetHandle{display:none}
+@media(max-width:900px){
+  #viewerApp{padding:0;max-width:none;height:100dvh;overflow:hidden;background:#fff}
+  #viewerApp .topbar{height:54px;margin:0;padding:7px 10px;border-bottom:1px solid var(--line);background:#fff}
+  #viewerApp .brand{gap:8px;font-size:14px}
+  #viewerApp .brandmark{width:30px;height:30px;border-radius:9px}
+  #viewerApp .brand .small{display:none}
+  #viewerApp .topbar .btn{padding:7px 9px}
+  #viewerApp .readOnlyViewer{height:calc(100dvh - 54px);min-height:0;border:0;border-radius:0;box-shadow:none}
+  #viewerApp .readOnlyViewer #map{height:100%;min-height:0}
+  #viewerApp .clientbar{top:8px;left:8px;right:8px}
+  #viewerApp .clientbar .pill:first-child{max-width:calc(100% - 16px);padding:7px 9px;border-radius:11px}
+  #viewerApp #clientTopTitle{display:block;max-width:72vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+  #viewerApp #clientTopRef{max-width:72vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}
+  #viewerApp .clientSheet{
+    left:0;right:0;bottom:0;width:100%;max-height:none;margin:0;
+    border-left:0;border-right:0;border-bottom:0;border-radius:22px 22px 0 0;
+    padding:0 12px max(12px,env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;overflow:hidden;
+    background:rgba(255,255,255,.98);backdrop-filter:blur(16px);
+    transition:height .24s ease;will-change:height;
+  }
+  #viewerApp .clientSheet.sheetPeek{height:112px}
+  #viewerApp .clientSheet.sheetHalf{height:46dvh}
+  #viewerApp .clientSheet.sheetFull{height:calc(100% - 12px)}
+  #viewerApp .sheetHandle{display:flex;align-items:center;justify-content:center;height:28px;flex:0 0 28px;touch-action:none;cursor:grab;outline:none}
+  #viewerApp .sheetHandle:active{cursor:grabbing}
+  #viewerApp .sheetHandleBar{display:block;width:42px;height:5px;border-radius:999px;background:#cbd5e1}
+  #viewerApp .clientTitle{font-size:18px;line-height:1.2;flex:0 0 auto}
+  #viewerApp .clientAddress{font-size:11px;line-height:1.35;margin:3px 0 7px;flex:0 0 auto}
+  #viewerApp .summary{font-size:12px;line-height:1.35;max-height:48px;overflow:hidden;flex:0 0 auto}
+  #viewerApp .clientPoiList{margin-top:9px;overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1;padding-bottom:8px}
+  #viewerApp .clientPoi{grid-template-columns:34px minmax(0,1fr) auto;gap:8px;padding:8px;border-radius:12px}
+  #viewerApp .poiIcon{width:34px;height:34px;border-radius:10px;font-size:17px}
+  #viewerApp .poiTitle{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #viewerApp .poiMeta{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #viewerApp .clientPoi .note{font-size:10.5px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+  #viewerApp .gmaps{font-size:10px;padding:5px 7px}
+  #viewerApp .clientSheet.sheetPeek .summary,
+  #viewerApp .clientSheet.sheetPeek .clientPoiList{display:none}
+  #viewerApp .siteFooter{display:none}
+}
