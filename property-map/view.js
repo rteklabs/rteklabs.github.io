@@ -17,6 +17,10 @@ let data=null,map=null,infoWindow=null,lang='en',homeMarker=null,homePulseMarker
 let availableCategories=[],selectedCategories=new Set(),activePoiIndex=null,setMobileSheetState=null;
 const livePlaces=new Map();
 const DATA_API=window.PROPERTY_MAP_DATA_API||'';
+const ROUTES_ENABLED=window.PROPERTY_MAP_ROUTES_ENABLED===true;
+const routeModes={DRIVING:{icon:'🚗',en:'Drive',zh:'驾车'},WALKING:{icon:'🚶',en:'Walk',zh:'步行'},BICYCLING:{icon:'🚲',en:'Cycle',zh:'骑行'},TRANSIT:{icon:'🚆',en:'Transit',zh:'公交'}};
+let routeMode='DRIVING',routeReversed=false,routeBaseLine=null,routeFlowLine=null,routeFlowFrame=0,currentRoute=null,routeRequestSerial=0;
+const routeCache=new Map();
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
 function validId(id){return /^psm_[A-Z2-9]{8}$/.test(id||'');}
 function latLng(place){if(!place||!place.location)return null;const loc=place.location,lat=typeof loc.lat==='function'?loc.lat():loc.lat,lng=typeof loc.lng==='function'?loc.lng():loc.lng;return Number.isFinite(lat)&&Number.isFinite(lng)?{lat,lng}:null;}
@@ -37,7 +41,7 @@ function visiblePoiCount(){return (data&&data.pois||[]).filter(isCategoryVisible
 function setAllCategories(){selectedCategories=new Set(availableCategories);renderFilters();renderClient();renderMap(true);}
 function toggleCategory(key){
   if(selectedCategories.has(key))selectedCategories.delete(key);else selectedCategories.add(key);
-  if(activePoiIndex!=null&&data&&data.pois&&data.pois[activePoiIndex]&&!isCategoryVisible(data.pois[activePoiIndex]))activePoiIndex=null;
+  if(activePoiIndex!=null&&data&&data.pois&&data.pois[activePoiIndex]&&!isCategoryVisible(data.pois[activePoiIndex])){activePoiIndex=null;clearActiveRoute();}
   renderFilters();renderClient();renderMap(true);
 }
 function renderFilters(){
@@ -125,6 +129,155 @@ function selectPoi(i,options={}){
     infoWindow.setContent(popup(p));
     infoWindow.open(map,m);
   }
+  if(ROUTES_ENABLED)requestActiveRoute();
+}
+function routePointKey(p){return p&&p.placeId?('pid:'+p.placeId):[Number(p&&p.lat).toFixed(6),Number(p&&p.lng).toFixed(6)].join(',');}
+function routeCacheKey(home,poi){return [routePointKey(home),routePointKey(poi),routeMode,routeReversed?'R':'F'].join('|');}
+function formatRouteDistance(meters){
+  if(!Number.isFinite(meters))return '';
+  return meters<1000?Math.max(1,Math.round(meters))+' m':(meters/1000).toFixed(meters<10000?1:0)+' km';
+}
+function formatRouteDuration(ms){
+  if(!Number.isFinite(ms))return '';
+  const minutes=Math.max(1,Math.round(ms/60000));
+  if(minutes<60)return minutes+' min';
+  const h=Math.floor(minutes/60),m=minutes%60;
+  return h+' hr'+(m?' '+m+' min':'');
+}
+function clearRouteOverlay(){
+  routeRequestSerial++;
+  if(routeFlowFrame)cancelAnimationFrame(routeFlowFrame);
+  routeFlowFrame=0;
+  if(routeBaseLine)routeBaseLine.setMap(null);
+  if(routeFlowLine)routeFlowLine.setMap(null);
+  routeBaseLine=null;routeFlowLine=null;currentRoute=null;
+}
+function fitRoutePath(path){
+  if(!map||!path||!path.length)return;
+  const bounds=new google.maps.LatLngBounds();
+  path.forEach(pt=>bounds.extend(pt));
+  const mobile=matchMedia('(max-width:900px)').matches;
+  map.fitBounds(bounds,mobile?72:58);
+}
+function drawRoutePath(route,fit=true){
+  if(!map||!route||!Array.isArray(route.path)||!route.path.length)return;
+  if(routeFlowFrame)cancelAnimationFrame(routeFlowFrame);
+  if(routeBaseLine)routeBaseLine.setMap(null);
+  if(routeFlowLine)routeFlowLine.setMap(null);
+
+  routeBaseLine=new google.maps.Polyline({
+    map,path:route.path,geodesic:false,clickable:false,zIndex:420,
+    strokeColor:'#4f8fd8',strokeOpacity:.78,strokeWeight:5
+  });
+  const arrow={path:google.maps.SymbolPath.FORWARD_CLOSED_ARROW,scale:2.15,fillColor:'#ffffff',fillOpacity:1,strokeColor:'#2563eb',strokeOpacity:1,strokeWeight:1};
+  routeFlowLine=new google.maps.Polyline({
+    map,path:route.path,geodesic:false,clickable:false,zIndex:421,
+    strokeOpacity:0,
+    icons:[{icon:arrow,offset:'0px',repeat:'44px'}]
+  });
+
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const started=performance.now();
+    const animate=now=>{
+      if(!routeFlowLine)return;
+      const offset=((now-started)/28)%44;
+      const icons=routeFlowLine.get('icons');
+      if(icons&&icons[0]){icons[0].offset=offset.toFixed(1)+'px';routeFlowLine.set('icons',icons);}
+      routeFlowFrame=requestAnimationFrame(animate);
+    };
+    routeFlowFrame=requestAnimationFrame(animate);
+  }
+  if(fit)fitRoutePath(route.path);
+}
+function renderRoutePanel(){
+  const panel=$('routePanel');
+  if(!panel)return;
+  const raw=activePoiIndex==null?null:(data&&data.pois||[])[activePoiIndex];
+  if(!ROUTES_ENABLED||!raw){panel.hidden=true;return;}
+  panel.hidden=false;
+  const home=homeData(),poi=poiData(raw);
+  const from=routeReversed?poi:home,to=routeReversed?home:poi;
+  $('routeDirectionLabel').textContent=(from.name||'Start')+' → '+(to.name||'Destination');
+  $('routeReverseBtn').title=lang==='zh'?'反转方向':'Reverse direction';
+  $('routeReverseBtn').setAttribute('aria-label',$('routeReverseBtn').title);
+  document.querySelectorAll('[data-route-mode]').forEach(btn=>{
+    const key=btn.dataset.routeMode,meta=routeModes[key],active=key===routeMode;
+    btn.classList.toggle('active',active);
+    btn.setAttribute('aria-pressed',active?'true':'false');
+    btn.innerHTML='<span>'+meta.icon+'</span><span>'+esc(lang==='zh'?meta.zh:meta.en)+'</span>';
+  });
+  const warning=$('routeWarning');
+  const warnMode=routeMode==='WALKING'||routeMode==='BICYCLING';
+  warning.hidden=!warnMode;
+  warning.textContent=warnMode?(lang==='zh'?'步行和骑行路线可能没有完整的人行道或自行车道信息。':'Walking and cycling routes may not include complete sidewalk or cycle-path information.'):'';
+  if(currentRoute){
+    $('routeSummary').textContent=[formatRouteDuration(currentRoute.durationMillis),formatRouteDistance(currentRoute.distanceMeters)].filter(Boolean).join(' · ');
+  }else{
+    $('routeSummary').textContent=lang==='zh'?'计算路线…':'Calculating route…';
+  }
+}
+async function requestActiveRoute(){
+  if(!ROUTES_ENABLED||!map||activePoiIndex==null)return;
+  const raw=(data&&data.pois||[])[activePoiIndex];
+  if(!raw||!isCategoryVisible(raw))return;
+  const home=homeData(),poi=poiData(raw);
+  if(home.lat==null||home.lng==null||poi.lat==null||poi.lng==null)return;
+
+  currentRoute=null;
+  renderRoutePanel();
+  const cacheKey=routeCacheKey(home,poi),cached=routeCache.get(cacheKey);
+  if(cached){
+    currentRoute=cached;
+    drawRoutePath(cached,true);
+    renderRoutePanel();
+    return;
+  }
+
+  const serial=++routeRequestSerial;
+  $('routeStatus').textContent=lang==='zh'?'正在读取路线…':'Loading route…';
+  try{
+    const {Route}=await google.maps.importLibrary('routes');
+    const origin=routeReversed?{lat:poi.lat,lng:poi.lng}:{lat:home.lat,lng:home.lng};
+    const destination=routeReversed?{lat:home.lat,lng:home.lng}:{lat:poi.lat,lng:poi.lng};
+    const request={
+      origin,destination,
+      travelMode:routeMode,
+      computeAlternativeRoutes:false,
+      fields:['path','distanceMeters','durationMillis']
+    };
+    if(routeMode==='DRIVING')request.routingPreference='TRAFFIC_UNAWARE';
+    const result=await Route.computeRoutes(request);
+    if(serial!==routeRequestSerial)return;
+    const route=result&&result.routes&&result.routes[0];
+    if(!route||!route.path||!route.path.length)throw new Error('No route found.');
+    currentRoute={path:route.path,distanceMeters:route.distanceMeters,durationMillis:route.durationMillis};
+    routeCache.set(cacheKey,currentRoute);
+    drawRoutePath(currentRoute,true);
+    $('routeStatus').textContent='';
+  }catch(err){
+    if(serial!==routeRequestSerial)return;
+    clearRouteOverlay();
+    renderRoutePanel();
+    $('routeSummary').textContent=lang==='zh'?'暂时无法取得路线':'Route unavailable';
+    $('routeStatus').textContent=err&&err.message?err.message:'Could not calculate route.';
+  }
+}
+function clearActiveRoute(){
+  clearRouteOverlay();
+  currentRoute=null;
+  const panel=$('routePanel');if(panel)panel.hidden=true;
+}
+function initRouteControls(){
+  const reverse=$('routeReverseBtn');
+  if(reverse)reverse.onclick=()=>{if(!ROUTES_ENABLED)return;routeReversed=!routeReversed;clearRouteOverlay();requestActiveRoute();};
+  document.querySelectorAll('[data-route-mode]').forEach(btn=>{
+    btn.onclick=()=>{
+      if(!ROUTES_ENABLED)return;
+      const next=btn.dataset.routeMode;
+      if(!routeModes[next]||next===routeMode)return;
+      routeMode=next;clearRouteOverlay();requestActiveRoute();
+    };
+  });
 }
 function createPropertyPulseMarker(position,title,onClick){
   const makeHalo=()=>new google.maps.Marker({
@@ -172,6 +325,7 @@ function renderClient(){
   $('clientCount').textContent=visible+(lang==='zh'?' 个地点':' places');
   $('langBtn').textContent=lang==='en'?'中文':'EN';
   renderFilters();
+  renderRoutePanel();
 
   const list=$('clientPoiList');list.replaceChildren();
   const visibleItems=(data.pois||[]).map((raw,i)=>({raw,p:poiData(raw),i})).filter(x=>isCategoryVisible(x.raw));
@@ -264,5 +418,6 @@ $('langBtn').onclick=()=>{lang=lang==='en'?'zh':'en';if(data)renderClient();};
 $('copyLinkBtn').onclick=()=>navigator.clipboard.writeText(location.href).then(()=>{const b=$('copyLinkBtn'),old=b.textContent;b.textContent='Copied';setTimeout(()=>b.textContent=old,1200);});
 initMobileSheet();
 initFilterScroller();
+initRouteControls();
 boot();
 })();
