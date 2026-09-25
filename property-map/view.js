@@ -30,6 +30,7 @@ function poiData(p){return p.placeId?{...(livePlaces.get(p.placeId)||{name:p.nam
 function distance(a,b){if(a.lat==null||a.lng==null||b.lat==null||b.lng==null)return null;const r=Math.PI/180,dLat=(b.lat-a.lat)*r,dLng=(b.lng-a.lng)*r,x=Math.sin(dLat/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dLng/2)**2;return 12742*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
 function distanceText(p){const km=distance(homeData(),p);return km==null?'':km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km';}
 function googleUrl(p){const id=p.placeId||p.googlePlaceId;if(id)return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.name||'place')+'&query_place_id='+encodeURIComponent(id);return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([p.name,p.address].filter(Boolean).join(' '));}
+function safeGoogleMapsUrl(raw){try{const u=new URL(raw);if(u.protocol!=='https:')return '';if(u.hostname==='maps.app.goo.gl')return u.href;if(['www.google.com','google.com','maps.google.com','www.google.com.my','google.com.my'].includes(u.hostname)&&u.pathname.startsWith('/maps'))return u.href;}catch(_){}return '';}
 function categoryMeta(key){return categories[key]||(data&&data.customCategories&&data.customCategories[key])||categories.other;}
 function categoryKey(raw){const key=raw&&raw.category;return categories[key]||(data&&data.customCategories&&data.customCategories[key])?key:'other';}
 function initCategoryFilters(){
@@ -377,6 +378,14 @@ function renderClient(){
   $('clientHomeName').textContent=home.name||(lang==='zh'?'物业':'Property');
   $('clientHomeAddress').textContent=home.address||'';
   $('clientIntro').textContent=data.intro||'';
+  const listUrl=safeGoogleMapsUrl(data.googleListUrl||''),listCta=$('googleListCta');
+  if(listCta){
+    listCta.hidden=!listUrl;
+    if(listUrl){
+      listCta.href=listUrl;
+      listCta.textContent=lang==='zh'?'🗺 在 Google 地图查看全部地点 ↗':'🗺 Open all in Google Maps ↗';
+    }
+  }
   $('clientCount').textContent=visible+(lang==='zh'?' 个地点':' places');
   $('langBtn').textContent=lang==='en'?'中文':'EN';
   renderFilters();
