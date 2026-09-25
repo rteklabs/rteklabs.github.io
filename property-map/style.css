@@ -210,3 +210,20 @@ h1,h2,h3,p{margin-top:0}.editor h2{font-size:18px;line-height:1.25;margin-bottom
   .filterScrollBtn{display:none!important}
   .categoryFilterWrap::before,.categoryFilterWrap::after{display:none}
 }
+
+
+/* Client POI selection sync */
+.clientPoi.selected{
+  border-color:#64748b;
+  background:#f8fafc;
+  box-shadow:0 0 0 2px rgba(100,116,139,.14);
+}
+.clientPoi.selected .poiIcon{
+  background:#e8edf3;
+}
+@media(max-width:900px){
+  #viewerApp .clientPoi.selected{
+    border-color:#526174;
+    box-shadow:0 0 0 2px rgba(82,97,116,.12);
+  }
+}
