@@ -15,7 +15,7 @@ const categories={
 const $=id=>document.getElementById(id);
 let data=null,map=null,infoWindow=null,lang='en',homeMarker=null,homePulseMarkers=[],homePulseFrame=0,poiMarkers=[];
 let availableCategories=[],selectedCategories=new Set(),activePoiIndex=null,setMobileSheetState=null,viewMode='map';
-let googleListElement=null,googleListInitializing=false;
+let googleListElement=null,googleListInitializing=false,placesHydrated=false,placesHydrating=null;
 const livePlaces=new Map();
 const DATA_API=window.PROPERTY_MAP_DATA_API||'';
 const ROUTES_ENABLED=window.PROPERTY_MAP_ROUTES_ENABLED===true;
@@ -450,14 +450,18 @@ function applyViewMode(next,push){
   updateViewModeButton();
   if(viewMode==='expanded'){
     renderPlacesPage();window.scrollTo({top:0,behavior:'instant'});
+    if(map&&!placesHydrated)hydrate();
   }else if(viewMode==='listing'){
     renderGoogleListingHeader();ensureGoogleListing();window.scrollTo({top:0,behavior:'instant'});
   }else if(map){
-    requestAnimationFrame(()=>{
-      google.maps.event.trigger(map,'resize');
-      if(activePoiIndex!=null&&data&&data.pois&&data.pois[activePoiIndex])focusPoi(activePoiIndex);
-      else focusHome();
-    });
+    const showMap=()=>{
+      requestAnimationFrame(()=>{
+        google.maps.event.trigger(map,'resize');
+        if(activePoiIndex!=null&&data&&data.pois&&data.pois[activePoiIndex])focusPoi(activePoiIndex);
+        else focusHome();
+      });
+    };
+    if(!placesHydrated)hydrate().then(showMap);else showMap();
   }
   if(push){
     const u=new URL(location.href);
@@ -598,8 +602,28 @@ function initMobileSheet(){
   apply('half',false);
 }
 
-async function hydrate(){const ids=[data.home&&data.home.googlePlaceId,...(data.pois||[]).map(p=>p.placeId)].filter(Boolean);await Promise.all([...new Set(ids)].map(async id=>{try{const place=new google.maps.places.Place({id});await place.fetchFields({fields:['displayName','formattedAddress','location','primaryTypeDisplayName']});livePlaces.set(id,asPlace(place));}catch(e){console.warn('Place details unavailable',id,e);}}));renderClient();renderPlacesPage();renderGoogleListingHeader();renderMap(true);if(viewMode==='listing')ensureGoogleListing();}
-async function initGoogle(){map=new google.maps.Map($('map'),{center:{lat:3.159,lng:101.692},zoom:12,mapTypeControl:false,streetViewControl:false,gestureHandling:'greedy'});infoWindow=new google.maps.InfoWindow();await hydrate();$('mapPlaceholder')?.remove();}
+async function hydrate(){
+  if(placesHydrated)return;
+  if(placesHydrating)return placesHydrating;
+  placesHydrating=(async()=>{
+    const ids=[data.home&&data.home.googlePlaceId,...(data.pois||[]).map(p=>p.placeId)].filter(Boolean);
+    await Promise.all([...new Set(ids)].filter(id=>!livePlaces.has(id)).map(async id=>{
+      try{const place=new google.maps.places.Place({id});await place.fetchFields({fields:['displayName','formattedAddress','location','primaryTypeDisplayName']});livePlaces.set(id,asPlace(place));}
+      catch(e){console.warn('Place details unavailable',id,e);}
+    }));
+    placesHydrated=true;
+    renderClient();renderPlacesPage();renderGoogleListingHeader();renderMap(true);
+  })();
+  try{await placesHydrating;}finally{placesHydrating=null;}
+}
+async function initGoogle(){
+  map=new google.maps.Map($('map'),{center:{lat:3.159,lng:101.692},zoom:12,mapTypeControl:false,streetViewControl:false,gestureHandling:'greedy'});
+  infoWindow=new google.maps.InfoWindow();
+  // A direct Google Listing visit already gets its place content from UI Kit.
+  // Do not also issue one Place Details request per saved POI unless the user opens Map/Expanded view.
+  if(viewMode==='listing')ensureGoogleListing();else await hydrate();
+  $('mapPlaceholder')?.remove();
+}
 function loadGoogle(){const key=window.PROPERTY_MAP_CONFIG&&window.PROPERTY_MAP_CONFIG.apiKey;if(!key||key==='YOUR_GOOGLE_MAPS_API_KEY'){$('mapPlaceholder').textContent='Google Maps is not configured.';return;}window.propertyMapViewerReady=()=>initGoogle().catch(e=>{$('mapPlaceholder').textContent='Google Maps could not initialize: '+e.message;});const s=document.createElement('script');s.async=true;s.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&v=beta&libraries=places&loading=async&callback=propertyMapViewerReady';s.onerror=()=>{$('mapPlaceholder').textContent='Could not load Google Maps.';};document.head.appendChild(s);}
 function jsonpMap(id,timeoutMs=15000){return new Promise((resolve,reject)=>{if(!DATA_API){reject(new Error('Map service is not configured.'));return;}const cb='psmview_'+Date.now()+'_'+Math.random().toString(36).slice(2),s=document.createElement('script'),timer=setTimeout(()=>{cleanup();reject(new Error('Property map service timed out.'));},timeoutMs);function cleanup(){clearTimeout(timer);delete window[cb];s.remove();}window[cb]=x=>{cleanup();resolve(x);};s.onerror=()=>{cleanup();reject(new Error('Could not reach property map service.'));};s.src=DATA_API+'?id='+encodeURIComponent(id)+'&callback='+encodeURIComponent(cb)+'&_='+Date.now();document.head.appendChild(s);});}
 function mapSessionKey(id){return 'propertySpotMapViewCache:'+id;}
