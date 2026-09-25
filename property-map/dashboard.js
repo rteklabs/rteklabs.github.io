@@ -79,5 +79,23 @@ function render(){
     listEl.appendChild(card);
   });
 }
+async function reconcileMissingPublishedMaps(){
+  if(!DATA_API)return;
+  const items=read();
+  if(!items.length)return;
+  const keep=[];
+  for(const item of items){
+    try{
+      const result=await jsonpMap(item.id);
+      if(result&&result.ok===false&&result.error==='Map not found')continue;
+    }catch(_){}
+    keep.push(item);
+  }
+  if(keep.length!==items.length){
+    write(keep);
+    render();
+  }
+}
 render();
+reconcileMissingPublishedMaps();
 })();
