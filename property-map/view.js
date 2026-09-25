@@ -19,7 +19,7 @@ const livePlaces=new Map();
 const DATA_API=window.PROPERTY_MAP_DATA_API||'';
 const ROUTES_ENABLED=window.PROPERTY_MAP_ROUTES_ENABLED===true;
 const routeModes={DRIVING:{icon:'🚗',en:'Drive',zh:'驾车'}};
-let routeMode='DRIVING',routeReversed=false,routeBaseLine=null,routeFlowLine=null,routeFlowFrame=0,currentRoute=null,routeRequestSerial=0;
+let routeMode='DRIVING',routeReversed=false,routeBaseLine=null,routeFlowLine=null,routeFlowFrame=0,currentRoute=null,routeRequestSerial=0,routeLoading=false,routeError='',routePendingKey='';
 const routeCache=new Map();
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
 function validId(id){return /^psm_[A-Z2-9]{8}$/.test(id||'');}
@@ -212,8 +212,12 @@ function renderRoutePanel(){
   warning.textContent=warnMode?(lang==='zh'?'步行和骑行路线可能没有完整的人行道或自行车道信息。':'Walking and cycling routes may not include complete sidewalk or cycle-path information.'):'';
   if(currentRoute){
     $('routeSummary').textContent=[formatRouteDuration(currentRoute.durationMillis),formatRouteDistance(currentRoute.distanceMeters)].filter(Boolean).join(' · ');
-  }else{
+  }else if(routeLoading){
     $('routeSummary').textContent=lang==='zh'?'计算路线…':'Calculating route…';
+  }else if(routeError){
+    $('routeSummary').textContent=lang==='zh'?'暂时无法取得路线':'Route unavailable';
+  }else{
+    $('routeSummary').textContent='';
   }
 }
 function decodePolyline(encoded){
@@ -251,16 +255,22 @@ async function requestActiveRoute(){
   const raw=(data&&data.pois||[])[activePoiIndex];
   if(!raw||!isCategoryVisible(raw))return;
   const home=homeData(),poi=poiData(raw);
-  currentRoute=null;
-  renderRoutePanel();
-
   const cacheKey=routeCacheKey(home,poi),cached=routeCache.get(cacheKey);
+
   if(cached){
+    routeLoading=false;routeError='';routePendingKey='';
     currentRoute=cached;
     drawRoutePath(cached,true);
+    $('routeStatus').textContent='';
     renderRoutePanel();
     return;
   }
+
+  if(routeLoading&&routePendingKey===cacheKey)return;
+
+  clearRouteOverlay();
+  routeLoading=true;routeError='';routePendingKey=cacheKey;
+  renderRoutePanel();
 
   const serial=++routeRequestSerial;
   $('routeStatus').textContent=lang==='zh'?'正在读取路线…':'Loading route…';
@@ -277,20 +287,22 @@ async function requestActiveRoute(){
       durationMillis:Number(result.route.durationSeconds)*1000
     };
     routeCache.set(cacheKey,currentRoute);
+    routeLoading=false;routeError='';routePendingKey='';
     drawRoutePath(currentRoute,true);
     $('routeStatus').textContent='';
     renderRoutePanel();
   }catch(err){
     if(serial!==routeRequestSerial)return;
     clearRouteOverlay();
+    routeLoading=false;routePendingKey='';
+    routeError=err&&err.message?err.message:'Could not calculate route.';
     renderRoutePanel();
-    $('routeSummary').textContent=lang==='zh'?'暂时无法取得路线':'Route unavailable';
-    $('routeStatus').textContent=err&&err.message?err.message:'Could not calculate route.';
+    $('routeStatus').textContent=routeError;
   }
 }
 function clearActiveRoute(){
   clearRouteOverlay();
-  currentRoute=null;
+  currentRoute=null;routeLoading=false;routeError='';routePendingKey='';
   const panel=$('routePanel');if(panel)panel.hidden=true;
 }
 function initRouteControls(){
