@@ -3,7 +3,7 @@
 const FOLDER_ID = '1a5mQZRRuTwMs85pIMvM1ZtquPPTygUY0';
 const ID_PATTERN = /^psm_[A-Z2-9]{8}$/;
 const ROUTE_DAILY_LIMIT = 300;
-const ROUTE_MODE_ALLOWLIST = { DRIVING: 'DRIVE' };
+const ROUTE_MODE_ALLOWLIST = { DRIVING: 'DRIVE', WALKING: 'WALK' };
 
 function doGet(e) {
   const p = (e && e.parameter) || {};
