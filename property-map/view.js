@@ -57,6 +57,26 @@ function renderFilters(){
     btn.innerHTML='<span class="filterChipIcon">'+cat.icon+'</span><span>'+esc(lang==='zh'?cat.zh:cat.en)+'</span>';
     btn.onclick=()=>toggleCategory(key);host.appendChild(btn);
   });
+  requestAnimationFrame(updateFilterScrollButtons);
+}
+function updateFilterScrollButtons(){
+  const host=$('categoryFilters'),left=$('filterScrollLeft'),right=$('filterScrollRight');
+  if(!host||!left||!right)return;
+  const max=Math.max(0,host.scrollWidth-host.clientWidth);
+  const canScroll=max>4;
+  left.hidden=!canScroll||host.scrollLeft<=4;
+  right.hidden=!canScroll||host.scrollLeft>=max-4;
+}
+function initFilterScroller(){
+  const host=$('categoryFilters'),left=$('filterScrollLeft'),right=$('filterScrollRight');
+  if(!host||!left||!right)return;
+  const amount=()=>Math.max(180,Math.round(host.clientWidth*.72));
+  left.onclick=()=>host.scrollBy({left:-amount(),behavior:'smooth'});
+  right.onclick=()=>host.scrollBy({left:amount(),behavior:'smooth'});
+  host.addEventListener('scroll',updateFilterScrollButtons,{passive:true});
+  addEventListener('resize',updateFilterScrollButtons);
+  new ResizeObserver(updateFilterScrollButtons).observe(host);
+  requestAnimationFrame(updateFilterScrollButtons);
 }
 function roundPinIcon(size,fill,stroke,strokeWeight=2){return {path:google.maps.SymbolPath.CIRCLE,scale:size/2,fillColor:fill,fillOpacity:1,strokeColor:stroke,strokeWeight};}
 function createPropertyPulseMarker(position,title,onClick){
@@ -192,5 +212,6 @@ async function boot(){const id=new URLSearchParams(location.search).get('id');if
 $('langBtn').onclick=()=>{lang=lang==='en'?'zh':'en';if(data)renderClient();};
 $('copyLinkBtn').onclick=()=>navigator.clipboard.writeText(location.href).then(()=>{const b=$('copyLinkBtn'),old=b.textContent;b.textContent='Copied';setTimeout(()=>b.textContent=old,1200);});
 initMobileSheet();
+initFilterScroller();
 boot();
 })();
