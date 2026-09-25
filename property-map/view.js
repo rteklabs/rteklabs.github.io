@@ -315,6 +315,21 @@ function renderMap(fit){if(!map||!data)return;clearMarkers();const bounds=new go
   if(fit&&count){if(count===1){map.setCenter(bounds.getCenter());map.setZoom(15);}else map.fitBounds(bounds,52);}
 }
 function focusPoi(i){selectPoi(i,{center:true,zoom:true,info:true,openFallback:true});}
+function focusHome(){
+  if(!map||!data)return;
+  const home=homeData();
+  if(home.lat==null||home.lng==null)return;
+  activePoiIndex=null;
+  updatePoiSelectionStyles();
+  clearActiveRoute();
+  if(infoWindow)infoWindow.close();
+  map.panTo({lat:home.lat,lng:home.lng});
+  map.setZoom(15);
+  if(homeMarker&&infoWindow){
+    infoWindow.setContent('<strong>'+esc(home.name||'Property')+'</strong><br><span style="font-size:11px;font-weight:700;color:#64748b">MAIN PROPERTY</span><br>'+esc(home.address||'')+'<br><a target="_blank" rel="noopener" href="'+esc(googleUrl(home))+'">Open in Google Maps ↗</a>');
+    infoWindow.open(map,homeMarker);
+  }
+}
 function renderClient(){
   const home=homeData(),title=data.title||home.name||'Property Spot Map',visible=visiblePoiCount();
   $('clientTopTitle').textContent=title;
@@ -416,6 +431,8 @@ async function loadPublishedMap(id){if(DATA_API){const result=await jsonpMap(id)
 async function boot(){const id=new URLSearchParams(location.search).get('id');if(!validId(id)){$('mapPlaceholder').textContent='Invalid property map link.';return;}try{data=await loadPublishedMap(id);if(!data||data.id!==id||!data.home||!Array.isArray(data.pois))throw new Error('Property map data is invalid.');initCategoryFilters();renderClient();loadGoogle();}catch(e){$('mapPlaceholder').textContent=e.message;}}
 $('langBtn').onclick=()=>{lang=lang==='en'?'zh':'en';if(data)renderClient();};
 $('copyLinkBtn').onclick=()=>navigator.clipboard.writeText(location.href).then(()=>{const b=$('copyLinkBtn'),old=b.textContent;b.textContent='Copied';setTimeout(()=>b.textContent=old,1200);});
+$('homeReturnBtn').onclick=focusHome;
+$('homeReturnBtn').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();focusHome();}};
 initMobileSheet();
 initFilterScroller();
 initRouteControls();
