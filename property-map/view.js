@@ -413,9 +413,10 @@ async function ensureGoogleListing(){
     list.places=linked.map(p=>'places/'+p.placeId);
     const template=document.createElement('template');
     template.setAttribute('slot','details-item');
+    const mediaSize=matchMedia('(max-width:900px)').matches?'small':'medium';
     template.innerHTML=
       '<gmp-place-name></gmp-place-name>'+
-      '<gmp-place-media preferred-size="small" lightbox-preferred></gmp-place-media>'+
+      '<gmp-place-media preferred-size="'+mediaSize+'" lightbox-preferred></gmp-place-media>'+
       '<gmp-place-rating></gmp-place-rating>'+
       '<gmp-place-type></gmp-place-type>'+
       '<gmp-place-address></gmp-place-address>'+
