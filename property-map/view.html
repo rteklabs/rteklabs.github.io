@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#405a73" />
   <title>Property Spot Map</title>
   <link rel="preconnect" href="https://maps.googleapis.com">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 <div class="shell" id="viewerApp">
@@ -27,7 +27,11 @@
       <h1 class="clientTitle" id="clientHomeName">Property</h1>
       <div class="clientAddress" id="clientHomeAddress"></div>
       <div class="summary" id="clientIntro"></div>
-      <div class="categoryFilters" id="categoryFilters" aria-label="Point of interest categories"></div>
+      <div class="categoryFilterWrap">
+        <button class="filterScrollBtn filterScrollLeft" id="filterScrollLeft" type="button" aria-label="Scroll categories left">‹</button>
+        <div class="categoryFilters" id="categoryFilters" aria-label="Point of interest categories"></div>
+        <button class="filterScrollBtn filterScrollRight" id="filterScrollRight" type="button" aria-label="Scroll categories right">›</button>
+      </div>
       <div class="clientPoiList" id="clientPoiList"></div>
     </section>
   </main>
@@ -35,6 +39,6 @@
 </div>
 <script src="config.js"></script>
 <script src="api-config.js"></script>
-<script src="view.js?v=9"></script>
+<script src="view.js?v=10"></script>
 </body>
 </html>
