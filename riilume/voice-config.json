@@ -1,28 +1,398 @@
 {
-  "schemaVersion": 1,
-  "catalogVersion": 2,
-  "enabledLocales": [
-    "en-US",
-    "en-GB",
-    "en-AU",
-    "en-MY",
-    "en-SG",
-    "en-PH",
-    "en-IN",
-    "ms-MY",
-    "zh-CN",
-    "zh-TW",
-    "zh-SG",
-    "zh-HK",
-    "ja-JP",
-    "ko-KR",
-    "th-TH",
-    "vi-VN",
-    "id-ID",
-    "es-ES",
-    "es-MX"
-  ],
-  "disabledVoices": [],
-  "notice": "Test rollout: Spanish voices enabled.",
-  "engineAction": "none"
+    "schemaVersion":  2,
+    "catalogVersion":  4,
+    "voices":  [
+                   {
+                       "id":  "en-AU-NatashaNeural",
+                       "locale":  "en-AU",
+                       "gender":  "female",
+                       "label":  "English (Australia) - Natasha, female"
+                   },
+                   {
+                       "id":  "en-AU-WilliamMultilingualNeural",
+                       "locale":  "en-AU",
+                       "gender":  "male",
+                       "label":  "English (Australia) - WilliamMultilingual, male"
+                   },
+                   {
+                       "id":  "en-GB-LibbyNeural",
+                       "locale":  "en-GB",
+                       "gender":  "female",
+                       "label":  "English (United Kingdom) - Libby, female"
+                   },
+                   {
+                       "id":  "en-GB-MaisieNeural",
+                       "locale":  "en-GB",
+                       "gender":  "female",
+                       "label":  "English (United Kingdom) - Maisie, female"
+                   },
+                   {
+                       "id":  "en-GB-RyanNeural",
+                       "locale":  "en-GB",
+                       "gender":  "male",
+                       "label":  "English (United Kingdom) - Ryan, male"
+                   },
+                   {
+                       "id":  "en-GB-SoniaNeural",
+                       "locale":  "en-GB",
+                       "gender":  "female",
+                       "label":  "English (United Kingdom) - Sonia, female"
+                   },
+                   {
+                       "id":  "en-GB-ThomasNeural",
+                       "locale":  "en-GB",
+                       "gender":  "male",
+                       "label":  "English (United Kingdom) - Thomas, male"
+                   },
+                   {
+                       "id":  "en-IN-NeerjaExpressiveNeural",
+                       "locale":  "en-IN",
+                       "gender":  "female",
+                       "label":  "English (India) - NeerjaExpressive, female"
+                   },
+                   {
+                       "id":  "en-IN-NeerjaNeural",
+                       "locale":  "en-IN",
+                       "gender":  "female",
+                       "label":  "English (India) - Neerja, female"
+                   },
+                   {
+                       "id":  "en-IN-PrabhatNeural",
+                       "locale":  "en-IN",
+                       "gender":  "male",
+                       "label":  "English (India) - Prabhat, male"
+                   },
+                   {
+                       "id":  "en-PH-JamesNeural",
+                       "locale":  "en-PH",
+                       "gender":  "male",
+                       "label":  "English (Philippines) - James, male"
+                   },
+                   {
+                       "id":  "en-PH-RosaNeural",
+                       "locale":  "en-PH",
+                       "gender":  "female",
+                       "label":  "English (Philippines) - Rosa, female"
+                   },
+                   {
+                       "id":  "en-SG-LunaNeural",
+                       "locale":  "en-SG",
+                       "gender":  "female",
+                       "label":  "English (Singapore) - Luna, female"
+                   },
+                   {
+                       "id":  "en-SG-WayneNeural",
+                       "locale":  "en-SG",
+                       "gender":  "male",
+                       "label":  "English (Singapore) - Wayne, male"
+                   },
+                   {
+                       "id":  "en-US-AnaNeural",
+                       "locale":  "en-US",
+                       "gender":  "female",
+                       "label":  "English (United States) - Ana, female"
+                   },
+                   {
+                       "id":  "en-US-AndrewMultilingualNeural",
+                       "locale":  "en-US",
+                       "gender":  "male",
+                       "label":  "English (United States) - AndrewMultilingual, male"
+                   },
+                   {
+                       "id":  "en-US-AndrewNeural",
+                       "locale":  "en-US",
+                       "gender":  "male",
+                       "label":  "English (United States) - Andrew, male"
+                   },
+                   {
+                       "id":  "en-US-AriaNeural",
+                       "locale":  "en-US",
+                       "gender":  "female",
+                       "label":  "English (United States) - Aria, female"
+                   },
+                   {
+                       "id":  "en-US-AvaMultilingualNeural",
+                       "locale":  "en-US",
+                       "gender":  "female",
+                       "label":  "English (United States) - AvaMultilingual, female"
+                   },
+                   {
+                       "id":  "en-US-AvaNeural",
+                       "locale":  "en-US",
+                       "gender":  "female",
+                       "label":  "English (United States) - Ava, female"
+                   },
+                   {
+                       "id":  "en-US-BrianMultilingualNeural",
+                       "locale":  "en-US",
+                       "gender":  "male",
+                       "label":  "English (United States) - BrianMultilingual, male"
+                   },
+                   {
+                       "id":  "en-US-BrianNeural",
+                       "locale":  "en-US",
+                       "gender":  "male",
+                       "label":  "English (United States) - Brian, male"
+                   },
+                   {
+                       "id":  "en-US-ChristopherNeural",
+                       "locale":  "en-US",
+                       "gender":  "male",
+                       "label":  "English (United States) - Christopher, male"
+                   },
+                   {
+                       "id":  "en-US-EmmaMultilingualNeural",
+                       "locale":  "en-US",
+                       "gender":  "female",
+                       "label":  "English (United States) - EmmaMultilingual, female"
+                   },
+                   {
+                       "id":  "en-US-EmmaNeural",
+                       "locale":  "en-US",
+                       "gender":  "female",
+                       "label":  "English (United States) - Emma, female"
+                   },
+                   {
+                       "id":  "en-US-EricNeural",
+                       "locale":  "en-US",
+                       "gender":  "male",
+                       "label":  "English (United States) - Eric, male"
+                   },
+                   {
+                       "id":  "en-US-GuyNeural",
+                       "locale":  "en-US",
+                       "gender":  "male",
+                       "label":  "English (United States) - Guy, male"
+                   },
+                   {
+                       "id":  "en-US-JennyNeural",
+                       "locale":  "en-US",
+                       "gender":  "female",
+                       "label":  "English (United States) - Jenny, female"
+                   },
+                   {
+                       "id":  "en-US-MichelleNeural",
+                       "locale":  "en-US",
+                       "gender":  "female",
+                       "label":  "English (United States) - Michelle, female"
+                   },
+                   {
+                       "id":  "en-US-RogerNeural",
+                       "locale":  "en-US",
+                       "gender":  "male",
+                       "label":  "English (United States) - Roger, male"
+                   },
+                   {
+                       "id":  "en-US-SteffanNeural",
+                       "locale":  "en-US",
+                       "gender":  "male",
+                       "label":  "English (United States) - Steffan, male"
+                   },
+                   {
+                       "id":  "es-ES-AlvaroNeural",
+                       "locale":  "es-ES",
+                       "gender":  "male",
+                       "label":  "Spanish (Spain, International Sort) - Alvaro, male"
+                   },
+                   {
+                       "id":  "es-ES-ElviraNeural",
+                       "locale":  "es-ES",
+                       "gender":  "female",
+                       "label":  "Spanish (Spain, International Sort) - Elvira, female"
+                   },
+                   {
+                       "id":  "es-ES-XimenaNeural",
+                       "locale":  "es-ES",
+                       "gender":  "female",
+                       "label":  "Spanish (Spain, International Sort) - Ximena, female"
+                   },
+                   {
+                       "id":  "es-MX-DaliaNeural",
+                       "locale":  "es-MX",
+                       "gender":  "female",
+                       "label":  "Spanish (Mexico) - Dalia, female"
+                   },
+                   {
+                       "id":  "es-MX-JorgeNeural",
+                       "locale":  "es-MX",
+                       "gender":  "male",
+                       "label":  "Spanish (Mexico) - Jorge, male"
+                   },
+                   {
+                       "id":  "hi-IN-MadhurNeural",
+                       "locale":  "hi-IN",
+                       "gender":  "male",
+                       "label":  "Hindi (India) - Madhur, male"
+                   },
+                   {
+                       "id":  "hi-IN-SwaraNeural",
+                       "locale":  "hi-IN",
+                       "gender":  "female",
+                       "label":  "Hindi (India) - Swara, female"
+                   },
+                   {
+                       "id":  "id-ID-ArdiNeural",
+                       "locale":  "id-ID",
+                       "gender":  "male",
+                       "label":  "Indonesian (Indonesia) - Ardi, male"
+                   },
+                   {
+                       "id":  "id-ID-GadisNeural",
+                       "locale":  "id-ID",
+                       "gender":  "female",
+                       "label":  "Indonesian (Indonesia) - Gadis, female"
+                   },
+                   {
+                       "id":  "ja-JP-KeitaNeural",
+                       "locale":  "ja-JP",
+                       "gender":  "male",
+                       "label":  "Japanese (Japan) - Keita, male"
+                   },
+                   {
+                       "id":  "ja-JP-NanamiNeural",
+                       "locale":  "ja-JP",
+                       "gender":  "female",
+                       "label":  "Japanese (Japan) - Nanami, female"
+                   },
+                   {
+                       "id":  "ko-KR-HyunsuMultilingualNeural",
+                       "locale":  "ko-KR",
+                       "gender":  "male",
+                       "label":  "Korean (Korea) - HyunsuMultilingual, male"
+                   },
+                   {
+                       "id":  "ko-KR-InJoonNeural",
+                       "locale":  "ko-KR",
+                       "gender":  "male",
+                       "label":  "Korean (Korea) - InJoon, male"
+                   },
+                   {
+                       "id":  "ko-KR-SunHiNeural",
+                       "locale":  "ko-KR",
+                       "gender":  "female",
+                       "label":  "Korean (Korea) - SunHi, female"
+                   },
+                   {
+                       "id":  "ms-MY-OsmanNeural",
+                       "locale":  "ms-MY",
+                       "gender":  "male",
+                       "label":  "Malay (Malaysia) - Osman, male"
+                   },
+                   {
+                       "id":  "ms-MY-YasminNeural",
+                       "locale":  "ms-MY",
+                       "gender":  "female",
+                       "label":  "Malay (Malaysia) - Yasmin, female"
+                   },
+                   {
+                       "id":  "ta-IN-PallaviNeural",
+                       "locale":  "ta-IN",
+                       "gender":  "female",
+                       "label":  "Tamil (India) - Pallavi, female"
+                   },
+                   {
+                       "id":  "ta-IN-ValluvarNeural",
+                       "locale":  "ta-IN",
+                       "gender":  "male",
+                       "label":  "Tamil (India) - Valluvar, male"
+                   },
+                   {
+                       "id":  "th-TH-NiwatNeural",
+                       "locale":  "th-TH",
+                       "gender":  "male",
+                       "label":  "Thai (Thailand) - Niwat, male"
+                   },
+                   {
+                       "id":  "th-TH-PremwadeeNeural",
+                       "locale":  "th-TH",
+                       "gender":  "female",
+                       "label":  "Thai (Thailand) - Premwadee, female"
+                   },
+                   {
+                       "id":  "vi-VN-HoaiMyNeural",
+                       "locale":  "vi-VN",
+                       "gender":  "female",
+                       "label":  "Vietnamese (Vietnam) - HoaiMy, female"
+                   },
+                   {
+                       "id":  "vi-VN-NamMinhNeural",
+                       "locale":  "vi-VN",
+                       "gender":  "male",
+                       "label":  "Vietnamese (Vietnam) - NamMinh, male"
+                   },
+                   {
+                       "id":  "zh-CN-XiaoxiaoNeural",
+                       "locale":  "zh-CN",
+                       "gender":  "female",
+                       "label":  "Chinese (Simplified, China) - Xiaoxiao, female"
+                   },
+                   {
+                       "id":  "zh-CN-XiaoyiNeural",
+                       "locale":  "zh-CN",
+                       "gender":  "female",
+                       "label":  "Chinese (Simplified, China) - Xiaoyi, female"
+                   },
+                   {
+                       "id":  "zh-CN-YunjianNeural",
+                       "locale":  "zh-CN",
+                       "gender":  "male",
+                       "label":  "Chinese (Simplified, China) - Yunjian, male"
+                   },
+                   {
+                       "id":  "zh-CN-YunxiaNeural",
+                       "locale":  "zh-CN",
+                       "gender":  "male",
+                       "label":  "Chinese (Simplified, China) - Yunxia, male"
+                   },
+                   {
+                       "id":  "zh-CN-YunxiNeural",
+                       "locale":  "zh-CN",
+                       "gender":  "male",
+                       "label":  "Chinese (Simplified, China) - Yunxi, male"
+                   },
+                   {
+                       "id":  "zh-CN-YunyangNeural",
+                       "locale":  "zh-CN",
+                       "gender":  "male",
+                       "label":  "Chinese (Simplified, China) - Yunyang, male"
+                   },
+                   {
+                       "id":  "zh-HK-HiuGaaiNeural",
+                       "locale":  "zh-HK",
+                       "gender":  "female",
+                       "label":  "Chinese (Traditional, Hong Kong SAR) - HiuGaai, female"
+                   },
+                   {
+                       "id":  "zh-HK-HiuMaanNeural",
+                       "locale":  "zh-HK",
+                       "gender":  "female",
+                       "label":  "Chinese (Traditional, Hong Kong SAR) - HiuMaan, female"
+                   },
+                   {
+                       "id":  "zh-HK-WanLungNeural",
+                       "locale":  "zh-HK",
+                       "gender":  "male",
+                       "label":  "Chinese (Traditional, Hong Kong SAR) - WanLung, male"
+                   },
+                   {
+                       "id":  "zh-TW-HsiaoChenNeural",
+                       "locale":  "zh-TW",
+                       "gender":  "female",
+                       "label":  "Chinese (Traditional, Taiwan) - HsiaoChen, female"
+                   },
+                   {
+                       "id":  "zh-TW-HsiaoYuNeural",
+                       "locale":  "zh-TW",
+                       "gender":  "female",
+                       "label":  "Chinese (Traditional, Taiwan) - HsiaoYu, female"
+                   },
+                   {
+                       "id":  "zh-TW-YunJheNeural",
+                       "locale":  "zh-TW",
+                       "gender":  "male",
+                       "label":  "Chinese (Traditional, Taiwan) - YunJhe, male"
+                   }
+               ],
+    "notice":  "Added French voices.",
+    "engineAction":  "none"
 }
