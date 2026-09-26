@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": 2,
+  "catalogVersion": 3,
   "enabledLocales": [
     "en-US",
     "en-GB",
@@ -20,9 +20,20 @@
     "vi-VN",
     "id-ID",
     "es-ES",
-    "es-MX"
+    "es-MX",
+    "hi-IN",
+    "ta-IN",
+    "pa-IN"
   ],
   "disabledVoices": [],
-  "notice": "Test rollout: Spanish voices enabled.",
-  "engineAction": "none"
+  "notice": "Hindi, Tamil and Punjabi voices enabled.",
+  "engineAction": "none",
+  "voiceAllowList": [
+    "hi-IN-SwaraNeural",
+    "hi-IN-MadhurNeural",
+    "ta-IN-PallaviNeural",
+    "ta-IN-ValluvarNeural",
+    "pa-IN-VaaniNeural",
+    "pa-IN-OjasNeural"
+  ]
 }
