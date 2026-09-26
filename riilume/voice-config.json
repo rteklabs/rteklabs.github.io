@@ -1,6 +1,6 @@
 {
     "schemaVersion":  2,
-    "catalogVersion":  4,
+    "catalogVersion":  5,
     "voices":  [
                    {
                        "id":  "en-AU-NatashaNeural",
@@ -393,6 +393,6 @@
                        "label":  "Chinese (Traditional, Taiwan) - YunJhe, male"
                    }
                ],
-    "notice":  "Added French voices.",
+    "notice":  "Add Hebrews",
     "engineAction":  "none"
 }
