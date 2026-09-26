@@ -1,6 +1,6 @@
 {
     "schemaVersion":  2,
-    "catalogVersion":  5,
+    "catalogVersion":  6,
     "voices":  [
                    {
                        "id":  "en-AU-NatashaNeural",
@@ -217,6 +217,30 @@
                        "locale":  "es-MX",
                        "gender":  "male",
                        "label":  "Spanish (Mexico) - Jorge, male"
+                   },
+                   {
+                       "id":  "fr-FR-RemyMultilingualNeural",
+                       "locale":  "fr-FR",
+                       "gender":  "male",
+                       "label":  "French (France) - RemyMultilingual, male"
+                   },
+                   {
+                       "id":  "fr-FR-VivienneMultilingualNeural",
+                       "locale":  "fr-FR",
+                       "gender":  "female",
+                       "label":  "French (France) - VivienneMultilingual, female"
+                   },
+                   {
+                       "id":  "he-IL-AvriNeural",
+                       "locale":  "he-IL",
+                       "gender":  "male",
+                       "label":  "Hebrew (Israel) - Avri, male"
+                   },
+                   {
+                       "id":  "he-IL-HilaNeural",
+                       "locale":  "he-IL",
+                       "gender":  "female",
+                       "label":  "Hebrew (Israel) - Hila, female"
                    },
                    {
                        "id":  "hi-IN-MadhurNeural",
